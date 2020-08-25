@@ -1,0 +1,49 @@
+html {
+    overflow: hidden;
+    font-size: 20px;
+    background: linear-gradient(to right bottom, rgb(72,114,194),rgb(0,156,224));
+}
+#appCanvas{
+    display: block;
+    width: 960px;
+    height: 590px;
+    background-color: #000;
+    border: 1px solid #111;
+    margin: 140px auto;
+}
+.g-tip {
+    pointer-events: none;
+    background-color: transparent;
+    font-size: 45px;
+    font-family: cursive;
+    color: rgb(0, 225, 0);
+    font-weight: bold;
+    text-shadow: ivory 0 0 20px;
+    animation: upalpha 1s;
+    opacity: 0;
+    box-shadow: none;
+}
+
+@keyframes upalpha {
+    0% {
+        opacity: 1;
+        transform: translateY(-50%);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-75%);
+    }
+}
+
+.g-tip .title, .g-tip .bo1, .g-tip .bo2 {
+    display: none;
+}
+
+.pon {
+    pointer-events: none;
+    background-color: transparent;
+}
+
+.danger {
+    color: red;
+}

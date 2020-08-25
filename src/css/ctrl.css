@@ -1,0 +1,96 @@
+#ctrl{
+    position: fixed;
+    z-index: 1000;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    top: 0px;
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: auto;
+}
+#ctrl_left{
+    float: left;
+    width: 18%;
+    background-color: #eee;
+    height: 100%;
+}
+#ctrl_view{
+    outline: none;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#ctrl .title{
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: blue;
+    padding: 0.5em 0;
+    background-color: #fefefe;
+    letter-spacing: 0.5em;
+}
+#ctrl .item{
+    text-align: center;
+    font-size: 16px;
+    padding: 0.5em;
+    background: linear-gradient(to right,#efefef,#dedede);
+    color: goldenrod;
+    font-weight: bold;
+}
+#ctrl .item:nth-child(odd){
+    background: linear-gradient(to right,#efefef,#dedede);
+}
+#ctrl .item:nth-child(even){
+    background: linear-gradient(to right,#dedede,#efefef);
+}
+#ctrl .item:hover{
+    cursor: pointer;
+}
+#ctrl_center{
+    float: left;
+    width: 32%;
+    background-color: #eaffea;
+    height: 100%;
+    overflow: auto;
+}
+#ctrl_right{
+    float: left;
+    width: 50%;
+    background-color: #eaeafe;
+    height: 100%;
+    overflow: auto;
+}
+#ctrl .field{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px;
+}
+#ctrl .field.number{
+    background-color: #fdd;
+}
+#ctrl .field.string{
+    background-color: #dfd;
+}
+#ctrl .field.boolean{
+    background-color: #add;
+}
+#ctrl .field.array{
+    background-color: #ddf;
+}
+#ctrl .field.object{
+    background-color: #ffa;
+}
+#ctrl .field .key{
+    float: left;
+    width: 5em;
+    text-align: right;
+    font-size: 14px;
+    font-weight: bold;
+}
+#ctrl .field input.value{
+    float: right;
+    width: 15em;
+}
+#ctrl pre{
+    font-family: Arial, Helvetica, sans-serif;
+}

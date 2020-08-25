@@ -1,0 +1,76 @@
+#appp{
+    user-select: none;
+}
+.g-back{
+    position: absolute;
+    top: 0;
+    user-select: none;
+}
+.g-ground{
+    position: absolute;
+    bottom: 0;
+    user-select: none;
+}
+.g-role{
+    position: absolute;
+}
+.g-role div{
+    position: absolute;
+}
+.g_body{
+    width: 75px;
+    height: 75px;
+    bottom: 0;
+}
+.g-body{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 5;
+}
+.g-head{
+    top: -38px;
+    width: 57px;
+    height: 57px;
+    z-index: 8;
+}
+.g-legl{
+    width: 66px;
+    height: 83px;
+    z-index: 4;
+    left: -3px;
+    top: 20px;
+}
+.g-legr{
+    width: 66px;
+    height: 83px;
+    z-index: 4;
+    left: 10px;
+    top: 20px;
+}
+.g-handl{
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #000;
+    top: 30px;
+    z-index: 9;
+}
+.g-handr{
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #000;
+    top: 22px;
+    left: 50px;
+    z-index: 9;
+}
+.g-weapon{
+    width: 100px;
+    height: 29px;
+    transform: rotate(-38deg);
+    top: -23px;
+    left: -18px;
+}
