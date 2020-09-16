@@ -254,7 +254,6 @@ export const init = () => {
             }
         }, undefined, (container, data) => {
             let world = data.world = new RealWorld(gameApp, container);
-            gameApp.ticker.add(world.onTimer.bind(world));
         });
         gameRouter.start();
         window.gameRouter = gameRouter;

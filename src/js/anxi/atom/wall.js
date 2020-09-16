@@ -36,32 +36,14 @@ export class Wall extends Conster {
         return y;
     }
 
-    get relativeX() {
-        return this.sprite.x;
-    }
-
-    set relativeX(x) {
-        this.sprite.x = x;
-        return x;
-    }
-
-    get relativeY() {
-        return GameHeight - this.sprite.y;
-    }
-
-    set relativeY(y) {
-        this.sprite.y = GameHeight - y;
-        return y;
-    }
-
     /**
      * vita是否应当从drop状态变为附着于该墙体
      * 只有y改变才有可能从下落变为附着
      */
-    willStickByY(ry, ny, x) {
+    willStickByY(oldValue, newValue, x) {
         let tx = this.x;
-        let ty = this.relativeY;
-        return ry > ty && ny <= ty && x > tx && x < tx + this.width;
+        let ty = this.y;
+        return oldValue <= ty && newValue > ty && x > tx && x < tx + this.width;
     }
 
 
@@ -77,9 +59,9 @@ export class Wall extends Conster {
      * @param {number} ny 头顶y坐标
      */
     willHitByY(nx, ny) {
-        let x = this.relativeX;
-        let y = this.relativeY;
-        return (nx > x && nx < x + this.width) && (ny < y && ny > y - this.height);
+        let x = this.x;
+        let y = this.y;
+        return (nx > x && nx < x + this.width) && (ny > y && ny < y + this.height);
     }
     /**
      * 是否撞击左右表面
@@ -89,8 +71,8 @@ export class Wall extends Conster {
      * @param {number} height 真实高度
      */
     willHitByX(nx, ny, height) {
-        let x = this.relativeX;
-        let y = this.relativeY;
+        let x = this.x;
+        let y = this.y;
         return (nx > x && nx < x + this.width) && (ny + height > y - this.height && ny < y);
     }
 

@@ -6,34 +6,37 @@ export class StateController extends Controller {
     static baseState = ['common', 'rest', 'go', 'run', 'jump', 'jumpSec', 'hard', 'URA', 'IME', 'drop', 'hover', 'banhover'
         , 'attack', 'poison', 'beHitBehind', 'dizzy', 'hurt', 'dead', 'slow', 'silence']
     static cache = {
-        common: [-100, false],
-        rest: [-99, false],
-        go: [100, false],
-        run: [101, false],
-        jump: [200, false],
-        jumpSec: [201, false],
-        hard: [-200, true], //  僵直状态
-        URA: [-300, true], //无双 免控
-        IME: [-400, true], //无敌
-        drop: [300, false],
-        hover: [499, false],
-        banhover: [500, false],//禁飞
-        attack: [400, false],
-        poison: [-402, true],//中毒
-        beHitBehind: [501, false],//被击退
-        dizzy: [600, true],//眩晕
-        hurt: [-401, false],//重伤
-        dead: [10000, false],
-        slow: [this.autoChangeIndex++, true],
-        silence: [this.autoChangeIndex++, false]
+        common: -100,
+        rest: -99,
+        go: 100,
+        run: 101,
+        jump: 200,
+        jumpSec: 201,
+        hard: -200,   //  僵直状态
+        URA: -300,  //无双 免控
+        IME: -400,  //无敌
+        drop: 300,
+        hover: 499,
+        banhover: 500,//禁飞
+        attack: 400,
+        poison: -402,  //中毒
+        beHitBehind: 501,//被击退
+        dizzy: 600,  //眩晕
+        hurt: -401,//重伤
+        dead: 10000,
+        slow: this.autoChangeIndex++,
+        silence: this.autoChangeIndex++
     }
+    static complexState = [
+        this.cache.hard, this.cache.URA, this.cache.IME, this.cache.poison, this.cache.dizzy, this.cache.slow
+    ]
     states = {}
     /**
      * @return {SingleState}
      * @param {number} stateIndex 
      */
     getSingleState(stateIndex) {
-        return this.states[stateIndex] || this.registerState(stateIndex, Object.entries(StateAtom).find(v => v[1][0] == stateIndex)[1]);
+        return this.states[stateIndex] || this.registerState(stateIndex, StateController.complexState.includes(stateIndex));
     }
     /**
      * @type {SingleState}
@@ -44,16 +47,43 @@ export class StateController extends Controller {
     }
     registerState(stateNumber = -(2 << 16), complex = false) {
         if (this.states[stateNumber]) throw new Error('already registered！');
-        return this.states[stateNumber] = new SingleState(stateNumber, 0, false, complex);
+        let ss = this.states[stateNumber] = new SingleState(stateNumber, 0, false, complex);
+        this.belonger.on(`loststate_${stateNumber}`, e => {
+            ss.lastLost = this.belonger.timer;
+            ss.timer = 0;
+            if (this.displayState.index == stateNumber) {
+                this.displayState = this.getExistSSS().sort((a, b) => a.index - b.index)[0];
+            }
+        }, true);
+        this.belonger.on(`getstate_${stateNumber}`, e => {
+            ss.lastGet = this.belonger.timer;
+            if (this.displayState.index < stateNumber) {
+                this.displayState = ss;
+            }
+        }, true);
+        return ss;
     }
     constructor() {
         super(...arguments);
         this.init();
     }
+    /**
+     * @return {SingleState[]}
+     */
+    getExistSSS() {
+        let sss = [];
+        for (const key in this.states) {
+            let ss = this.states[key];
+            if (ss.exist()) {
+                sss.push(ss);
+            }
+        }
+        return sss;
+    }
     init() {
         for (const key of StateController.baseState) {
-            let value = StateAtom[key];
-            this.registerState(value[0], value[1]);
+            let value = StateCache[key];
+            this.registerState(value, StateController.complexState.includes(value));
         }
         this.displayState = this.states[StateCache.common];
         this.setStateInfinite(StateCache.common, true);
@@ -229,7 +259,7 @@ export class SingleState {
                 return item.last > 0 || item.infinite;
             })
         } else {
-            
+
         }
         if (!this.exist()) lostHandler();
     }
@@ -291,9 +321,4 @@ export class StateItem {
         this.infinite = infinite;
     }
 }
-export const StateAtom = StateController.cache;
-let _StateCache = {};
-for (let key in StateAtom) {
-    _StateCache[key] = StateAtom[key][0];
-}
-export const StateCache = _StateCache;
+export const StateCache = StateController.cache;

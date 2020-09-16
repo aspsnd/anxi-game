@@ -5,7 +5,7 @@ import { VitaProto } from "../proto/vita";
 import { SingleState, StateCache, StateController } from "../controller/state";
 import { ViewController } from "../controller/view";
 import { World } from "./world";
-import { jumpContinue, jumpSpeed } from "../../util";
+import { GameHeight, jumpContinue, jumpSpeed } from "../../util";
 
 export const typicalProp = ['hp', 'mp', 'atk', 'def', 'crt', 'dod', 'hpr', 'mpr', 'speed'];
 /**
@@ -221,6 +221,51 @@ export class Vita extends Atom {
                 return;
             }
         }, true);
+        this.on(`loststate_${StateCache.jump}`, e => {
+            if (this.stickingWall) return;
+            if (this.stateController.includes(StateCache.jump, StateCache.jumpSec, StateCache.hover)) return;
+            this.stateController.setStateInfinite(StateCache.drop, true);
+        }, true);
+        this.on(`loststate_${StateCache.jumpSec}`, e => {
+            if (this.stickingWall) return;
+            if (this.stateController.includes(StateCache.jump, StateCache.jumpSec, StateCache.hover)) return;
+            this.stateController.setStateInfinite(StateCache.drop, true);
+        }, true);
+        this.on('movex', e => {
+            let moveUtil = e.value;
+            let { old, value } = moveUtil;
+
+        }, true);
+        this.on('movey', e => {
+            let moveUtil = e.value;
+            let { old, value } = moveUtil;
+            this.stickingWall = null;
+            if (value > old) {
+                //下落 看看是否有墙体收留
+                this.world.walls.some(wall => {
+                    if (wall.willStickByY(old + this.height, value + this.height, this.x)) {
+                        this.stickingWall = wall;
+                        this.stateController.removeState(StateCache.drop);
+                        this.jumpTimes = 0;
+                        moveUtil.value = wall.y - this.height;
+                        return true;
+                    }
+                    return false;
+                })
+            } else {
+                //上升 判断是否撞墙
+                this.world.walls.some(wall => {
+                    if (wall.canup) return false;
+                    if (wall.willHitByY(this.x, value)) {
+                        moveUtil.value = wall.y + wall.height;
+                        wall.on(new ItemEvent('holdvita_0', this));
+                        this.on(new ItemEvent('behold_0', wall));
+                        return true;
+                    }
+                    return false;
+                })
+            }
+        }, true);
         // this.on('timing', e => {
         //     if (!this.live || this.timer % 60 > 0) return;
         //     if (this.nhp < this.hp && this.hpr > 0) {
@@ -249,6 +294,10 @@ export class Vita extends Atom {
     }
     onTimer() {
         super.onTimer();
+        if (this.needCompute) {
+            this.needCompute = false;
+            this.compute();
+        }
     }
     _tempX = 0
     _tempY = 0
@@ -260,7 +309,8 @@ export class Vita extends Atom {
     }
     set x(value) {
         if (Number.isNaN(value)) throw new Error('argsError');
-        let oldX = this.x;
+        if (value == this._tempX) return;
+        let oldX = this._tempX;
         let moveUtil = {
             old: oldX,
             value: value
@@ -270,7 +320,8 @@ export class Vita extends Atom {
     }
     set y(value) {
         if (Number.isNaN(value)) throw new Error('argsError');
-        let oldY = this.y;
+        if (value == this._tempY) return;
+        let oldY = this._tempY;
         let moveUtil = {
             old: oldY,
             value: value

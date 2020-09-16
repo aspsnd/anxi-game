@@ -1,7 +1,7 @@
 import { Application, Container, Sprite } from "pixi.js";
 import { WallProtos } from "../../data/wall/wall";
 import { Role } from "../../po/atom/role";
-import { by } from "../../util";
+import { by, GameHeight } from "../../util";
 import { Atom } from "../atom";
 import { StepManager } from "../card/step";
 import { Vita } from "./vita";
@@ -64,7 +64,7 @@ export class World extends Atom {
     initGround(_ground) {
         let ground = new Wall(WallProtos[_ground]);
         ground.x = -50;
-        ground.relativeY = ground.height;
+        ground.y = GameHeight -  ground.height;
         this.container.addChild(ground.sprite);
         this.walls.push(ground);
         this.ground = ground;
