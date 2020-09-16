@@ -4,6 +4,8 @@ const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 const webpack = require('webpack');
 const minicss = require('mini-css-extract-plugin');
 const copy_plugin = require('copy-webpack-plugin');
+const GetResPlugin = require('./plugins/resBuild');
+const { ResPlugin } = require('./plugins/resBuild');
 module.exports = {
   // mode: 'production',
   mode: 'development',
@@ -19,8 +21,15 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader'
+      },
+      {
+        test:/res.js/,
+        loader:'resloader'
       }
     ]
+  },
+  resolveLoader:{
+    modules: ['node_modules','./plugins/'],
   },
   plugins: [
     // new OpenBrowserPlugin({
@@ -44,15 +53,15 @@ module.exports = {
       }, {
         from: './src/css',
         to: 'css'
-      }
-    ])
+      } 
+    ]),
+    // new ResPlugin()
   ],
   devServer: {
     contentBase: path.join(__dirname, 'build'),
     compress: true,
     port: 8080,
     open: true,
-
   },
   devtool:'source-map'
 };

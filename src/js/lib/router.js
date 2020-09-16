@@ -11,12 +11,10 @@ export class PIXIRouter {
             container.visible = false;
         },
         inited: false,
-        data: {}
     }
     nowPage = undefined
-    constructor() {
-
-    }
+    history = []
+    constructor() { }
     pageHandlers = {}
     /**
      * @return {Container}
@@ -28,20 +26,22 @@ export class PIXIRouter {
      * }} options 
      * @param {Container} container 
      */
-    register(pageName, options = {}, container = new Container()) {
+    register(pageName, options = {}, container = new Container(), instantIniter = () => { }) {
         if (this.pageHandlers[pageName]) throw new AnxiError('this page name has been used!');
         if (!this.nowPage) this.nowPage = pageName;
-        options = Object.assign({}, this.__proto__.constructor.defaultOptions, options);
+        options = Object.assign({ data: {} }, this.__proto__.constructor.defaultOptions, options);
         container.visible = false;
         this.pageHandlers[pageName] = {
             container,
             ...options
         };
+        instantIniter.call(this, container, this.pageHandlers[pageName].data);
         return container;
     }
     to(pageName) {
         if (!(pageName in this.pageHandlers)) throw new AnxiError('page name not exests!');
         if (this.nowPage != undefined) {
+            this.history.unshift(this.nowPage);
             let rcomt = this.pageHandlers[this.nowPage];
             rcomt.disolver(rcomt.container, rcomt.data);
         }
@@ -61,5 +61,19 @@ export class PIXIRouter {
      */
     getContainer(pageName) {
         return this.pageHandlers[pageName].container;
+    }
+    back() {
+        let pageName = this.history.shift();
+        if (this.nowPage != undefined) {
+            let rcomt = this.pageHandlers[this.nowPage];
+            rcomt.disolver(rcomt.container, rcomt.data);
+        }
+        this.nowPage = pageName;
+        let comt = this.pageHandlers[pageName];
+        if (!comt.inited) {
+            comt.inited = true;
+            comt.initer(comt.container, comt.data);
+        }
+        comt.refresher(comt.container, comt.data);
     }
 }

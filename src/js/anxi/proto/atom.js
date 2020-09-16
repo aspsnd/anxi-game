@@ -3,7 +3,7 @@ export class AtomProto {
     /**
      * @param {AtomProto} proto 
      */
-    constructor(proto) {
-        Object.assign(this, proto);
+    constructor(proto = {}) {
+        
     }
 }

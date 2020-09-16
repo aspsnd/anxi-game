@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');//解析需要遍历的文件夹
 var filePath = path.resolve(__dirname, './build/res');
-fileDisplay(filePath)
+fileDisplay(filePath);
 function fileDisplay(filePath) {
     //根据文件路径读取文件，返回文件列表
     let files = fs.readdirSync(filePath);
@@ -33,11 +33,11 @@ function fileDisplay(filePath) {
 
 function deleteFolder(path) {
     let files = [];
-    if( fs.existsSync(path) ) {
+    if (fs.existsSync(path)) {
         files = fs.readdirSync(path);
-        files.forEach(function(file,index){
+        files.forEach(function (file, index) {
             let curPath = path + "/" + file;
-            if(fs.statSync(curPath).isDirectory()) {
+            if (fs.statSync(curPath).isDirectory()) {
                 deleteFolder(curPath);
             } else {
                 fs.unlinkSync(curPath);

@@ -9,6 +9,14 @@ export class Atom extends ItemEventDispatcher {
     btimespeed = 1
     timeChangeRates = []
     timeRate = 1
+    timer = 0
+    running = true
+    start() {
+        this.running = true;
+    }
+    stop() {
+        this.running = false;
+    }
     caculateTimespeed() {
         let addedRate = 1;
         this.timeChangeRates.forEach(r => addedRate *= r);
@@ -21,7 +29,7 @@ export class Atom extends ItemEventDispatcher {
     /**
      * @param {AtomProto} proto 
      */
-    constructor(proto) {
+    constructor(proto = { timespeed: 1 }) {
         super();
         this.proto = proto;
         this.btimespeed = proto.timespeed;
@@ -31,13 +39,15 @@ export class Atom extends ItemEventDispatcher {
         this.caculateTimespeed();
     }
     lastTimerFrame = 0
-    onFrame(frame) {
+    frame = 0
+    onFrame(frame = this.frame++) {
         while (frame - this.lastTimerFrame >= this.timespeed) {
             this.lastTimerFrame += this.timespeed;
             this.onTimer();
         }
     }
     onTimer() {
+        if (!this.running) return;
         this.timer++;
         this.on(`timer_${this.timer}`);
         this.on(`timing`);
@@ -70,8 +80,8 @@ export class Atom extends ItemEventDispatcher {
      * 跟随父级，共享时间
      * @param {Atom} atom 
      */
-    follow(atom){
-        atom.on('timing',e=>{
+    follow(atom) {
+        atom.on('timing', e => {
             this.onTimer();
             return this.realDead;
         })

@@ -5,6 +5,12 @@ import { RecordController } from "./record/record";
 import { RecordPage } from "./record/page";
 import { MotionBlurFilter, ColorMapFilter, ColorOverlayFilter, RadialBlurFilter, TiltShiftFilter, DotFilter, GodrayFilter } from "pixi-filters";
 import { AtomProto } from "./anxi/proto/atom";
+import { RealWorld } from "./po/world";
+import { RoleProtos } from "./data/role/all";
+import { Role } from "./po/atom/role";
+import { World } from "./anxi/atom/world";
+const { myAler } = ZY;
+const { Question } = myAler;
 
 export const init = () => {
     gameApp.start();
@@ -23,6 +29,7 @@ export const init = () => {
                     RecordController.login(uname, upass).then(res => {
                         new GTip('登录成功');
                         gameRouter.to('main');
+
                     }).catch(e => {
                         new GDanger('登录失败', e => {
                             unameInput.value = '';
@@ -34,13 +41,17 @@ export const init = () => {
                 gameApp.stage.addChild(container);
 
                 /**
-                 * @test autologin
+                 * @test autologin 
                  */
-                RecordController.login('aspsnd', 'aspsnd').then(res => {
+                RecordController.login('aspsnd3', 'aspsnd').then(res => {
                     new GTip('登录成功');
-                    gameRouter.to('main');
+                    // gameRouter.to('main');
+                    setTimeout(_ => {
+                        gameRouter.pageHandlers['world'].data.record = RecordController.getRecord(0);
+                        gameRouter.to('world');
+                    })
                 }).catch(e => {
-                    console.log(e);
+                    console.error(e);
                     new GDanger('登录失败');
                 })
 
@@ -114,7 +125,8 @@ export const init = () => {
                 gameApp.ticker.add(_ => {
                     filter2[0].time += 0.05;
                 })
-                for (let i = 0; i < 4; i++) {
+                for (let i = 0; i < RoleProtos.length; i++) {
+                    let index = i;
                     let sprite = new Sprite(directBy(`role/face/role${i + 1}.png`));
                     sprite.position.set(240 * i, 0);
                     sprite.filters = filter1;
@@ -126,9 +138,11 @@ export const init = () => {
                         sprite.filters = filter1;
                     }
                     sprite.tap = _ => {
-
+                        let role = new Role(RoleProtos[index]);
+                        let record = RecordController.newRecord([role.toPlainObject()]);
+                        gameRouter.pageHandlers['save'].data.record = record;
+                        gameRouter.to('save');
                     }
-                    data.roles = [];
                     container.addChild(sprite);
                 }
                 container.addChild(new Sprite(directBy('role_select_bg.png')));
@@ -185,13 +199,13 @@ export const init = () => {
                         gameRouter.to('main');
                     },
                     selectHandler(index) {
-
+                        gameRouter.pageHandlers['world'].data.record = RecordController.getRecord(index);
+                        gameRouter.to('world');
                     }
                 });
                 recordPage.position.set(200, 170);
                 container.addChild(recordPage);
                 gameApp.stage.addChild(container);
-                window.recordPage = recordPage;
             },
             refresher(container, data) {
                 container.visible = true;
@@ -201,7 +215,47 @@ export const init = () => {
                 let recordPage = data.recordPage;
                 recordPage.load();
             }
+        });
+        gameRouter.register('save', {
+            initer(container, data) {
+                let record = data.record;
+                let recordPage = data.recordPage = new RecordPage({
+                    closeHandler() {
+                        gameRouter.back();
+                    },
+                    selectHandler(index, exist) {
+                        if (exist) {
+                            new Question('确定覆盖当前存档？', bool => {
+                                if (!bool) return;
+                                RecordController.saveRecord(index, record);
+                                gameRouter.pageHandlers['world'].data.record = record;
+                                gameRouter.to('world');
+                            })
+                        } else {
+                            RecordController.saveRecord(index, record);
+                            gameRouter.pageHandlers['world'].data.record = record;
+                            gameRouter.to('world');
+                        }
+                    }
+                });
+                recordPage.position.set(200, 170);
+                container.addChild(recordPage);
+                gameApp.stage.addChild(container);
+            }
         })
+        gameRouter.register('world', {
+            initer(container, data) {
+                gameApp.stage.addChild(container);
+            },
+            refresher(container, data) {
+                container.visible = true;
+                let world = data.world;
+                world.init(data.record);
+            }
+        }, undefined, (container, data) => {
+            let world = data.world = new RealWorld(gameApp, container);
+            gameApp.ticker.add(world.onTimer.bind(world));
+        });
         gameRouter.start();
         window.gameRouter = gameRouter;
     })

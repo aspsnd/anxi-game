@@ -7,7 +7,13 @@ let res = [];
 let ressound = [];
 //文件遍历方法
 //调用文件遍历方法
-fileDisplay(filePath);
+module.exports = {
+    getRes: _ => {
+        fileDisplay(filePath);
+        return `export const res = ${JSON.stringify(res, null, 4)};
+export const ressound = ${JSON.stringify(ressound, null, 4)}`;
+    }
+}
 function fileDisplay(filePath) {
     //根据文件路径读取文件，返回文件列表
     let files = fs.readdirSync(filePath);
@@ -29,12 +35,10 @@ function fileDisplay(filePath) {
         }
         if (isDir) {
             if (filename == 're' || filename.startsWith('_')) {
-                console.log('filter : ' + filedir)
+                // console.log('filter : ' + filedir);
             } else {
                 fileDisplay(filedir);//递归，如果是文件夹，就继续遍历该文件夹下面的文件
             }
         }
     });
 }
-fs.writeFileSync(resjs, `export const res = ${JSON.stringify(res, null, 4)};
-export const ressound = ${JSON.stringify(ressound, null, 4)}`);

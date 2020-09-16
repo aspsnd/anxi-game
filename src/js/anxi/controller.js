@@ -1,17 +1,27 @@
 import { Atom } from "./atom";
+import { Vita } from "./atom/vita";
 
 /**
  * 控制器的抽象
  */
 export class Controller {
     /**
-     * @type {Atom}
+     * @type {Vita}
      */
-    belonger 
+    belonger
     /**
      * @param {Atom} atom 
      */
-    constructor(atom){
+    constructor(atom) {
         this.belonger = atom;
+    }
+    init() {
+
+    }
+    refresh() {
+
+    }
+    onTimer() {
+
     }
 }
