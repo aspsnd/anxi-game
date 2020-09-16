@@ -1,6 +1,6 @@
 import { ItemEvent } from "../event";
 // import { AI } from "./ai";
-export var Instructer = {
+export const Instructer = {
     player(_keys = 'wsadjkyuiol h') {
         let keys = typeof _keys == 'string' ? _keys.split('') : _keys;
         return function (vita) {
@@ -16,7 +16,7 @@ export var Instructer = {
                 up(e);
             });
             function down(e) {
-                if (!vita.live || !vita?.fight?.running) return;
+                if (vita.dead || !vita?.world?.running) return;
                 let index = findIndex(keys, e);
                 let key = e.key;
                 switch (index) {
@@ -35,7 +35,7 @@ export var Instructer = {
                 }
             }
             function up(e) {
-                if (!vita.live || !vita?.fight?.running) return;
+                if (vita.dead || !vita?.world?.running) return;
                 let index = findIndex(keys, e);
                 let key = e.key;
                 switch (index) {

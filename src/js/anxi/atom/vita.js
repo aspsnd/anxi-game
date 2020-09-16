@@ -2,9 +2,10 @@ import { Atom } from "../atom";
 import { ItemEvent } from "../event";
 import { Wall } from "./wall";
 import { VitaProto } from "../proto/vita";
-import { StateController } from "../controller/state";
+import { SingleState, StateCache, StateController } from "../controller/state";
 import { ViewController } from "../controller/view";
 import { World } from "./world";
+import { jumpContinue, jumpSpeed } from "../../util";
 
 export const typicalProp = ['hp', 'mp', 'atk', 'def', 'crt', 'dod', 'hpr', 'mpr', 'speed'];
 /**
@@ -123,17 +124,119 @@ export class Vita extends Atom {
         this.stateController = new StateController(this);
         this.viewController = new ViewController(this);
     }
+    getCanRun() {
+        var ps = this.stateController.states[StateCache.go];
+        return this.timer - ps.lastGet < 25 && this.timer > 25;
+    }
+    jumpTimes = 0
+    maxJumpTimes = 1
     /**
      * 注册指令
      */
     initInstruct() {
-
+        this.on('wantleft', e => {
+            if (this.stateController.includes(StateCache.hard, StateCache.beHitBehind, StateCache.dizzy, StateCache.attack)) return;
+            if (this.stateController.has(StateCache.go) && this.face == -1) return;
+            if (this.getCanRun() && this.face == -1) {
+                this.stateController.setStateInfinite(StateCache.go, false);
+                this.stateController.setStateInfinite(StateCache.run, true);
+            } else {
+                this.face = -1;
+                this.stateController.setStateInfinite(StateCache.go, true);
+            }
+        }, true)
+        this.on('wantright', e => {
+            if (this.stateController.includes(StateCache.hard, StateCache.beHitBehind, StateCache.dizzy, StateCache.attack)) return;
+            if (this.stateController.has(StateCache.go) && this.face == 1) return;
+            if (this.getCanRun() && this.face == 1) {
+                this.stateController.setStateInfinite(StateCache.go, false);
+                this.stateController.setStateInfinite(StateCache.run, true);
+            } else {
+                this.face = 1;
+                this.stateController.setStateInfinite(StateCache.go, true);
+            }
+        }, true);
+        this.on('cancelleft', e => {
+            if (this.face == 1) return;
+            this.stateController.setStateInfinite(StateCache.go, false);
+            this.stateController.setStateInfinite(StateCache.run, false);
+        }, true)
+        this.on('cancelright', e => {
+            if (this.face == -1) return;
+            this.stateController.setStateInfinite(StateCache.go, false);
+            this.stateController.setStateInfinite(StateCache.run, false);
+        }, true);
+        this.on('wantjump', e => {
+            if (this.stateController.includes(StateCache.hard, StateCache.attack, StateCache.beHitBehind, StateCache.dizzy)) return;
+            if (this.maxJumpTimes < 1 || this.jumpTimes == this.maxJumpTimes) return;
+            if (this.stickingWall?.glue) {
+                return;
+            }
+            this.jumpTimes++;
+            if (this.jumpTimes == 1) {
+                this.stateController.setStateTime(StateCache.jump, jumpContinue.jump);
+            } else {
+                this.stateController.removeState(StateCache.jump);
+                this.stateController.setStateTime(StateCache.jumpSec, jumpContinue.jumpSec);
+            }
+        }, true);
+        this.on('wantdown', e => {
+            if (this.stateController.has(StateCache.drop) || this.state.includes(StateCache.jumpSec, StateCache.jump, StateCache.hover)) return;
+            if (!this.stickingWall) return;
+            if (!this.stickingWall.candown) return;
+            this.stateController.setStateInfinite(StateCache.drop, true);
+        }, true);
+        this.on('wantdrop', e => {
+            if (this.stateController.has(StateCache.drop) || this.state.includes(StateCache.jumpSec, StateCache.jump, StateCache.hover)) return;
+            if (this.stickingWall) return;
+            this.stateController.setStateInfinite(StateCache.drop, true);
+        }, true);
     }
     /**
      * 注册状态监听
      */
     initStating() {
-
+        this.on(`stating_${StateCache.drop}`, e => {
+            /**
+             * @type {SingleState}
+             */
+            let ps = e.value;
+            this.y += Math.min(((ps.timer + 5) ** 2) * 0.0018 * this.prop.speed, 6);
+        }, true);
+        this.on(`stating_${StateCache.go}`, e => {
+            this.x += this.face * this.prop.speed;
+        }, true)
+        this.on(`stating_${StateCache.run}`, e => {
+            this.x += this.face * this.prop.speed * 1.5;
+        }, true)
+        this.on(`stating_${StateCache.jump}`, e => {
+            this.y -= jumpSpeed.jump(e.value.timer, this.prop.speed);
+        }, true)
+        this.on(`stating_${StateCache.jumpSec}`, e => {
+            this.y -= jumpSpeed.jumpSec(e.value.timer, this.prop.speed);
+        }, true)
+        this.on(`stating_${StateCache.drop}`, e => {
+            if (this.stateController.includes(StateCache.jumpSec, StateCache.jump, StateCache.hover)) {
+                this.stateController.setStateInfinite(StateCache.drop, false);
+                return;
+            }
+        }, true);
+        // this.on('timing', e => {
+        //     if (!this.live || this.timer % 60 > 0) return;
+        //     if (this.nhp < this.hp && this.hpr > 0) {
+        //         let rhp = this.nhp;
+        //         this.nhp = Math.min(this.hpr + rhp, this.hp);
+        //         this.on(new ItemEvent('nhpchange', [rhp, this.nhp], this));
+        //     }
+        //     if (this.nmp < this.mp && this.mpr >0) {
+        //         let rmp = this.nmp;
+        //         this.nmp = Math.min(this.mpr + rmp, this.mp);
+        //         this.on(new ItemEvent('nmpchange', [rmp, this.nmp], this));
+        //     }
+        // }, true);
+        // this.on('behold_0', e => {
+        //     this.state.removeState(StateCache.jump, StateCache.jumpSec);
+        // }, true)
     }
     /**
      * 注册被攻击，血量变化，死亡等事件监听
@@ -156,6 +259,7 @@ export class Vita extends Atom {
         return this._tempY;
     }
     set x(value) {
+        if (Number.isNaN(value)) throw new Error('argsError');
         let oldX = this.x;
         let moveUtil = {
             old: oldX,
@@ -165,6 +269,7 @@ export class Vita extends Atom {
         this._tempX = moveUtil.value;
     }
     set y(value) {
+        if (Number.isNaN(value)) throw new Error('argsError');
         let oldY = this.y;
         let moveUtil = {
             old: oldY,
@@ -195,7 +300,7 @@ export class Vita extends Atom {
     /**
      * @param {World} world 
      */
-    link(world){
+    link(world) {
         this.world = world;
         return this;
     }

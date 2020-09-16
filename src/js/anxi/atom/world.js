@@ -93,7 +93,7 @@ export class World extends Atom {
         this.vitas[role.id] = role;
         this.roles.push(role);
         role.x = 100 + index * 50;
-        role.y = 350;
+        role.y = 180;
         role.landIn(this);
     }
 }

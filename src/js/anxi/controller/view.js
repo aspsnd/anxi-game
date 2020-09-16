@@ -1,7 +1,9 @@
 import { Controller } from "../controller";
-import { Container, Sprite } from "pixi.js";
+import { Container, Matrix, Sprite } from "pixi.js";
 import { Vita } from "../atom/vita";
 import { by } from "../../util";
+import { BaseActionData } from "../action/baseAction";
+import { StateCache } from "./state";
 
 export class ViewController extends Controller {
     static convert(arr) {
@@ -32,6 +34,7 @@ export class ViewController extends Controller {
     init() {
         this.initImage();
         this.initReact();
+        this.belonger.on('timing', this.onTimer.bind(this));
     }
     initImage() {
         let { vita } = this;
@@ -91,8 +94,23 @@ export class ViewController extends Controller {
         wing: undefined,
     }
     onTimer() {
-        let ss = this.belonger.stateController.displayState;
-
+        this.view.position.set(this.belonger.x, this.belonger.y);
+        let state = this.belonger.stateController.displayState;
+        let _s = state.index;
+        for (let comt in this.blocks) {
+            let action = this.getActionData(_s, comt);
+            let frame = this.getFrame(action, this.action.state ? this.vita.stateController.states[this.action.state] : state, comt);
+            if (this.lastFrame[comt][0] == state.value && frame == this.lastFrame[comt][1]) continue;
+            this.lastFrame[comt] = [state.value, frame];
+            this.lastFace = this.vita.face;
+            /**
+             * @type {PIXI.Sprite}
+             */
+            let sprite = this.blocks[comt];
+            let matrix = convert(action.value[frame]).translate(-18, 0);
+            sprite.transform.setFromMatrix(matrix);
+        }
+        this.view.scale.set(this.vita.face, 1);
     }
     lastFrame = {
         body: [],
@@ -134,10 +152,10 @@ export class ViewController extends Controller {
     getActionData(state, comt) {
         let vita = this.vita;
         return this.action?.[comt] ??
-            vita.proto.action[state]?.[comt] ??
-            baseRoleAction[state]?.[comt] ??
-            vita.proto.manager.action['common']?.[comt] ??
-            baseRoleAction['common'][comt];
+            vita.proto.actionData[state]?.[comt] ??
+            BaseActionData[state]?.[comt] ??
+            vita.proto.actionData[StateCache.common]?.[comt] ??
+            BaseActionData[StateCache.common][comt];
     }
     getFrame(action, state) {
         let { changedFrame, len } = action;
