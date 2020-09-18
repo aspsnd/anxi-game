@@ -52,7 +52,7 @@ export class StateController extends Controller {
             ss.lastLost = this.belonger.timer;
             ss.timer = 0;
             if (this.displayState.index == stateNumber) {
-                this.displayState = this.getExistSSS().sort((a, b) => a.index - b.index)[0];
+                this.displayState = this.getExistSSS().reduce((a, b) => b.index > a.index ? b : a);
             }
         }, true);
         this.belonger.on(`getstate_${stateNumber}`, e => {
@@ -102,12 +102,14 @@ export class StateController extends Controller {
     /**
      * simple
      */
-    removeState(stateIndex) {
-        if (!this.has(stateIndex)) return;
-        let ss = this.getSingleState(stateIndex);
-        ss.last = 0;
-        ss.infinite = false;
-        this.belonger.on(new ItemEvent(`loststate_${stateIndex}`));
+    removeState(...stateIndex) {
+        for (let index in stateIndex) {
+            if (!this.has(index)) continue;
+            let ss = this.getSingleState(index);
+            ss.last = 0;
+            ss.infinite = false;
+            this.belonger.on(new ItemEvent(`loststate_${index}`));
+        }
     }
     /**
      * simple
@@ -209,11 +211,17 @@ export class StateController extends Controller {
     onTimer() {
         super.onTimer();
         let entries = Object.entries(this.states);
+        let displayIndex = this.displayState.index;
         for (let d of entries) {
             /**
              * @type {SingleState}
              */
             let ss = d[1];
+            if (ss.index == displayIndex) {
+                ss.behaveTime++;
+            } else {
+                ss.behaveTime = 0;
+            }
             ss.onTimer(_ => {
                 this.belonger.on(new ItemEvent(`loststate_${d[0]}`));
             });
@@ -233,7 +241,7 @@ export class SingleState {
         // if (this.complex) throw new Error('unsuspect operation!');
         this._last = Math.max(value, 0);
     }
-
+    behaveTime = 0
     timer = 0
     lastGet = -1
     lastLost = -1

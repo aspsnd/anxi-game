@@ -5,7 +5,10 @@ import { by, GameHeight } from "../../util";
 import { Atom } from "../atom";
 import { StepManager } from "../card/step";
 import { Vita } from "./vita";
-import { Wall } from "./wall";
+import { Wall } from "../conster/wall";
+import { Monst } from "../../po/atom/monst";
+import { MonstProtos } from "../../data/monst/all";
+import { Instructer } from "../instruct/instructor";
 
 export class ForeverWorld extends Atom {
     /**
@@ -33,11 +36,33 @@ export class World extends Atom {
     constructor(carddata, roles, container) {
         super();
         this.container = container;
+        container.addChild(this.wallContainer, this.guiContainer, this.vitaContainer, this.toolContainer);
         this.initCard(carddata);
         roles.forEach((role, index) => this.initRole(role, index));
         this.stepManager = new StepManager(this).bind(roles);
-        window.role = roles[0];
+        /**
+         * @test
+         */
+        document.addEventListener('keydown', e => {
+            if (!this.running) return;
+            if (48 <= e.keyCode && e.keyCode <= 57) {
+                e.preventDefault();
+                let monst = new Monst(MonstProtos[parseInt(e.key) - 1]);
+                window.monst = monst;
+                this.vitaContainer.addChild(monst.viewController.view);
+                monst.link(this);
+                monst.use(e.ctrlKey ? Instructer.artificialIntelligence() : Instructer.player(Instructer.testPlayer));
+                this.vitas[monst.id] = monst;
+                monst.x = 600 + this.stepManager.screenLeft;
+                monst.y = 250;
+                monst.landIn(this);
+            }
+        })
     }
+    wallContainer = new Container();
+    guiContainer = new Container();
+    vitaContainer = new Container();
+    toolContainer = new Container();
     /**
      * @type {Vita[]}
      */
@@ -53,7 +78,7 @@ export class World extends Atom {
     initCard(carddata) {
         this.carddata = carddata;
         let back = new Sprite(by(carddata.back));
-        this.container.addChild(back);
+        this.wallContainer.addChild(back);
         this.initGround(carddata.ground);
         carddata.walls?.forEach(_wall => this.initWall(_wall));
     }
@@ -64,8 +89,8 @@ export class World extends Atom {
     initGround(_ground) {
         let ground = new Wall(WallProtos[_ground]);
         ground.x = -50;
-        ground.y = GameHeight -  ground.height;
-        this.container.addChild(ground.sprite);
+        ground.y = GameHeight - ground.height;
+        this.wallContainer.addChild(ground.sprite);
         this.walls.push(ground);
         this.ground = ground;
     }
@@ -77,7 +102,7 @@ export class World extends Atom {
         let wall = new Wall(WallProtos[_wall[0]]);
         wall.x = _wall[1];
         wall.y = _wall[2];
-        this.container.addChild(wall.sprite);
+        this.wallContainer.addChild(wall.sprite);
         this.walls.push(wall);
     }
     /**
@@ -85,9 +110,8 @@ export class World extends Atom {
      * @param {number} index 
      */
     initRole(role, index) {
-        this.container.addChild(role.viewController.view);
-        // Fight.guiContainer.visible = true;
-        // Fight.guiContainer.addChild(role.gui.basebar);
+        this.vitaContainer.addChild(role.viewController.view);
+        this.guiContainer.addChild(role.gui.basebar);
         role.link(this);
         role.refresh();
         this.vitas[role.id] = role;

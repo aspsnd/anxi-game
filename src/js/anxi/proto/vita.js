@@ -5,6 +5,11 @@ import { Shape } from "../shape/shape";
 import { AtomProto } from "./atom";
 
 export class VitaProto extends AtomProto {
+    index
+    useIndex(index) {
+        this.index = index;
+        return this;
+    }
     name = 'undefined'
     level = 1
     group = -1

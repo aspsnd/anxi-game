@@ -7,6 +7,8 @@ import { Role } from "./atom/role";
 import { simpleCombine } from "../pod/home/combine";
 import { RoleProto } from "../anxi/proto/role";
 import { Instructer } from "../anxi/instruct/instructor";
+import { GUI } from "./gui";
+import { Monst } from "./atom/monst";
 
 export class RealWorld extends ForeverWorld {
     /**
@@ -22,6 +24,17 @@ export class RealWorld extends ForeverWorld {
         RealWorld.instance = this;
         window.RealWorld = this;
         this.container = container;
+        /**
+         * @test
+         */
+        document.addEventListener('keydown', e => {
+            if (e.key == 'p') {
+                this.running ? this.stop() : this.start();
+            }
+        });
+        setTimeout(_ => {
+            this.loadCard(cardDatas[0]);
+        }, 100)
     }
     record
     init(record) {
@@ -111,10 +124,11 @@ export class RealWorld extends ForeverWorld {
         this.roles = [];
         roles.forEach((_role, index) => {
             let role = new Role(_role);
-            // new GUI(role, index == 0);
+            new GUI(role, index == 0);
             this.roles.push(role);
             role.use(Instructer.player(index == 0 ? Instructer.defaultPlayer : Instructer.extraPlayer));
         });
+        window.role = this.roles[0];
         simpleCombine.load(this.roles);
         // new QuickOpen(this.roles);
     }

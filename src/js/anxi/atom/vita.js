@@ -1,6 +1,6 @@
 import { Atom } from "../atom";
 import { ItemEvent } from "../event";
-import { Wall } from "./wall";
+import { Wall } from "../conster/wall";
 import { VitaProto } from "../proto/vita";
 import { SingleState, StateCache, StateController } from "../controller/state";
 import { ViewController } from "../controller/view";
@@ -27,8 +27,8 @@ export class Vita extends Atom {
     prop = {}
     registeredProp = new Set()
     varProp = {
-        nhp: 0,
-        hmp: 0
+        hp: 0,
+        mp: 0
     }
     computeFucntions = {}
     compute() {
@@ -116,6 +116,7 @@ export class Vita extends Atom {
         this.level = proto.level;
         this.skills = proto.skills;
         this.talents = proto.talents;
+        this.initEvent();
     }
     /**
      * 注册各个控制器
@@ -187,7 +188,7 @@ export class Vita extends Atom {
             this.stateController.setStateInfinite(StateCache.drop, true);
         }, true);
         this.on('wantdrop', e => {
-            if (this.stateController.has(StateCache.drop) || this.state.includes(StateCache.jumpSec, StateCache.jump, StateCache.hover)) return;
+            if (this.stateController.has(StateCache.drop) || this.stateController.includes(StateCache.jumpSec, StateCache.jump, StateCache.hover)) return;
             if (this.stickingWall) return;
             this.stateController.setStateInfinite(StateCache.drop, true);
         }, true);
@@ -266,22 +267,44 @@ export class Vita extends Atom {
                 })
             }
         }, true);
-        // this.on('timing', e => {
-        //     if (!this.live || this.timer % 60 > 0) return;
-        //     if (this.nhp < this.hp && this.hpr > 0) {
-        //         let rhp = this.nhp;
-        //         this.nhp = Math.min(this.hpr + rhp, this.hp);
-        //         this.on(new ItemEvent('nhpchange', [rhp, this.nhp], this));
-        //     }
-        //     if (this.nmp < this.mp && this.mpr >0) {
-        //         let rmp = this.nmp;
-        //         this.nmp = Math.min(this.mpr + rmp, this.mp);
-        //         this.on(new ItemEvent('nmpchange', [rmp, this.nmp], this));
-        //     }
-        // }, true);
-        // this.on('behold_0', e => {
-        //     this.state.removeState(StateCache.jump, StateCache.jumpSec);
-        // }, true)
+        this.on('timing', e => {
+            if (this.die || this.timer % 60 > 0) return;
+            if (this.varProp.hp < this.prop.hp && this.prop.hpr > 0) {
+                let rhp = this.varProp.hp;
+                this.varProp.hp = Math.min(this.prop.hpr + rhp, this.prop.hp);
+                this.on(new ItemEvent('nhpchange', [rhp, this.varProp.hp], this));
+            }
+            if (this.varProp.hp < this.prop.mp && this.prop.mpr > 0) {
+                let rmp = this.varProp.mp;
+                this.varProp.mp = Math.min(this.prop.mpr + rmp, this.prop.mp);
+                this.on(new ItemEvent('nhpchange', [rmp, this.varProp.mp], this));
+            }
+        }, true);
+        this.on('behold_0', e => {
+            this.state.removeState(StateCache.jump, StateCache.jumpSec);
+        }, true)
+        this.once(`timer_${1}`, e => {
+            this.on('wantdrop');
+        });
+    }
+    // 初始化最基本的变化 基础(额外)属性变化-> 最终属性变化
+    initEvent() {
+        typicalProp.forEach(p => {
+            this.on(`b${p}change`, e => {
+                let oldbasevalue = e.value[0];
+                let newbasevalue = e.value[1];
+                this.prop[p] = newbasevalue + this.extraProp[p];
+                let changeEvent = new ItemEvent(`${p}change`, [this.extraProp[p] + oldbasevalue, this.prop[p]]);
+                this.on(changeEvent);
+            }, true);
+            this.on(`e${p}change`, e => {
+                let oldextravalue = e.value[0];
+                let newextravalue = e.value[1];
+                this.prop[p] = newextravalue + this.baseProp[p];
+                let changeEvent = new ItemEvent(`${p}change`, [this.baseProp[p] + oldextravalue, this.prop[p]]);
+                this.on(changeEvent);
+            }, true);
+        })
     }
     /**
      * 注册被攻击，血量变化，死亡等事件监听
@@ -290,7 +313,10 @@ export class Vita extends Atom {
 
     }
     initVar() {
-
+        this.varProp = {
+            hp: this.prop.hp,
+            mp: this.prop.mp
+        }
     }
     onTimer() {
         super.onTimer();

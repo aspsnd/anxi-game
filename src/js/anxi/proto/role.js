@@ -4,11 +4,6 @@ import { AnxiError } from "../error/base";
 import { VitaProto } from "./vita";
 
 export class RoleProto extends VitaProto {
-    index
-    useIndex(index) {
-        this.index = index;
-        return this;
-    }
     /**
      * @param {VitaProto} proto 
      */
@@ -20,6 +15,9 @@ export class RoleProto extends VitaProto {
         return this;
     }
     uraIndex = 0
+    /**
+     * @type {(level:number)=>number}
+     */
     getFexp = () => { throw new AnxiError('unimplement!') }
     /**
      * @param {(level:number)=>number} fexpGetter 

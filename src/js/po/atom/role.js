@@ -1,4 +1,5 @@
 import { Vita } from "../../anxi/atom/vita";
+import { StateCache } from "../../anxi/controller/state";
 import { RoleProto } from "../../anxi/proto/role";
 import { RoleProtos } from "../../data/role/all";
 
@@ -41,13 +42,24 @@ export class Role extends Vita {
         super(realProto);
         this.initRole(role_proto);
     }
+    /**
+     * @param {RoleProto} role_proto 
+     */
     initRole(role_proto) {
         this.index = role_proto.index;
-        this.exp = role_proto.exp;
-        this.fexp = role_proto.fexp;
-        this.money = role_proto.money;
+        this.exp = role_proto.exp || this.exp;
+        this.fexp = role_proto.getFexp(this.level);
+        this.money = role_proto.money || this.money;
         this.bag = role_proto.bag || this.bag;
         this.equip = role_proto.equip || this.equip;
+    }
+    initEvent(){
+        super.initEvent();
+        this.on(`stating_${StateCache.common}`, e => {
+            if (e.value.behaveTime >= this.proto.restInterval) {
+                this.stateController.setStateTime(StateCache.rest, this.proto.restTime);
+            }
+        }, true);
     }
     toPlainObject() {
         return Object.assign(super.toPlainObject(), {
@@ -59,7 +71,7 @@ export class Role extends Vita {
             equip: this.equip,
         });
     }
-    refresh(){
-        
+    refresh() {
+
     }
 }
