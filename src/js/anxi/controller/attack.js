@@ -1,6 +1,8 @@
+import { AttackProtos } from "../../data/attack/all";
 import { by } from "../../util";
 import { Controller } from "../controller";
 import { AnxiError } from "../error/base";
+import { Attack } from "../hurt/attack";
 import { StateCache } from "./state";
 
 export class AttackController extends Controller {
@@ -42,21 +44,22 @@ export class AttackController extends Controller {
                 this.execute(this.jumptype);
             } else if (stateController.includes(StateCache.go, StateCache.run)) {
                 stateController.removeState(StateCache.go, StateCache.run);
-                this.execute(this.nextCType());
+                this.execute(this.types[this.nextCType()]);
             } else {
-                this.execute(this.nextCType());
+                this.execute(this.types[this.nextCType()]);
             }
         }, true);
+        this.belonger.on(`loststate_${StateCache.attack}`, e => {
+            this.belonger.viewController.removeAction(this.lastActionIndex);
+        }, true);
     }
-    execute(_type) {
-        let type = this.types[_type - 1];
+    execute(type) {
         const timer = this.belonger.timer;
-        // const attackInstance = AttackActions[type];
-        this.freezeUntil = timer + (attackInstance.freeze || attackInstance.time);
-        this.vita.state.setStateTime(StateCache.attack, attackInstance.time);
-        let action = AttackActions[type];
-        this.lastActionIndex = this.vita.viewController.insertAction(action);
-        new Attack(type).from(this.vita).execute();
+        const attackProto = AttackProtos[type];
+        this.freezeUntil = timer + (attackProto.freeze || attackProto.time);
+        this.belonger.stateController.setStateTime(StateCache.attack, attackProto.time);
+        this.lastActionIndex = this.belonger.viewController.insertAction(attackProto.acitonData);
+        new Attack(attackProto, this.belonger).execute();
     }
     nextCType() {
         let len = this.types.length;

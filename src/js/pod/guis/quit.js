@@ -1,9 +1,8 @@
 import { Graphics, Text, TextStyle, Filter } from "pixi.js";
-import { Fight } from "../../po/fight";
-import { Game } from "../../po/game";
+import { World } from "../../anxi/atom/world";
+import { QuickOpen } from "../../po/gui/open";
 import { gameTink } from "../../util";
 import { BaseGui } from "./gui";
-import { QuickOpen } from "../../po/open";
 /**
  * 返回地图界面
  */
@@ -20,17 +19,16 @@ export class OpenQuit extends BaseGui {
         quitContainer.beginFill(0x000000);
         quitContainer.drawRect(0, 0, 320, 100);
         quitContainer.endFill();
-        Fight.elseContainer.addChild(quitContainer);
         /**
          * @test
          */
         document.addEventListener('keydown', e => {
-            if (!Game.inCard) return;
+            if (!this.world) return;
             if (e.key == 'p') {
-                if (!Fight.instance.running) {
-                    Fight.instance.start();
+                if (!World.instance.running) {
+                    World.instance.start();
                 } else {
-                    Fight.instance.stop();
+                    World.instance.stop();
                 }
             }
         })
@@ -53,9 +51,23 @@ export class OpenQuit extends BaseGui {
 
         gameTink.makeInteractive(btn);
         btn.tap = () => {
-            Fight.instance.stop();
-            Fight.instance.end(true);
+            this.world.stop();
+            /**
+             * @todo
+             */
+            this.world.end(true);
             QuickOpen.refresh();
         }
+    }
+    /**
+     * @type {World}
+     */
+    world
+    /**
+     * @param {World} world 
+     */
+    bind(world){
+        this.world = world;
+        world.toolContainer.addChild(this.baseContainer);
     }
 }

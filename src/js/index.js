@@ -1,20 +1,21 @@
 import { gameApp, loadAndAfter, gameRouter, GameWidth, GTip, GDanger, directBy, gameTink } from "./util";
-import { Text, Sprite } from "pixi.js";
-import { TextInput, Input, Button, SimpleButton, SpanLine } from "./anxi/lib/input";
+import { Sprite } from "pixi.js";
+import { Input, Button, SimpleButton, SpanLine } from "./anxi/lib/input";
 import { RecordController } from "./record/record";
 import { RecordPage } from "./record/page";
-import { MotionBlurFilter, ColorMapFilter, ColorOverlayFilter, RadialBlurFilter, TiltShiftFilter, DotFilter, GodrayFilter } from "pixi-filters";
-import { AtomProto } from "./anxi/proto/atom";
+import { DotFilter, GodrayFilter } from "pixi-filters";
 import { RealWorld } from "./po/world";
 import { RoleProtos } from "./data/role/all";
 import { Role } from "./po/atom/role";
-import { World } from "./anxi/atom/world";
+import { cardDatas } from "./data/card/card";
+import { QuickOpen } from "./po/gui/open";
 const { myAler } = ZY;
 const { Question } = myAler;
 
 export const init = () => {
     gameApp.start();
     loadAndAfter(_ => {
+        new QuickOpen();
         gameRouter.register('login', {
             initer(container) {
                 let unameInput = new Input('用户名');
@@ -251,6 +252,7 @@ export const init = () => {
                 container.visible = true;
                 let world = data.world;
                 world.init(data.record);
+                world.loadCard(cardDatas[0]);
             }
         }, undefined, (container, data) => {
             let world = data.world = new RealWorld(gameApp, container);

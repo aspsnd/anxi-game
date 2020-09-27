@@ -1,7 +1,7 @@
 import { Container, Sprite, Matrix } from "pixi.js";
-import { Vita } from "../../po/vita";
 import { gameApp } from "../../util";
-import { baseRoleAction } from "../../data/role/action";
+import { Vita } from "../../anxi/atom/vita";
+import { StateCache } from "../../anxi/controller/state";
 
 export var VitaComt = ['weapon', 'head', 'body', 'hand_l', 'hand_r', 'leg_l', 'leg_r', 'wing'];
 export class SmallVita {
@@ -11,12 +11,11 @@ export class SmallVita {
     blocks = {
 
     }
-
     /**
-     * @param {Vita} vita 
+     * @type {Vita}
      */
-    constructor(vita) {
-        this.vita = vita;
+    vita
+    constructor() {
         this.view.x = 65;
         // this.view.y = 20;
         let tick = this.onFrame.bind(this);
@@ -34,9 +33,10 @@ export class SmallVita {
     showing = false;
     onFrame() {
         if (!this.showing) return;
+        if (!this.view.worldVisible) return;
         this.frame++;
         for (let comt of VitaComt) {
-            let action = this.vita.manager.action['common'][comt];
+            let action = this.vita.proto.actionData[StateCache.common][comt];
             let frame = this.getFrame(action);
             if (frame == this.lastFrame[comt]) continue;
             this.lastFrame[comt] = frame;

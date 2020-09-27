@@ -1,18 +1,18 @@
 import { BaseGui } from "./gui";
 import { Container, Graphics, Text, TextStyle } from "pixi.js";
-import { Fight } from "../../po/fight";
 import { SmallVita } from "./smallVita";
 import { ObjWrap } from "./base/block";
-import { EquipTypeIntro, getSpriteFromThing, EquipType, getProto } from "../../data/bag/util";
 import { WholePropBar, PropBar } from "./base/porpbar";
 import { SingleBag } from "./base/singleBag";
 import { TextButton } from "./base/button";
 import { gameTink } from "../../util";
-import { Role } from "../../po/role";
-import { EquipProtos } from "../../data/equip/all";
+// import { EquipProtos } from "../../data/equip/all";
 import { SimpleOperator } from "./base/operate";
-import { equipExtraProps } from "../../po/vita";
+// import { equipExtraProps } from "../../po/vita";
 import { SimpleDetail } from "./base/detail";
+import { Role } from "../../po/atom/role";
+import { EquipTypeIntro, getSpriteFromThing, EquipType, getProto } from "../../anxi/define/util";
+import { World } from "../../anxi/atom/world";
 
 export class BagController extends BaseGui {
 
@@ -48,9 +48,8 @@ export class BagController extends BaseGui {
         new ObjWrap(EquipTypeIntro.dcrt),
         new ObjWrap(EquipTypeIntro.wing),
     ]
-    constructor(roles) {
-        super(roles);
-        this.roles = roles;
+    constructor() {
+        super();
         this.roleIndex = 0;
         this.init();
     }
@@ -62,11 +61,10 @@ export class BagController extends BaseGui {
         container.endFill();
         container.position.set(130, 80);
         container.visible = false;
-        Fight.elseContainer.addChild(container);
         this.initCommon();
         this.initSV();
         this.initRealBag();
-        this.initRoleSelector();
+        this.baseContainer.addChild(this.roleSelectorContainer);
     }
     initCommon() {
         let bagtext = new Text('背 包', new TextStyle({
@@ -84,7 +82,7 @@ export class BagController extends BaseGui {
             this.baseContainer.addChild(block);
         })
 
-        this.wholePropBar = new WholePropBar(this.roles[0]);
+        this.wholePropBar = new WholePropBar();
         this.wholePropBar.position.set(40, 240);
         this.baseContainer.addChild(this.wholePropBar);
         this.baseContainer.addChild(this.saleBtn);
@@ -105,7 +103,7 @@ export class BagController extends BaseGui {
         }
     }
     initSV() {
-        this.smallVita = new SmallVita(this.roles[0]);
+        this.smallVita = new SmallVita();
         this.smallVita.show();
         this.baseContainer.beginFill(0x555555);
         this.baseContainer.drawRect(45, 55, 150, 150);
@@ -113,7 +111,6 @@ export class BagController extends BaseGui {
         this.baseContainer.addChild(this.smallVita.view);
         this.smallVita.view.position.set(150, 80);
         window.svv = this.smallVita.view;
-        this.smallVita.refresh(this.roles[0]);
     }
     initRealBag() {
         let all = this;
@@ -129,10 +126,11 @@ export class BagController extends BaseGui {
             })
         })
     }
-    initRoleSelector() {
+    roleSelectorContainer = new Container()
+    refreshRoleSelector() {
         this.roles.forEach((role, index) => {
             let nameBtn = new TextButton(role.name, -42, 100 + 60 * index, {}, 85, 30);
-            this.baseContainer.addChild(nameBtn);
+            this.roleSelectorContainer.addChild(nameBtn);
             nameBtn.tap = () => {
                 this.roleIndex = index;
                 this.refresh();
@@ -145,6 +143,7 @@ export class BagController extends BaseGui {
         this.smallVita.refresh(role);
         this.wholePropBar.refresh(role);
         this.refreshEquipInRole();
+        this.refreshRoleSelector();
         this.realBag.load(role);
     }
     refreshEquipInRole(role = this.roles[this.roleIndex]) {
@@ -167,5 +166,13 @@ export class BagController extends BaseGui {
             }
             block.addChild(sprite);
         })
+    }
+    /**
+     * @param {World} world 
+     */
+    bind(world){
+        this.world = world;
+        this.roles = this.world.roles;
+        world.toolContainer.addChild(this.baseContainer);
     }
 }

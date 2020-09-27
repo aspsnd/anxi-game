@@ -28,7 +28,7 @@ export class StateController extends Controller {
         silence: this.autoChangeIndex++
     }
     static complexState = [
-        this.cache.hard, this.cache.URA, this.cache.IME, this.cache.poison, this.cache.dizzy, this.cache.slow
+        this.cache.hard, this.cache.URA, this.cache.IME, this.cache.poison, this.cache.dizzy, this.cache.slow, this.cache.beHitBehind
     ]
     states = {}
     /**
@@ -86,7 +86,7 @@ export class StateController extends Controller {
             this.registerState(value, StateController.complexState.includes(value));
         }
         this.displayState = this.states[StateCache.common];
-        this.setStateInfinite(StateCache.common, true);
+        this.states[StateCache.common].infinite = true;
         this.belonger.on('timing', this.onTimer.bind(this));
     }
     includes(...stateIndexs) {
@@ -103,7 +103,7 @@ export class StateController extends Controller {
      * simple
      */
     removeState(...stateIndex) {
-        for (let index in stateIndex) {
+        for (let index of stateIndex) {
             if (!this.has(index)) continue;
             let ss = this.getSingleState(index);
             ss.last = 0;
@@ -184,7 +184,9 @@ export class StateController extends Controller {
     insertState(stateIndex, stateItem) {
         let ss = this.getSingleState(stateIndex);
         if (!ss.exist()) {
+            let rs = ss.insert(stateItem);
             this.belonger.on(new ItemEvent(`getstate_${stateIndex}`));
+            return rs;
         }
         return ss.insert(stateItem);
     }
@@ -323,10 +325,11 @@ export class StateItem {
     last = 0
     infinite = false
     timer = 0
-    constructor(last = 1, infinite = false) {
+    constructor(last = 1, infinite = false, data = {}) {
         if (last == 0 && !infinite) throw new Error('must be useful');
         this.last = last;
         this.infinite = infinite;
+        this.data = data;
     }
 }
 export const StateCache = StateController.cache;

@@ -1,12 +1,10 @@
-import { Game } from "../../po/game";
-import { Graphics, Text, TextStyle, Sprite } from "pixi.js";
-import { Fight } from "../../po/fight";
-import { Role } from "../../po/role";
+import { Graphics, Text, TextStyle, Sprite, Container } from "pixi.js";
 import { gameTink, by, GTip } from "../../util";
-import { SkillDatas } from "../../data/skill/all";
-import { Vita } from "../../po/vita";
-import { Skill } from "../../data/skill/skill";
+import { SkillProtos } from "../../data/skill/all";
 import { BaseGui } from "./gui";
+import { Role } from "../../po/atom/role";
+import { Skill } from "../../po/skill";
+import { World } from "../../anxi/atom/world";
 
 export class SkillPanel extends BaseGui{
 
@@ -37,22 +35,29 @@ export class SkillPanel extends BaseGui{
     }
     init() {
         this.container.visible = false;
-        Fight.elseContainer.addChild(this.container);
         this.center.beginFill(0x000000, 0.8);
         this.center.drawRect(0, 0, 750, 430);
         this.center.endFill();
         this.center.position.set(105, 80);
         this.container.addChild(this.center);
-        this.initCtrl();
         this.initCenter();
+        this.container.addChild(this.ctrlContainer);
     }
-
-    initCtrl() {
+    /**
+     * @param {World} world 
+     */
+    bind(world){
+        this.world = world;
+        this.roles = world.roles;
+        world.toolContainer.addChild(this.baseContainer);
+    }
+    ctrlContainer = new Container();
+    refreshCtrl() {
         let posx = 150;
         this.roles.forEach((role,index) => {
             let name = SkillPanel.nameText(role.name);
             name.position.set(posx + index * 130, 40);
-            this.container.addChild(name);
+            this.ctrlContainer.addChild(name);
             name.tap = e => {
                 this.roleIndex = index;
                 this.refresh();
@@ -104,10 +109,10 @@ export class SkillPanel extends BaseGui{
     }
     refresh() {
         let role = this.roles[this.roleIndex];
-        let fultureSkills = role.manager.futureSkills;
-        let nowSkill = role.skill;
+        let fultureSkills = role.proto.fultureSkills;
+        let nowSkill = role.skills;
         fultureSkills.forEach((skill, index) => {
-            this.sprites[index][0].text = SkillDatas[skill.index]._name;
+            this.sprites[index][0].text = SkillProtos[skill.index]._name;
             if (nowSkill.includes(skill.index)) {
                 this.sprites[index][1].text = '已解锁';
                 this.sprites[index][1].tap = null;
@@ -116,15 +121,16 @@ export class SkillPanel extends BaseGui{
                 this.sprites[index][1].tap = () => {
                     if (role.money < skill.cost.money) return;
                     role.reduceMoney(skill.cost.money);
-                    role.skill.push(skill.index);
-                    role.skillController.add(new Skill(SkillDatas[skill.index]).link(role));
+                    role.skills.push(skill.index);
+                    role.skillController.add(new Skill(SkillProtos[skill.index]).link(role));
                     new GTip('学习成功');
                     this.refresh(role);
                 };
             }
-            this.sprites[index][2].text = SkillDatas[skill.index].mp;
-            this.sprites[index][3].text = SkillDatas[skill.index]._describe;
-        })
+            this.sprites[index][2].text = SkillProtos[skill.index].mp;
+            this.sprites[index][3].text = SkillProtos[skill.index]._describe;
+        });
+        this.refreshCtrl();
     }
     static _nameTextStyle = new TextStyle({
         fill: [0xFBE764, 0xFE8611],

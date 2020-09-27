@@ -10,6 +10,10 @@ export class RoleProto extends VitaProto {
     constructor(proto) {
         super(proto);
     }
+    useAttacks(attacks){
+        this.attacks = attacks;
+        return this;
+    }
     useUraIndex(index) {
         this.uraIndex = index;
         return this;

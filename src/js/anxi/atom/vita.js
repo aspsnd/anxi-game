@@ -2,10 +2,15 @@ import { Atom } from "../atom";
 import { ItemEvent } from "../event";
 import { Wall } from "../conster/wall";
 import { VitaProto } from "../proto/vita";
-import { SingleState, StateCache, StateController } from "../controller/state";
+import { SingleState, StateCache, StateController, StateItem } from "../controller/state";
 import { ViewController } from "../controller/view";
 import { World } from "./world";
 import { GameHeight, jumpContinue, jumpSpeed } from "../../util";
+import { Shape } from "../shape/shape";
+import { Affect } from "../affect";
+import { AttackController } from "../controller/attack";
+import { SkillController } from "../controller/skill";
+import { Controller } from "../controller";
 
 export const typicalProp = ['hp', 'mp', 'atk', 'def', 'crt', 'dod', 'hpr', 'mpr', 'speed'];
 /**
@@ -17,7 +22,7 @@ export class Vita extends Atom {
     level = 0
     name = 'undefined'
     group = -1
-    selectable = false
+    selectable = true
     face = 1
     /**
      * 不要直接操作！
@@ -30,7 +35,7 @@ export class Vita extends Atom {
         hp: 0,
         mp: 0
     }
-    computeFucntions = {}
+    computeFunctions = {}
     compute() {
         this.registeredProp.forEach(pn => {
             this.caculate(pn);
@@ -41,7 +46,7 @@ export class Vita extends Atom {
         let base_value = this.baseProp[prop];
         let old_extra_value = this.extraProp[prop];
         let new_extra_value = 0;
-        this.computeFucntions[prop].forEach(fun => {
+        this.computeFunctions[prop].forEach(fun => {
             new_extra_value += fun.call(this, base_value);
         });
         if (old_extra_value !== new_extra_value) {
@@ -51,7 +56,7 @@ export class Vita extends Atom {
     }
     registerProp(propName, baseValue = 0, extraValue = 0) {
         this.registeredProp.add(propName);
-        this.computeFucntions[propName] = [];
+        this.computeFunctions[propName] = [];
         this.baseProp[propName] = baseValue;
         this.extraProp[propName] = extraValue;
         this.prop[propName] = baseValue + extraValue;
@@ -124,6 +129,8 @@ export class Vita extends Atom {
     initController() {
         this.stateController = new StateController(this);
         this.viewController = new ViewController(this);
+        this.attackController = new AttackController(this, this.proto.attacks);
+        this.skillController = new SkillController(this);
     }
     getCanRun() {
         var ps = this.stateController.states[StateCache.go];
@@ -241,6 +248,7 @@ export class Vita extends Atom {
             let moveUtil = e.value;
             let { old, value } = moveUtil;
             this.stickingWall = null;
+            this.stateController.setStateInfinite(StateCache.drop, true);
             if (value > old) {
                 //下落 看看是否有墙体收留
                 this.world.walls.some(wall => {
@@ -310,7 +318,92 @@ export class Vita extends Atom {
      * 注册被攻击，血量变化，死亡等事件监听
      */
     initReaction() {
+        /**
+         * 闪避判定
+         * 护甲减伤判定
+         * 状态免疫判定
+         */
+        this.on('getAffect', e => {
+            /**
+             * @type {Affect}
+             */
+            let affect = e.value;
 
+            affect.bedoded = affect.proto.dodAble && Math.random() < this.prop.dod;
+            if (affect.bedoded) {
+                this.on(new ItemEvent('dodaffect', affect, e.from));
+                e.from.on(new ItemEvent('dodedaffect', affect, this));
+                return;
+            }
+
+            /**
+             * 参考lol护甲减伤机制
+             */
+            affect.reduce.common += this.prop.def >= 0 ? affect.harm.common * this.prop.def / (this.prop.def + 100) : affect.harm * this.prop.def / 100;
+
+            if (affect.harm.common < affect.reduce.common) {
+                affect.reduce.common = affect.harm.common;
+            }
+            if (affect.harm.absolute < affect.reduce.absolute) {
+                affect.reduce.absolute = affect.harm.absolute;
+            }
+
+            /**
+             * 确定应掉血量
+             */
+            affect.finalHarm = Math.round(affect.harm.common + affect.harm.absolute - affect.reduce.common - affect.reduce.absolute);
+            
+            /**
+             * 是否无敌
+             */
+            if (this.stateController.has(StateCache.IME)) {
+                affect.reduce.common = affect.harm.common;
+                affect.reduce.absolute = affect.harm.absolute;
+            }
+
+            /**
+             * 免控减少机制
+             */
+            if (this.stateController.has(StateCache.URA)) {
+                affect.finalDefuff = [];
+            } else {
+
+            }
+        }, true);
+        this.on('beAffect', e => {
+            /**
+             * @type {Affect}
+             */
+            let affect = e.value;
+            /**
+             * 触发掉血事件
+             */
+            let rhp = this.varProp.hp;
+            let nhp = Math.max(rhp - affect.finalHarm, 0);
+            this.varProp.hp = nhp;
+            this.on(new ItemEvent('nhpchange', [rhp, nhp], e.from));
+
+            //实现控制效果
+            if (affect.finalDefuff.find(buff => [StateCache.beHitBehind, StateCache.dizzy].includes(buff.state))) {
+                this.stateController.removeState(StateCache.go, StateCache.run, StateCache.attack, StateCache.rest);
+            }
+            affect.finalDefuff.forEach(buff => {
+                this.stateController.insertState(buff.state, new StateItem(buff.last, false, buff.dataGetter?.(affect)));
+            })
+        }, true)
+        this.on('nhpchange', e => {
+            if (this.varProp.hp <= 0) {
+                if (!this.dead) {
+                    this.dead = true;
+                    this.on(new ItemEvent('dead', undefined, e.from));
+                }
+            }
+        }, true)
+        this.on('dead', e => {
+            this.ai && this.ai.destory();
+            this.ai = null;
+            this.stateController.setStateInfinite(StateCache.dead, true);
+        }, true)
     }
     initVar() {
         this.varProp = {
@@ -356,16 +449,15 @@ export class Vita extends Atom {
         this._tempY = moveUtil.value;
     }
     get centerY() {
-        return this._tempY - this.height >> 1;
+        return this._tempY + (this.height >> 1);
     }
     set centerY(value) {
-        this.y = value + this.height >> 1;
+        this.y = value - (this.height >> 1);
     }
     toPlainObject() {
         return {
             name: this.name,
             level: this.level,
-            attackController: this.proto.attackController,
             skills: this.skills,
             talents: this.talents,
             baseProp: this.baseProp
@@ -380,5 +472,22 @@ export class Vita extends Atom {
     link(world) {
         this.world = world;
         return this;
+    }
+    /**
+     * @return {Shape}
+     */
+    getHitGraph() {
+        return this.proto.getHitGraph([this.x, this.y], this.face, this);
+    }
+    /**
+     * @return {Controller}
+     * @param {string} name 
+     * @param {Controller} ControllerClass 
+     */
+    getController(name, ControllerClass) {
+        if (!this[name]) {
+            this[name] = new ControllerClass(this);
+        }
+        return this[name];
     }
 }

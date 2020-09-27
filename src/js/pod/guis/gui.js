@@ -1,4 +1,3 @@
-import { Role } from "../../po/role";
 import { DisplayObject } from "pixi.js";
 
 export class BaseGui {

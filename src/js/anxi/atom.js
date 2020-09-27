@@ -1,6 +1,7 @@
 import { ItemEventDispatcher, ItemEvent } from "./event";
 import { AlreadyDoneError } from "./error/base";
 import { AtomProto } from "./proto/atom";
+import { World } from "./atom/world";
 /**
  * 包含生命周期的单位
  */
@@ -66,10 +67,15 @@ export class Atom extends ItemEventDispatcher {
         })
     }
     /**
+     * @type {World}
+     */
+    world
+    /**
      * 加入世界，拥有自己时间
      * @param {Atom} world 
      */
     landIn(world, timespeed = 1) {
+        this.world = world;
         this.btimespeed = timespeed;
         world.on('timing', e => {
             this.onFrame();

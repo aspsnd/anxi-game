@@ -51,7 +51,7 @@ export function formatDate(date, fmt) {
     return fmt;
 }
 export function by(url) {
-    return res.includes(url) ? gameApp.loader.resources[url].texture : (void console.log('useless url:' + url));
+    return res.includes(url) ? gameApp.loader.resources[url].texture : null;
 }
 export function directBy(durl, url = './res/util/' + durl) {
     return res.includes(url) ? gameApp.loader.resources[url].texture : null;

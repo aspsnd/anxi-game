@@ -1,9 +1,12 @@
 import { Controller } from "../controller";
-import { Container, Matrix, Sprite } from "pixi.js";
+import { Container, Matrix, Sprite, Text } from "pixi.js";
 import { Vita } from "../atom/vita";
 import { by } from "../../util";
 import { BaseActionData } from "../action/baseAction";
 import { StateCache } from "./state";
+import { Flyer } from "../atom/flyer";
+import { lostHpStyle } from "./view.util";
+import { Affect } from "../affect";
 
 export class ViewController extends Controller {
     static convert(arr) {
@@ -68,7 +71,32 @@ export class ViewController extends Controller {
         );
     }
     initReact() {
-        //
+        this.view.filters = [];
+        this.vita.on('beAffect', e => {
+            /**
+             * @type {Affect}
+             */
+            let affect = e.value;
+            if (affect.finalHarm > 0) {
+                window.flyer = new Flyer(new Text(affect.finalHarm, lostHpStyle), s => {
+                    s.anchor.set(0.5, 0);
+                    s.position.set(this.view.x, this.view.y);
+                }).useConstSpeed([0, -1]).useLiveTime(60).from(this.belonger);
+                // this.hpBarUsed && (this.hpBar.timer = 120);
+            }
+        }, true)
+        this.vita.on('dodaffect', e => {
+            gameSDst.text('miss', this.view, 20);
+        }, true);
+        this.vita.on('addlevel', e => {
+            gameSDst.text('level up', this.view, 20);
+        }, true);
+        this.vita.on('getura', e => {
+            this.addFilter(uraFilter);
+        }, true);
+        this.vita.on('lostura', e => {
+            this.removeFilter(uraFilter);
+        }, true);
     }
     view = new Container()
     /**
@@ -100,8 +128,8 @@ export class ViewController extends Controller {
         for (let comt in this.blocks) {
             let action = this.getActionData(_s, comt);
             let frame = this.getFrame(action, this.action.state ? this.vita.stateController.states[this.action.state] : state, comt);
-            if (this.lastFrame[comt][0] == state.value && frame == this.lastFrame[comt][1]) continue;
-            this.lastFrame[comt] = [state.value, frame];
+            if (this.lastFrame[comt][0] == state.index && frame == this.lastFrame[comt][1]) continue;
+            this.lastFrame[comt] = [state.index, frame];
             this.lastFace = this.vita.face;
             /**
              * @type {PIXI.Sprite}
@@ -157,6 +185,9 @@ export class ViewController extends Controller {
             vita.proto.actionData[StateCache.common]?.[comt] ??
             BaseActionData[StateCache.common][comt];
     }
+    /**
+     * @return {number}
+     */
     getFrame(action, state) {
         let { changedFrame, len } = action;
         if (typeof changedFrame == 'number') {

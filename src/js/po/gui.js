@@ -110,22 +110,22 @@ export class GUI {
         }
         barContainer.addChild(levelSprite);
         role.on('nhpchange', e => {
-            let per = role.nhp / role.hp;
+            let per = role.varProp.hp / role.prop.hp;
             this.hpbar.width = 150 * per;
             this.hptext.text = `${role.varProp.hp | 0}/${role.prop.hp | 0}`;
         }, true);
         role.on('hpchange', e => {
-            let per = role.nhp / role.hp;
+            let per = role.varProp.hp / role.prop.hp;
             this.hpbar.width = 150 * per;
             this.hptext.text = `${role.varProp.hp | 0}/${role.prop.hp | 0}`;
         }, true);
         role.on('nmpchange', e => {
-            let per = role.nmp / role.mp;
+            let per = role.varProp.mp / role.prop.mp;
             this.mpbar.width = 150 * per;
             this.hptext.text = `${role.varProp.mp | 0}/${role.prop.mp | 0}`;
         }, true)
         role.on('mpchange', e => {
-            let per = role.nmp / role.mp;
+            let per = role.varProp.mp / role.prop.mp;
             this.mpbar.width = 150 * per;
             this.hptext.text = `${role.varProp.mp | 0}/${role.prop.mp | 0}`;
         }, true)

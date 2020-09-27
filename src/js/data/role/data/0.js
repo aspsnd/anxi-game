@@ -1,6 +1,7 @@
 import { ActionData } from "../../../anxi/action/action";
 import { StateCache } from "../../../anxi/controller/state";
 import { RoleProto } from "../../../anxi/proto/role";
+import { Point, Polygon } from "../../../anxi/shape/shape";
 import { tween } from "../../../util";
 export default new RoleProto({
     baseProp: {
@@ -16,6 +17,8 @@ export default new RoleProto({
     },
     name: '孤影剑客',
     level: 1,
+    attacks: [0],
+    height: 80
 }).useIndex(0).useRest().useFexpGetter(level => Math.round(50 * (1.25 ** level)))
     .useFultureSkills([
         {
@@ -57,6 +60,14 @@ export default new RoleProto({
         def: 1.5
     }))
     .useView(0)
+    .useHitGraph((pos, face, vita) => {
+        return new Polygon(
+            new Point(vita.x - 20, vita.centerY + 40),
+            new Point(vita.x - 20, vita.centerY - 40),
+            new Point(vita.x + 20, vita.centerY - 40),
+            new Point(vita.x + 20, vita.centerY + 40),
+        )
+    })
     .useAnchors({
         body: [0.5, 0.5],
         head: [0.45, 0.74],
@@ -73,62 +84,62 @@ export default new RoleProto({
                 changedFrame: 16,
                 len: 2,
                 value: [
-                    [13, 76],
-                    [13, 76]
+                    [13, 56],
+                    [13, 56]
                 ]
             },
             head: {
                 changedFrame: 16,
                 len: 2,
                 value: [
-                    [16, 45],
-                    [16, 46]
+                    [16, 25],
+                    [16, 26]
                 ]
             },
             hand_l: {
                 changedFrame: 16,
                 len: 1,
                 value: [
-                    [14, 60, 105],
-                    [14, 60, 104]
+                    [14, 40, 105],
+                    [14, 40, 104]
                 ]
             },
             hand_r: {
                 changedFrame: 16,
                 len: 2,
                 value: [
-                    [14, 62, 15],
-                    [14, 62, 16]
+                    [14, 42, 15],
+                    [14, 42, 16]
                 ]
             },
             leg_l: {
                 changedFrame: 16,
                 len: 1,
                 value: [
-                    [12, 93, 30]
+                    [12, 73, 30]
                 ]
             },
             leg_r: {
                 changedFrame: 16,
                 len: 1,
                 value: [
-                    [17, 93, -30]
+                    [17, 73, -30]
                 ]
             },
             weapon: {
                 changedFrame: 16,
                 len: 2,
                 value: [
-                    [34, 65, 185],
-                    [34, 65, 186]
+                    [34, 45, 185],
+                    [34, 45, 186]
                 ]
             },
             wing: {
                 changedFrame: 16,
                 len: 2,
                 value: [
-                    [0, 64],
-                    [0, 65]
+                    [0, 44],
+                    [0, 45]
                 ]
             }
         },
@@ -136,24 +147,24 @@ export default new RoleProto({
             leg_l: {
                 changedFrame: 1,
                 len: 24,
-                value: tween([13, 93, 20], [18, 93, -30], 24)
+                value: tween([13, 73, 20], [18, 73, -30], 24)
             },
             leg_r: {
                 changedFrame: 1,
                 len: 24,
-                value: tween([19, 93, -20], [12, 93, 30], 24)
+                value: tween([19, 73, -20], [12, 73, 30], 24)
             }
         },
         [StateCache.run]: {
             leg_l: {
                 changedFrame: 1,
                 len: 15,
-                value: tween([13, 93, 20], [18, 93, -30], 15)
+                value: tween([13, 73, 20], [18, 73, -30], 15)
             },
             leg_r: {
                 changedFrame: 1,
                 len: 15,
-                value: tween([19, 93, -20], [12, 93, 30], 15)
+                value: tween([19, 73, -20], [12, 73, 30], 15)
             }
         },
         [StateCache.rest]: {
@@ -170,9 +181,9 @@ export default new RoleProto({
                 },
                 len: 3,
                 value: [
-                    [9, 93, 20],
-                    [6, 93, 10],
-                    [3, 93, 0]
+                    [9, 73, 20],
+                    [6, 73, 10],
+                    [3, 73, 0]
                 ]
             },
             body: {
@@ -188,9 +199,9 @@ export default new RoleProto({
                 },
                 len: 3,
                 value: [
-                    [10, 76],
-                    [7, 76],
-                    [4, 76]
+                    [10, 56],
+                    [7, 56],
+                    [4, 56]
                 ]
             },
             leg_r: {
@@ -206,9 +217,9 @@ export default new RoleProto({
                 },
                 len: 3,
                 value: [
-                    [14, 93, -40],
-                    [11, 93, -50],
-                    [9, 93, -60]
+                    [14, 73, -40],
+                    [11, 73, -50],
+                    [9, 73, -60]
                 ]
             },
             hand_l: {
@@ -224,9 +235,9 @@ export default new RoleProto({
                 },
                 len: 3,
                 value: [
-                    [11, 60, 105],
-                    [8, 60, 105],
-                    [5, 60, 105]
+                    [11, 40, 105],
+                    [8, 40, 105],
+                    [5, 40, 105]
                 ]
             },
             hand_r: {
@@ -242,9 +253,9 @@ export default new RoleProto({
                 },
                 len: 3,
                 value: [
-                    [10, 62, 19],
-                    [7, 62, 20],
-                    [4, 62, 21]
+                    [10, 42, 19],
+                    [7, 42, 20],
+                    [4, 42, 21]
                 ]
             },
             weapon: {
@@ -263,8 +274,8 @@ export default new RoleProto({
                 },
                 len: 39,
                 value: [
-                    ...tween([33, 65, 185 + 12 * 1], [24, 70, 185 + 12 * 9], 10),
-                    ...tween([24, 70, 185 + 12 * 10], [24, 70, 185 + 12 * 39], 30)
+                    ...tween([33, 45, 185 + 12 * 1], [24, 50, 185 + 12 * 9], 10),
+                    ...tween([24, 50, 185 + 12 * 10], [24, 50, 185 + 12 * 39], 30)
                 ]
             },
             head: {
@@ -283,9 +294,9 @@ export default new RoleProto({
                 },
                 len: 3,
                 value: [
-                    [13, 45],
-                    [10, 46],
-                    [8, 46]
+                    [13, 25],
+                    [10, 26],
+                    [8, 26]
                 ]
             }
         },
@@ -294,25 +305,25 @@ export default new RoleProto({
                 changedFrame: 3,
                 len: 1,
                 value: [
-                    [14, 62, 65]
+                    [14, 42, 65]
                 ]
             },
             weapon: {
                 len: 1,
                 value: [
-                    [25, 85, -60]
+                    [25, 65, -60]
                 ]
             },
             head: {
                 len: 1,
                 value: [
-                    [16, 45, -10]
+                    [16, 25, -10]
                 ]
             },
             leg_r: {
                 len: 1,
                 value: [
-                    [17, 93, -15]
+                    [17, 73, -15]
                 ]
             }
         }

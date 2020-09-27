@@ -1,10 +1,11 @@
 import { StateCache } from "../../../anxi/controller/state";
 import { MonstProto } from "../../../anxi/proto/monst";
+import { Circle } from "../../../anxi/shape/shape";
 
 export default new MonstProto({
     name: '斧头兵',
     index: 0,
-    height: 85,
+    height: 40,
     baseProp: {
         hp: 50,
         mp: 50,
@@ -34,6 +35,9 @@ export default new MonstProto({
         material: [],
         extra: []
     },
+    attacks: [1]
+}).useHitGraph((pos, face, vita) => {
+    return new Circle(pos[0], vita.centerY - 15, 20);
 }).useView(0).useAnchors({
     body: [0.5, 0.5],
     weapon: [0.58, 0.163]
@@ -43,15 +47,15 @@ export default new MonstProto({
             changedFrame: 16,
             len: 1,
             value: [
-                [20, 75]
+                [20, 35]
             ]
         },
         weapon: {
             changedFrame: 16,
             len: 2,
             value: [
-                [18, 68, 185],
-                [18, 68, 186]
+                [18, 28, 185],
+                [18, 28, 186]
             ]
         },
     },
@@ -59,13 +63,13 @@ export default new MonstProto({
         weapon: {
             len: 1,
             value: [
-                [10, 65, 165]
+                [10, 25, 165]
             ]
         },
         body: {
             len: 1,
             value: [
-                [20, 75, -5]
+                [20, 35, -5]
             ]
         },
     },
@@ -77,27 +81,27 @@ export default new MonstProto({
             },
             len: 21,
             value: [
-                [18, 68, 185],
-                [18, 70, 190],
-                [18, 71, 195],
-                [18, 72, 200],
-                [18, 73, 205],
-                [18, 74, 210],
-                [18, 75, 215],
-                [18, 76, 220],
-                [18, 77, 225],
-                [18, 78, 230],
-                [18, 79, 235],
-                [18, 80, 240],
-                [18, 80, 245],
-                [18, 80, 250],
-                [18, 80, 255],
-                [18, 80, 260],
-                [18, 80, 265],
-                [18, 80, 265],
-                [18, 85, 265],
-                [18, 90, 265],
-                [18, 90, 265],
+                [18, 28, 185],
+                [18, 30, 190],
+                [18, 31, 195],
+                [18, 32, 200],
+                [18, 33, 205],
+                [18, 34, 210],
+                [18, 35, 215],
+                [18, 36, 220],
+                [18, 37, 225],
+                [18, 38, 230],
+                [18, 39, 235],
+                [18, 40, 240],
+                [18, 40, 245],
+                [18, 40, 250],
+                [18, 40, 255],
+                [18, 40, 260],
+                [18, 40, 265],
+                [18, 40, 265],
+                [18, 45, 265],
+                [18, 50, 265],
+                [18, 50, 265],
             ]
         },
         body: {
@@ -110,10 +114,10 @@ export default new MonstProto({
             },
             len: 4,
             value: [
-                [20, 75, -5],
-                [19, 79, -10],
-                [18, 83, -15],
-                [17, 84, -20]
+                [20, 35, -5],
+                [19, 39, -10],
+                [18, 43, -15],
+                [17, 44, -20]
             ]
         }
     }

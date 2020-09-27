@@ -1,5 +1,5 @@
 import { Container, Text, TextStyle, Graphics } from "pixi.js";
-import { Role } from "../../../po/role";
+import { Role } from "../../../po/atom/role";
 
 export class PropBar extends Container {
     /**
@@ -69,26 +69,24 @@ export class WholePropBar extends Container {
             fill: 0xeeaa00
         }, 70)
     }
-    constructor(role) {
+    constructor() {
         super();
-        this.role = role;
         for (let prop in this.bars) {
             this.addChild(this.bars[prop]);
         }
-        this.refresh(role);
     }
     /**
      * @param {Role} role 
      */
     refresh(role) {
-        this.bars.hp.value = `${role.nhp | 0} / ${role.hp | 0} `;
-        this.bars.mp.value = `${role.nmp | 0} / ${role.mp | 0}`;
-        this.bars.atk.value = role.atk | 0;
-        this.bars.def.value = role.def | 0;
-        this.bars.crt.value = `${((role.crt * 100) + '').substr(0, 2) | 0}%`;
-        this.bars.dod.value = `${((role.dod * 100) + '').substr(0, 2) | 0}%`;
-        this.bars.hpr.value = role.hpr | 0;
-        this.bars.mpr.value = role.mpr | 0;
+        this.bars.hp.value = `${role.varProp.hp | 0} / ${role.prop.hp | 0} `;
+        this.bars.mp.value = `${role.varProp.mp | 0} / ${role.prop.mp | 0}`;
+        this.bars.atk.value = role.prop.atk | 0;
+        this.bars.def.value = role.prop.def | 0;
+        this.bars.crt.value = `${((role.prop.crt * 100) + '').substr(0, 2) | 0}%`;
+        this.bars.dod.value = `${((role.prop.dod * 100) + '').substr(0, 2) | 0}%`;
+        this.bars.hpr.value = role.prop.hpr | 0;
+        this.bars.mpr.value = role.prop.mpr | 0;
         this.bars.exp.value = `${role.exp | 0} / ${role.fexp}`;
         this.bars.money.value = role.money | 0;
     }

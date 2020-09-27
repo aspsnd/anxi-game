@@ -33,6 +33,7 @@ export class ItemEventDispatcher {
             this.emit(event);
         }
     }
+    _emiting = false
     /**
      * @return {import("./eventName").EventComt }
      * @param {import("./eventName").EventName | Function} e
@@ -84,16 +85,20 @@ export class ItemEventDispatcher {
      */
     emit(event) {
         if (this.commonHandlers[event.type]) {
-            this.commonHandlers[event.type] = this.commonHandlers[event.type].filter(comt => {
-                return !comt.handler(event);
-            })
-        }
-        this.complexHandlers = this.complexHandlers.filter(comt => {
-            if (comt.checker(event)) {
-                return !comt.handler(event);
+            let handlers = this.commonHandlers[event.type];
+            this.commonHandlers[event.type] = [];
+            for (let handler of handlers) {
+                if (!handler.handler(event)) {
+                    this.commonHandlers[event.type].push(handler);
+                }
             }
-            return true;
-        })
+        };
+        let complexCache = this.complexHandlers;
+        this.complexHandlers = [];
+        for (let comt of complexCache) {
+            if (comt.checker(event) && comt.handler(event)) continue;
+            this.complexHandlers.push(comt);
+        }
     }
     /**
      * 清除所有非永久的handler

@@ -1,9 +1,11 @@
 import { Vita } from "../../anxi/atom/vita";
 import { StateCache } from "../../anxi/controller/state";
+import { ItemEvent } from "../../anxi/event";
 import { RoleProto } from "../../anxi/proto/role";
 import { RoleProtos } from "../../data/role/all";
 
 export class Role extends Vita {
+    group = 0
     exp = 0
     fexp = 1
     money = 0
@@ -38,9 +40,9 @@ export class Role extends Vita {
     }
     maxJumpTimes = 2
     constructor(role_proto) {
-        let realProto = Object.assign(role_proto, RoleProtos[role_proto.index], role_proto);
+        let realProto = Object.assign({}, role_proto, RoleProtos[role_proto.index], role_proto);
         super(realProto);
-        this.initRole(role_proto);
+        this.initRole(realProto);
     }
     /**
      * @param {RoleProto} role_proto 
@@ -53,13 +55,72 @@ export class Role extends Vita {
         this.bag = role_proto.bag || this.bag;
         this.equip = role_proto.equip || this.equip;
     }
-    initEvent(){
+    initEvent() {
         super.initEvent();
+        this.on('overexp', e => {
+            this.reduceEXP(this.fexp);
+            let growth = this.proto.nextLevel(this, this.level + 1);
+            for (const key in growth) {
+                let value = growth[key];
+                this.setBaseValue(key, this.baseProp[key] + value);
+            }
+            this.varProp.hp = this.prop.hp;
+            this.varProp.mp = this.prop.mp;
+            this.on('nhpchange');
+            this.on('nmpchange');
+            this.level = this.level + 1;
+            this.fexp = this.proto.getFexp(this.level);
+            this.on(new ItemEvent('addlevel', this.level));
+        }, true);
+        this.on('dead', e => {
+            let roles = this.world.roles;
+            if (roles.every(role => role.dead)) {
+                this.world.once(`framing_${this.fight.frame + 90}`, e => {
+                    this.world.stop();
+                    this.world.end(true);
+                })
+            }
+        }, true);
+        this.on('finishcard', e => {
+            if (this.world.win) {
+                this.world.cross();
+                this.world.end(true);
+            }
+        }, true);
+        this.on('getmoney', e => {
+            let r = Math.random();
+            if (r < 0.02) {
+                let rhp = this.varProp.hp;
+                this.varProp.hp += parseInt(this.prop.hp * 0.05 * (0.5 + Math.random()));
+                (this.nhp > this.hp) && (this.nhp = this.hp);
+                this.on(new ItemEvent('nhpchange', [rhp, this.nhp]));
+            } else if (r < 0.04) {
+                let rmp = this.varProp.mp;
+                this.varProp.mp += parseInt(this.prop.mp * 0.05 * (0.5 + Math.random()));
+                (this.varProp.mp > this.prop.mp) && (this.varProp.mp = this.prop.mp);
+                this.on(new ItemEvent('nmpchange', [rmp, this.nmp]));
+            } else if (r < 0.08) {
+                let rhp = this.varProp.hp;
+                this.varProp.hp += parseInt(this.prop.hp * 0.05 * (0.5 + Math.random()));
+                (this.nhp > this.hp) && (this.nhp = this.hp);
+                this.on(new ItemEvent('nhpchange', [rhp, this.nhp]));
+                let rmp = this.varProp.mp;
+                this.varProp.mp += parseInt(this.prop.mp * 0.05 * (0.5 + Math.random()));
+                (this.varProp.mp > this.prop.mp) && (this.varProp.mp = this.prop.mp);
+                this.on(new ItemEvent('nmpchange', [rmp, this.nmp]));
+            }
+        }, true);
         this.on(`stating_${StateCache.common}`, e => {
             if (e.value.behaveTime >= this.proto.restInterval) {
                 this.stateController.setStateTime(StateCache.rest, this.proto.restTime);
             }
         }, true);
+        this.on(event => {
+            let eventName = event.type;
+            return eventName.startsWith('getstate_') && !eventName.endsWith(StateCache.rest)
+        }, e => {
+            this.stateController.removeState(StateCache.rest);
+        }, true)
     }
     toPlainObject() {
         return Object.assign(super.toPlainObject(), {
@@ -71,7 +132,39 @@ export class Role extends Vita {
             equip: this.equip,
         });
     }
+    // 获取经验
+    getEXP(exp, reason = 0) {
+        if (exp <= 0) throw new Error('大于0');
+        this.exp += exp;
+        this.on(new ItemEvent('getexp', exp, reason));
+        while (this.exp >= this.fexp) {
+            this.on(new ItemEvent('overexp', this.exp, reason));
+        }
+    }
+    // 升级减少经验
+    reduceEXP(exp) {
+        if (this.exp < exp) throw new Error('不够');
+        this.exp -= exp;
+        this.on(new ItemEvent('reduceexp', exp));
+    }
+    // 用于游戏中获取灵魂
+    getMoney(money, reason = 0) {
+        if (money <= 0) throw new Error('大于0');
+        this.money += money;
+        let event = new ItemEvent('getmoney', money, reason);
+        this.on(event);
+    }
+    // 使用灵魂
+    reduceMoney(money, reason = 0) {
+        if (money <= 0) throw new Error('大于0');
+        if (money > this.money) return false;
+        this.money -= money;
+        let event = new ItemEvent('reducemoney', money, reason);
+        this.on(event);
+        return true;
+    }
     refresh() {
 
     }
+
 }

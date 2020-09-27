@@ -6,6 +6,7 @@ import { AtomProto } from "./atom";
 
 export class VitaProto extends AtomProto {
     index
+    attacks = []
     useIndex(index) {
         this.index = index;
         return this;
@@ -60,9 +61,9 @@ export class VitaProto extends AtomProto {
         this.defaultViewAnchor = anchor;
         return this;
     }
-    getHitGraph = (pos, vita) => { throw new AnxiError('unimplement method!') }
+    getHitGraph = (pos, face, vita) => { throw new AnxiError('unimplement method!') }
     /**
-     * @param {(pos:[number,number],vita:Vita)=>Shape} getter 
+     * @param {(pos:[number,number],face:number,vita:Vita)=>Shape} getter 
      */
     useHitGraph(getter) {
         this.getHitGraph = getter;

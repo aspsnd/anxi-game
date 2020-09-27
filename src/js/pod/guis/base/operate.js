@@ -1,11 +1,9 @@
 import { Graphics, Sprite } from "pixi.js";
 import { gameTink, by, gameApp } from "../../../util";
-import { Role } from "../../../po/role";
-import { ThingProto } from "../../../data/bag/base";
-import { EquipProto } from "../../../data/bag/util/equip";
-import { SingleBag } from "./singleBag";
+// import { ThingProto } from "../../../data/bag/base";
+// import { EquipProto } from "../../../data/bag/util/equip";
 import { BagController } from "../bag";
-import { MaterialProto } from "../../../data/bag/util/material";
+// import { MaterialProto } from "../../../data/bag/util/material";
 
 class Operater extends Graphics {
     static INSTANCE = new Operater();

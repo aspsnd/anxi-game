@@ -9,6 +9,9 @@ import { Wall } from "../conster/wall";
 import { Monst } from "../../po/atom/monst";
 import { MonstProtos } from "../../data/monst/all";
 import { Instructer } from "../instruct/instructor";
+import { QualityColor } from "../define/util";
+import { QuickOpen } from "../../po/gui/open";
+import { RealWorld } from "../../po/world";
 
 export class ForeverWorld extends Atom {
     /**
@@ -30,11 +33,17 @@ export class World extends Atom {
     ground
     container
     /**
+     * @type {World}
+     */
+    static instance
+    /**
      * @param {Role[]} roles 
      * @param {Container} container 
      */
     constructor(carddata, roles, container) {
         super();
+        World.instance = this;
+        QuickOpen.bind(this);
         this.container = container;
         container.addChild(this.wallContainer, this.guiContainer, this.vitaContainer, this.toolContainer);
         this.initCard(carddata);
@@ -71,6 +80,10 @@ export class World extends Atom {
      * @type {Role[]}
      */
     roles = []
+    /**
+     * @type {Atom[]}
+     */
+    elseAtoms = []
     carddata
     /**
      * @param {Role} role 
@@ -119,5 +132,34 @@ export class World extends Atom {
         role.x = 100 + index * 50;
         role.y = 180;
         role.landIn(this);
+    }
+    /**
+     * 存活且可选中的角色 不可选中 == 不会受到任何效果， 但不会防止曾经受到的持续效果
+     */
+    selectableVitas() {
+        return this.vitas.filter(vita => vita.selectable && !vita.dead);
+    }
+    win = false
+    /**
+     * 打开退出通道
+     */
+    openQuit() {
+        this.win = true;
+    }
+    cross() {
+        let cards = this.carddata.crossOpen;
+        cards.forEach(c => {
+            if(!RealWorld.instance.record.opened.includes(c)){
+                RealWorld.instance.record.opened.push(c);
+            }
+        })
+    }
+
+    end(save) {
+        if (save) {
+            RealWorld.instance.save();
+        }
+        this.die();
+        RealWorld.instance.quitCard();
     }
 }
