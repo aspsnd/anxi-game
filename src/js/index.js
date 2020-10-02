@@ -48,7 +48,7 @@ export const init = () => {
                     new GTip('登录成功');
                     // gameRouter.to('main');
                     setTimeout(_ => {
-                        gameRouter.pageHandlers['world'].data.record = RecordController.getRecord(0);
+                        gameRouter.pageHandlers['world'].data.record = RecordController.getRecord(1);
                         gameRouter.to('world');
                     })
                 }).catch(e => {

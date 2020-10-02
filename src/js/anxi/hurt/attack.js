@@ -45,7 +45,7 @@ export class Attack extends Hurt {
                 /**@type Vita[] */
                 let shoots = this.getShootedVita();
                 if (this.proto.notrans && shoots.length > 0) {
-                    this.finish = true;
+                    this.finished = true;
                 }
                 shoots.forEach(vita => {
                     this.shootedVitas.push(vita.id);

@@ -61,6 +61,12 @@ export class VitaProto extends AtomProto {
         this.defaultViewAnchor = anchor;
         return this;
     }
+    /**
+     * 
+     * @param {[number,number]} pos 
+     * @param {number} face 
+     * @param {Vita} vita 
+     */
     getHitGraph = (pos, face, vita) => { throw new AnxiError('unimplement method!') }
     /**
      * @param {(pos:[number,number],face:number,vita:Vita)=>Shape} getter 
@@ -75,6 +81,11 @@ export class VitaProto extends AtomProto {
      */
     useActionData(actionData) {
         this.actionData = actionData;
+        return this;
+    }
+    bulletUrl
+    useBulletUrl(url){
+        this.bulletUrl = url;
         return this;
     }
 }

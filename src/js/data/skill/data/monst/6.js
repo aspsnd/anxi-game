@@ -2,7 +2,7 @@ import { Sprite } from "pixi.js";
 import { Affect } from "../../../../anxi/affect";
 import { Flyer } from "../../../../anxi/atom/flyer";
 import { World } from "../../../../anxi/atom/world";
-import { StateCache } from "../../../../anxi/controller/state";
+import { StateCache, StateItem } from "../../../../anxi/controller/state";
 import { SkillProto } from "../../../../anxi/proto/skill";
 import { Circle } from "../../../../anxi/shape/shape";
 import { by, IFC, tween } from "../../../../util";
@@ -15,7 +15,7 @@ export default new SkillProto(6, '眺望远射', '蓄力射出强力一击').los
         let x = vita.x;
         let y = vita.y;
         vita.stateController.removeState(StateCache.go, StateCache.run)
-        vita.stateController.setStateInfinite(StateCache.URA, 60);
+        vita.stateController.insertState(StateCache.URA, new StateItem(60));
         let target = World.instance.selectableVitas().filter(v => v.group != vita.group)[0];
         if (!target) return;
         let face = target.x > x ? 1 : -1;

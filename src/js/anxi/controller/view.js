@@ -5,7 +5,7 @@ import { by } from "../../util";
 import { BaseActionData } from "../action/baseAction";
 import { StateCache } from "./state";
 import { Flyer } from "../atom/flyer";
-import { lostHpStyle } from "./view.util";
+import { commonEnglishStyle, lostHpStyle } from "./view.util";
 import { Affect } from "../affect";
 
 export class ViewController extends Controller {
@@ -95,13 +95,13 @@ export class ViewController extends Controller {
             }
         }, true)
         this.vita.on('dodaffect', e => {
-            new Flyer(new Text('miss', lostHpStyle), s => {
+            new Flyer(new Text('miss', commonEnglishStyle), s => {
                 s.anchor.set(0.5, 0);
                 s.position.set(this.view.x, this.view.y);
             }).useConstSpeed([0, -1]).useLiveTime(60).from(this.belonger);
         }, true);
         this.vita.on('addlevel', e => {
-            new Flyer(new Text('Level up', lostHpStyle), s => {
+            new Flyer(new Text('Level up', commonEnglishStyle), s => {
                 s.anchor.set(0.5, 0);
                 s.position.set(this.view.x, this.view.y);
             }).useConstSpeed([0, -1]).useLiveTime(60).from(this.belonger);

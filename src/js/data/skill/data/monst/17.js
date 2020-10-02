@@ -26,7 +26,6 @@ export default new SkillProto(17, '月之降临', '在前方释放一个月轮�
                 graphics.alpha = 1 - proc;
                 return;
             }
-            console.log(timer, this.executing, vita.stateController.getSingleState(StateCache.attack).last);
             if (!this.executing) return flyer.die();
             if (timer > 60) {
                 if (timer == 70) {
@@ -60,11 +59,10 @@ export default new SkillProto(17, '月之降临', '在前方释放一个月轮�
             }
         }).from(vita).checkFromArray([101, 106, 111, 116])
             .useHitAreaGetter(function (x, y) {
-                console.log(new Circle(x, y, this.timer - 20));
                 return new Circle(x, y, this.timer - 20)
             })
-            .useAffectGetter(enemy => {
-                let affect = new Affect(this, vita, enemy);
+            .useAffectGetter((from, enemy) => {
+                let affect = new Affect(this, from, enemy);
                 affect.harm.common = vita.prop.atk * 2.5;
                 affect.debuff = [{
                     state: StateCache.dizzy,

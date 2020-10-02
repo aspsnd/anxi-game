@@ -2,6 +2,7 @@ import { Graphics, Sprite } from "pixi.js";
 import { a2r } from "../../util";
 import { Affect } from "../affect";
 import { Atom } from "../atom";
+import { StateCache } from "../controller/state";
 import { ItemEvent } from "../event";
 import { Circle, Shape } from "../shape/shape";
 import { Vita } from "./vita";

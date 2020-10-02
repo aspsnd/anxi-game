@@ -12,6 +12,7 @@ import { Instructer } from "../instruct/instructor";
 import { QualityColor } from "../define/util";
 import { QuickOpen } from "../../po/gui/open";
 import { RealWorld } from "../../po/world";
+import { Flyer } from "./flyer";
 
 export class ForeverWorld extends Atom {
     /**
@@ -69,6 +70,13 @@ export class World extends Atom {
                 monst.y = 250;
                 monst.landIn(this);
             }
+            // if (e.key == 't') {
+            //     let flyer = window.flyer = new Flyer(new Sprite()).useLiveTime(120).onTime(timer => {
+            //         console.log(this.timer, timer);
+            //     });
+            //     flyer.landIn(this, 1);
+            //     console.log('landIn World', this.timer);
+            // }
         })
     }
     wallContainer = new Container();
@@ -162,7 +170,7 @@ export class World extends Atom {
         if (save) {
             RealWorld.instance.save();
         }
-        this.roles.forEach(role=>role.refresh());
+        this.roles.forEach(role => role.refresh());
         this.die();
         RealWorld.instance.quitCard();
     }

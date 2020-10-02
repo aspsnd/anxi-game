@@ -33,7 +33,6 @@ export class ItemEventDispatcher {
             this.emit(event);
         }
     }
-    _emiting = false
     /**
      * @return {import("./eventName").EventComt }
      * @param {import("./eventName").EventName | Function} e
@@ -79,26 +78,47 @@ export class ItemEventDispatcher {
         this.complexHandlers.push(comt);
         return comt;
     }
+    _emitingEvents = []
     /**
      * 触发一个事件
      * @param {ItemEvent} event 
      */
     emit(event) {
+        this._emitingEvents.unshift(event);
         if (this.commonHandlers[event.type]) {
             let handlers = this.commonHandlers[event.type];
-            this.commonHandlers[event.type] = [];
+            // this.commonHandlers[event.type] = [];
+            // for (let handler of handlers) {
+            //     if (!handler.handler(event)) {
+            //         this.commonHandlers[event.type].push(handler);
+            //     }
+            // }
+            let i = 0;
             for (let handler of handlers) {
-                if (!handler.handler(event)) {
-                    this.commonHandlers[event.type].push(handler);
+                if (!handler) continue;
+                if (handler.handler(event)) {
+                    handlers[i] = undefined;
                 }
+                i++;
             }
+            handlers = handlers.filter(handler => handler);
         };
         let complexCache = this.complexHandlers;
-        this.complexHandlers = [];
-        for (let comt of complexCache) {
-            if (comt.checker(event) && comt.handler(event)) continue;
-            this.complexHandlers.push(comt);
+        // this.complexHandlers = [];
+        // for (let comt of complexCache) {
+        //     if (comt.checker(event) && comt.handler(event)) continue;
+        //     this.complexHandlers.push(comt);
+        // }
+        let j = 0;
+        for (let handler of complexCache) {
+            if (!handler) continue;
+            if (handler.handler(event)) {
+                handlers[j] = undefined;
+            }
+            j++;
         }
+        complexCache = complexCache.filter(handler=>handler);
+        this._emitingEvents.shift();
     }
     /**
      * 清除所有非永久的handler

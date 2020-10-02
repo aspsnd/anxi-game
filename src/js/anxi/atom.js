@@ -41,7 +41,7 @@ export class Atom extends ItemEventDispatcher {
     }
     lastTimerFrame = 0
     frame = 0
-    onFrame(frame = this.frame++) {
+    onFrame(frame = ++this.frame) {
         while (frame - this.lastTimerFrame >= this.timespeed) {
             this.lastTimerFrame += this.timespeed;
             this.onTimer();
@@ -52,6 +52,7 @@ export class Atom extends ItemEventDispatcher {
         this.timer++;
         this.on(`timer_${this.timer}`);
         this.on(`timing`);
+        this.on('timer_end');
     }
     dead = false
     realDead = false
@@ -77,7 +78,7 @@ export class Atom extends ItemEventDispatcher {
     landIn(world, timespeed = 1) {
         this.world = world;
         this.btimespeed = timespeed;
-        world.on('timing', e => {
+        return world.on('timing', e => {
             this.onFrame();
             return this.realDead;
         });

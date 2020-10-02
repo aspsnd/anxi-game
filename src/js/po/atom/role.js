@@ -175,5 +175,4 @@ export class Role extends Vita {
         this.gui.refresh();
         this.dead = false;
     }
-
 }
