@@ -122,12 +122,12 @@ export class GUI {
         role.on('nmpchange', e => {
             let per = role.varProp.mp / role.prop.mp;
             this.mpbar.width = 150 * per;
-            this.hptext.text = `${role.varProp.mp | 0}/${role.prop.mp | 0}`;
+            this.mptext.text = `${role.varProp.mp | 0}/${role.prop.mp | 0}`;
         }, true)
         role.on('mpchange', e => {
             let per = role.varProp.mp / role.prop.mp;
             this.mpbar.width = 150 * per;
-            this.hptext.text = `${role.varProp.mp | 0}/${role.prop.mp | 0}`;
+            this.mptext.text = `${role.varProp.mp | 0}/${role.prop.mp | 0}`;
         }, true)
 
         role.on('addlevel', e => {
@@ -162,5 +162,13 @@ export class GUI {
             // ura.height = 40 * role.uraController.uras;
             // ura.y = 40 * (1 - role.uraController.uras) + 1;
         }, true);
+    }
+    refresh() {
+        let hpper = role.varProp.hp / role.prop.hp;
+        this.hpbar.width = 150 * hpper;
+        this.hptext.text = `${role.varProp.hp | 0}/${role.prop.hp | 0}`;
+        let mpper = role.varProp.mp / role.prop.mp;
+        this.mpbar.width = 150 * mpper;
+        this.mptext.text = `${role.varProp.mp | 0}/${role.prop.mp | 0}`;
     }
 }

@@ -1,4 +1,6 @@
 import { Vita } from "../atom/vita";
+import { StateCache } from "../controller/state";
+import { Attack } from "../hurt/attack";
 import { Circle } from "../shape/shape";
 import { HurtProto } from "./hurt";
 
@@ -6,13 +8,13 @@ export class AttackProto extends HurtProto {
     index
     freeze = 0
     time = 60
-     /**
-     * @type [{
-     *      state:Number, //状态类型
-     *      last:Number,  //持续时间
-     *      dataGetter:(affect:Affect)=>{}
-     * }]
-     */
+    /**
+    * @type [{
+    *      state:Number, //状态类型
+    *      last:Number,  //持续时间
+    *      dataGetter:(affect:Affect)=>{}
+    * }]
+    */
     debuff = []
     /**
      * @param {AttackProto} proto 
@@ -23,7 +25,10 @@ export class AttackProto extends HurtProto {
     }
     checkTimes = []
     absoluteCheck = false
-    executeProto() { }
+    /**
+     * @type {(this:Attack)=>void}
+     */
+    executeProto = () => {}
     /**
      * @type {ActionData}
      */
@@ -41,3 +46,15 @@ export class AttackProto extends HurtProto {
      */
     notrans = false
 }
+export const defaultDebuff = [
+    {
+        state: StateCache.beHitBehind,
+        last: 10
+    }
+];
+export const behindDebuff = num => [
+    {
+        state: StateCache.beHitBehind,
+        last: num
+    }
+];

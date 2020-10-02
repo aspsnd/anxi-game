@@ -70,6 +70,16 @@ export class ViewController extends Controller {
             this.blocks.wing
         );
     }
+    addFilter(filter) {
+        if (!this.view.filters.includes(filter)) {
+            this.view.filters.push(filter);
+        }
+    }
+    removeFilter(filter) {
+        let index = this.view.filters.indexOf(filter);
+        if (index == -1) return;
+        this.view.filters.splice(index, 1);
+    }
     initReact() {
         this.view.filters = [];
         this.vita.on('beAffect', e => {
@@ -78,18 +88,23 @@ export class ViewController extends Controller {
              */
             let affect = e.value;
             if (affect.finalHarm > 0) {
-                window.flyer = new Flyer(new Text(affect.finalHarm, lostHpStyle), s => {
+                new Flyer(new Text(affect.finalHarm, lostHpStyle), s => {
                     s.anchor.set(0.5, 0);
                     s.position.set(this.view.x, this.view.y);
                 }).useConstSpeed([0, -1]).useLiveTime(60).from(this.belonger);
-                // this.hpBarUsed && (this.hpBar.timer = 120);
             }
         }, true)
         this.vita.on('dodaffect', e => {
-            gameSDst.text('miss', this.view, 20);
+            new Flyer(new Text('miss', lostHpStyle), s => {
+                s.anchor.set(0.5, 0);
+                s.position.set(this.view.x, this.view.y);
+            }).useConstSpeed([0, -1]).useLiveTime(60).from(this.belonger);
         }, true);
         this.vita.on('addlevel', e => {
-            gameSDst.text('level up', this.view, 20);
+            new Flyer(new Text('Level up', lostHpStyle), s => {
+                s.anchor.set(0.5, 0);
+                s.position.set(this.view.x, this.view.y);
+            }).useConstSpeed([0, -1]).useLiveTime(60).from(this.belonger);
         }, true);
         this.vita.on('getura', e => {
             this.addFilter(uraFilter);

@@ -1,14 +1,14 @@
 import { Sprite } from "pixi.js";
-import { Affect } from "../../../anxi/affect";
-import { ShadowController } from "../../../anxi/controller/skill/shadow";
-import { StateCache } from "../../../anxi/controller/state";
-import { SkillProto } from "../../../anxi/proto/skill";
-import { Point, Polygon } from "../../../anxi/shape/shape";
-import { by } from "../../../util";
+import { Affect } from "../../../../anxi/affect";
+import { ShadowController } from "../../../../anxi/controller/skill/shadow";
+import { StateCache, StateItem } from "../../../../anxi/controller/state";
+import { SkillProto } from "../../../../anxi/proto/skill";
+import { Point, Polygon } from "../../../../anxi/shape/shape";
+import { by } from "../../../../util";
 /**
  * 技能4 向前位移【途中无敌】 原地留下一只残影
  */
-export default new SkillProto('悲影落', '向前位移【途中无敌】 原地留下一只残影')
+export default new SkillProto(3,'悲影落', '向前位移【途中无敌】 原地留下一只残影')
     .active(true)
     .lost(40)
     .standing(15)
@@ -20,8 +20,8 @@ export default new SkillProto('悲影落', '向前位移【途中无敌】 原�
         let distance = face * role.prop.speed * 8 * 15;
         role.stateController.removeState(StateCache.run, StateCache.go);
         role.getController('shadowController', ShadowController).create(role.x - 10 * face, role.centerY);
-        role.stateController.setStateTime(StateCache.IME, 15);
-        role.stateController.addStateTime(StateCache.URA, 15);
+        role.stateController.insertState(StateCache.IME, new StateItem(15));
+        role.stateController.insertState(StateCache.URA, new StateCache(15));
         role.viewController.view.alpha = 0;
         let headshadow = new Sprite(by('./res/util/role/0/shadow/headshoot.png'));
         role.world.vitaContainer.addChild(headshadow);

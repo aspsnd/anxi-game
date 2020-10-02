@@ -75,7 +75,7 @@ export class Role extends Vita {
         this.on('dead', e => {
             let roles = this.world.roles;
             if (roles.every(role => role.dead)) {
-                this.world.once(`framing_${this.fight.frame + 90}`, e => {
+                this.world.once(`timer_${this.world.timer + 90}`, e => {
                     this.world.stop();
                     this.world.end(true);
                 })
@@ -164,7 +164,16 @@ export class Role extends Vita {
         return true;
     }
     refresh() {
-
+        for(let p in this){
+            if(/Controller$/.test(p)){
+                this[p].refresh();
+            }
+        }
+        this.compute();
+        this.varProp.hp = this.prop.hp;
+        this.varProp.mp = this.prop.mp;
+        this.gui.refresh();
+        this.dead = false;
     }
 
 }

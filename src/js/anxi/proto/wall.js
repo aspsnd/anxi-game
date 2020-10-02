@@ -6,11 +6,12 @@ export class WallProto {
     }
 
     /**
-     * @param {number} width 
+     * @param {number} imgWidth 
      * @param {number} height 
      */
-    size(width, height) {
-        this.width = width;
+    size(imgWidth, imgHeight, height) {
+        this.imgWidth = imgWidth;
+        this.imgHeight = imgHeight
         this.height = height;
         return this;
     }

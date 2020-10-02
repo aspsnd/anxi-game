@@ -19,7 +19,7 @@ export class StepManager {
      */
     constructor(world) {
         this.world = world;
-        this.container = world.container;
+        this.container = world.baseContainer;
         world.on('timing', this.onTimer.bind(this));
     }
     onTimer() {

@@ -173,6 +173,6 @@ export class BagController extends BaseGui {
     bind(world){
         this.world = world;
         this.roles = this.world.roles;
-        world.toolContainer.addChild(this.baseContainer);
+        world.parallelContainer.addChild(this.baseContainer);
     }
 }

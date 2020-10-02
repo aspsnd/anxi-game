@@ -1,13 +1,13 @@
 import { Matrix, RenderTexture, Sprite } from "pixi.js";
-import { Flyer } from "../../../anxi/atom/flyer";
-import { SkillProto } from "../../../anxi/proto/skill";
-import { gameApp } from "../../../util";
+import { Flyer } from "../../../../anxi/atom/flyer";
+import { SkillProto } from "../../../../anxi/proto/skill";
+import { gameApp } from "../../../../util";
 
 /**
  * 技能3 【被动】残影会在3秒后爆炸造成伤害并消失
  *       的
  */
-export default new SkillProto('影攻心', '【被动】残影会在3秒后爆炸造成伤害并消失。\n【主动】与眼前最近的敌人互换位置')
+export default new SkillProto(2,'影攻心', '【被动】残影会在3秒后爆炸造成伤害并消失。\n【主动】与眼前最近的敌人互换位置')
     .active(true)
     .lost(60)
     .init(function () {

@@ -1,13 +1,13 @@
-import { Affect } from "../../../anxi/affect";
-import { ShadowController } from "../../../anxi/controller/skill/shadow";
-import { StateCache } from "../../../anxi/controller/state";
-import { SkillProto } from "../../../anxi/proto/skill";
-import { Point, Polygon } from "../../../anxi/shape/shape";
-import { IFC } from "../../../util";
+import { Affect } from "../../../../anxi/affect";
+import { ShadowController } from "../../../../anxi/controller/skill/shadow";
+import { StateCache } from "../../../../anxi/controller/state";
+import { SkillProto } from "../../../../anxi/proto/skill";
+import { Point, Polygon } from "../../../../anxi/shape/shape";
+import { IFC } from "../../../../util";
 /**
 * 技能2 向前挥剑，发出自己的残影，对路过敌人造成伤害，并在终点滞留3秒
 */
-export default new SkillProto('轻斩', '发出自己的残影，对路过敌人造成伤害，并在终点滞留')
+export default new SkillProto(1,'轻斩', '发出自己的残影，对路过敌人造成伤害，并在终点滞留')
     .active(true)
     .lost(20)
     .standing(30)

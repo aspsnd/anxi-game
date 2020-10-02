@@ -49,7 +49,7 @@ export class SkillPanel extends BaseGui{
     bind(world){
         this.world = world;
         this.roles = world.roles;
-        world.toolContainer.addChild(this.baseContainer);
+        world.parallelContainer.addChild(this.baseContainer);
     }
     ctrlContainer = new Container();
     refreshCtrl() {

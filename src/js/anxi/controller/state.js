@@ -1,10 +1,11 @@
 import { Controller } from "../controller";
+import { AnxiError } from "../error/base";
 import { ItemEvent } from "../event";
 
 export class StateController extends Controller {
     static autoChangeIndex = -99999;
     static baseState = ['common', 'rest', 'go', 'run', 'jump', 'jumpSec', 'hard', 'URA', 'IME', 'drop', 'hover', 'banhover'
-        , 'attack', 'poison', 'beHitBehind', 'dizzy', 'hurt', 'dead', 'slow', 'silence']
+        , 'attack', 'poison', 'beHitBehind', 'dizzy', 'hurt', 'dead', 'slow', 'silence', 'fast']
     static cache = {
         common: -100,
         rest: -99,
@@ -25,11 +26,16 @@ export class StateController extends Controller {
         hurt: -401,//重伤
         dead: 10000,
         slow: this.autoChangeIndex++,
+        fast: this.autoChangeIndex++,
         silence: this.autoChangeIndex++
     }
     static complexState = [
-        this.cache.hard, this.cache.URA, this.cache.IME, this.cache.poison, this.cache.dizzy, this.cache.slow, this.cache.beHitBehind
+        this.cache.hard, this.cache.URA, this.cache.IME, this.cache.poison, this.cache.dizzy, this.cache.slow, this.cache.beHitBehind,
+        this.cache.fast
     ]
+    /**
+     * @type {SingleState[]}
+     */
     states = {}
     /**
      * @return {SingleState}
@@ -116,6 +122,7 @@ export class StateController extends Controller {
      */
     setStateTime(stateIndex, last) {
         let ss = this.getSingleState(stateIndex);
+        if (ss.complex) throw new AnxiError('complex state!');
         if (last == 0) {
             if (ss.exist()) {
                 ss.last = 0;
@@ -138,6 +145,7 @@ export class StateController extends Controller {
     addStateTime(stateIndex, last) {
         if (last == 0) return;
         let ss = this.getSingleState(stateIndex);
+        if (ss.complex) throw new AnxiError('complex state!');
         if (!ss.exist()) {
             ss.last = last;
             this.belonger.on(new ItemEvent(`getstate_${stateIndex}`));
@@ -151,6 +159,7 @@ export class StateController extends Controller {
     maxStateTime(stateIndex, last) {
         if (last == 0) return;
         let ss = this.getSingleState(stateIndex);
+        if (ss.complex) throw new AnxiError('complex state!');
         if (!ss.exist()) {
             ss.last = last;
             this.belonger.on(new ItemEvent(`getstate_${stateIndex}`));
@@ -163,6 +172,7 @@ export class StateController extends Controller {
      */
     setStateInfinite(stateIndex, infinite) {
         let ss = this.getSingleState(stateIndex);
+        if (ss.complex) throw new AnxiError('complex state!');
         if (ss.infinite == infinite) return;
         if (infinite) {
             ss.infinite = infinite;
@@ -266,7 +276,7 @@ export class SingleState {
             this.items = this.items.filter(item => {
                 if (item.last > 0) item.last--;
                 item.timer++;
-                return item.last > 0 || item.infinite;
+                return item.last > 0 || item.infinite || item.destory();
             })
         } else {
 
@@ -330,6 +340,18 @@ export class StateItem {
         this.last = last;
         this.infinite = infinite;
         this.data = data;
+    }
+    disappearHandlers = []
+    /**
+     * @param  {...(data:{})=>void} handler 
+     */
+    whenDisappear(...handler) {
+        this.disappearHandlers.push(...handler);
+        return this;
+    }
+    destory() {
+        this.disappearHandlers.forEach(handler => handler(this.data));
+        return false;
     }
 }
 export const StateCache = StateController.cache;

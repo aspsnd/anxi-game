@@ -5,12 +5,11 @@ import { ItemEvent } from "../event";
 
 
 export class SkillProto {
-    static INDEX = 0
     index
-    constructor(name, describe) {
+    constructor(index, name, describe) {
         this._name = name;
         this._describe = describe;
-        this.index = SkillProto.INDEX++;
+        this.index = index;
     }
     _init = data => { }
     /**

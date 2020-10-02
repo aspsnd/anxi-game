@@ -22,6 +22,7 @@ export class Attack extends Hurt {
         super(proto, vita);
         this.proto = proto;
         this.belonger = vita;
+        this.checkbar = vita;
         for (let key in proto) {
             this[key] = proto[key];
         }
@@ -30,6 +31,10 @@ export class Attack extends Hurt {
     }
     absoulteCheck = false
     notrans = false
+    checkbar
+    check(checker){
+        this.checkbar = checker;
+    }
     execute() {
         this.executeProto();
         let vita = this.belonger;
@@ -65,7 +70,7 @@ export class Attack extends Hurt {
 
     }
     getShootedVita() {
-        let hitarea = this.proto.getHitGraph([this.belonger.x, this.belonger.y], this.belonger.face, this.belonger);
+        let hitarea = this.proto.getHitGraph([this.checkbar.x, this.checkbar.y], this.belonger.face, this.belonger);
         let allVitas = this.belonger.world.selectableVitas();
         return allVitas.filter(vita => vita.group != this.belonger.group)
             .filter(vita => !this.shootedVitas.includes(vita.id))

@@ -32,6 +32,8 @@ export class World extends Atom {
      */
     ground
     container
+    parallelContainer = new Container()
+    baseContainer = new Container()
     /**
      * @type {World}
      */
@@ -45,10 +47,11 @@ export class World extends Atom {
         World.instance = this;
         QuickOpen.bind(this);
         this.container = container;
-        container.addChild(this.wallContainer, this.guiContainer, this.vitaContainer, this.toolContainer);
+        this.container.addChild(this.baseContainer, this.guiContainer, this.parallelContainer);
+        this.baseContainer.addChild(this.wallContainer, this.vitaContainer, this.toolContainer);
         this.initCard(carddata);
-        roles.forEach((role, index) => this.initRole(role, index));
         this.stepManager = new StepManager(this).bind(roles);
+        roles.forEach((role, index) => this.initRole(role, index));
         /**
          * @test
          */
@@ -149,7 +152,7 @@ export class World extends Atom {
     cross() {
         let cards = this.carddata.crossOpen;
         cards.forEach(c => {
-            if(!RealWorld.instance.record.opened.includes(c)){
+            if (!RealWorld.instance.record.opened.includes(c)) {
                 RealWorld.instance.record.opened.push(c);
             }
         })
@@ -159,6 +162,7 @@ export class World extends Atom {
         if (save) {
             RealWorld.instance.save();
         }
+        this.roles.forEach(role=>role.refresh());
         this.die();
         RealWorld.instance.quitCard();
     }

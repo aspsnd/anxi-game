@@ -13,6 +13,7 @@ export class MonstProto extends VitaProto {
      * @type {{
      *  intelli:number,
      *  skillFreeze:number,
+     *  attackDistance:number,
      *  skill:{
      *      index:number,
      *      rate:number,

@@ -28,8 +28,8 @@ export default new AttackProto({
             len: 15,
             changedFrame: 1,
             value: [
-                ...tween([18, 28, 185], [18, 28, 280], 12),
-                ...tween([18, 28, 280], [18, 28, 185], 3)
+                ...tween([18, 5, 185], [18, 5, 280], 12),
+                ...tween([18, 5, 280], [18, 5, 185], 3)
             ]
         }
     }

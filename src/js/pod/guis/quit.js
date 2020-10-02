@@ -68,6 +68,6 @@ export class OpenQuit extends BaseGui {
      */
     bind(world){
         this.world = world;
-        world.toolContainer.addChild(this.baseContainer);
+        world.parallelContainer.addChild(this.baseContainer);
     }
 }

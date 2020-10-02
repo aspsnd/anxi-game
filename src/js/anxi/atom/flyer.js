@@ -91,7 +91,7 @@ export class Flyer extends Atom {
         }
         if (!this.ifcheck()) return;
         let area = this.areaGetter(this.checker.x, this.checker.y);
-        let hits = this.checkFilter(this.belonger.world.selectableVitas().filter(v => !this.shootedVitas.includes(v.id))).filter(v => area.hit(v.getHitGraph()));
+        let hits = this.checkFilter(this.belonger.world.selectableVitas()).filter(v => !this.shootedVitas.includes(v.id)).filter(v => area.hit(v.getHitGraph()));
         let belonger = this.belonger;
         if (hits.length == 0) return;
         if (this.dieAfterHit) {
@@ -105,15 +105,7 @@ export class Flyer extends Atom {
             this.shootedVitas.push(enemy.id);
             if (!this.affectGetter) return;
             let affect = this.affectGetter(belonger, enemy);
-            belonger.on(new ItemEvent('setAffect', affect, enemy));
-            affect.finalDefuff = affect.debuff;
-            enemy.on(new ItemEvent('getAffect', affect, belonger));
-            if (affect.beDod) {
-                this.on(new ItemEvent('bedod'), affect, enemy);
-            } else {
-                enemy.on(new ItemEvent('beAffect', affect, belonger));
-            }
-            belonger.on(new ItemEvent('resAffect', affect, enemy));
+            affect.setout();
         });
         this.dieAfterHit && this.die();
     }
@@ -185,7 +177,7 @@ export class Flyer extends Atom {
      */
     affectGetter = undefined;
     /**
-     * @param {(vita:Vita)=>Affect} getter 
+     * @param {(from:Vita,to:Vita)=>Affect} getter 
      */
     useAffectGetter(getter) {
         this.affectGetter = getter;
@@ -233,8 +225,9 @@ export class Flyer extends Atom {
      */
     bindTo(atom) {
         this.atom = atom;
-        this.belonger = atom?.belonger;
-        this.link(atom.world);
+        this.belonger = atom.belonger || atom;
+        this.world = atom.world;
+        atom.world.elseAtoms[this.id] = this;
         atom.on('timing', e => {
             this.onTimer();
             return this._disposed;
@@ -287,5 +280,7 @@ export class Flyer extends Atom {
         this.livetime = time;
         return this;
     }
-
+    link(world) {
+        this.world = world;
+    }
 }

@@ -11,6 +11,7 @@ import { Affect } from "../affect";
 import { AttackController } from "../controller/attack";
 import { SkillController } from "../controller/skill";
 import { Controller } from "../controller";
+import { Role } from "../../po/atom/role";
 
 export const typicalProp = ['hp', 'mp', 'atk', 'def', 'crt', 'dod', 'hpr', 'mpr', 'speed'];
 /**
@@ -189,7 +190,7 @@ export class Vita extends Atom {
             }
         }, true);
         this.on('wantdown', e => {
-            if (this.stateController.has(StateCache.drop) || this.state.includes(StateCache.jumpSec, StateCache.jump, StateCache.hover)) return;
+            if (this.stateController.has(StateCache.drop) || this.stateController.includes(StateCache.jumpSec, StateCache.jump, StateCache.hover)) return;
             if (!this.stickingWall) return;
             if (!this.stickingWall.candown) return;
             this.stateController.setStateInfinite(StateCache.drop, true);
@@ -239,10 +240,45 @@ export class Vita extends Atom {
             if (this.stateController.includes(StateCache.jump, StateCache.jumpSec, StateCache.hover)) return;
             this.stateController.setStateInfinite(StateCache.drop, true);
         }, true);
+        this.slowSpeed = 0;
+        this.fastSpeed = 0;
+        this.on(`timing`, e => {
+            let despeed = Math.max(0, ...this.stateController.getSingleState(StateCache.slow).items.map(item => item.data));
+            let fastspeed = this.stateController.getSingleState(StateCache.fast).items.reduce((p, c) => p + c.data, 0);
+            let newExtra = fastspeed - despeed;
+            if (this.extraProp.speed != newExtra) {
+                let revalue = this.extraProp.speed;
+                this.extraProp.speed = newExtra;
+                this.on(new ItemEvent('espeedchange', [revalue, newExtra]));
+            }
+        }, true);
         this.on('movex', e => {
             let moveUtil = e.value;
             let { old, value } = moveUtil;
-
+            let limit = this.world.stepManager.limit;
+            value = Math.max(limit[0], Math.min(limit[1], value));
+            this.world.walls.some(wall => {
+                if (wall.canup) return false;
+                if (wall.willHitByX(value, this.y, this.height)) {
+                    console.log('hti');
+                    if (value > old) {
+                        value = wall.x;
+                        wall.on(new ItemEvent('holdvita_1', this));
+                        this.on(new ItemEvent('behold_1'), wall);
+                    } else {
+                        value = wall.x + wall.width;
+                        wall.on(new ItemEvent('holdvita_2', this));
+                        this.on(new ItemEvent('behold_2'), wall);
+                    }
+                    return true;
+                }
+                return false;
+            })
+            if (this.stickingWall?.willOutByX(value)) {
+                this.stickingWall = null;
+                this.stateController.setStateInfinite(StateCache.drop, true);
+            }
+            moveUtil.value = value;
         }, true);
         this.on('movey', e => {
             let moveUtil = e.value;
@@ -352,7 +388,7 @@ export class Vita extends Atom {
              * 确定应掉血量
              */
             affect.finalHarm = Math.round(affect.harm.common + affect.harm.absolute - affect.reduce.common - affect.reduce.absolute);
-            
+
             /**
              * 是否无敌
              */

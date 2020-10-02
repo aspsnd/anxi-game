@@ -74,12 +74,12 @@ export class SkillController extends Controller{
             if (timer < skill.freezeUtil) return;
             skill.freezeUtil = timer + skill.proto.freeze;
             let lostMp = skill.getMp();
-            if (lostMp > this.vita.nmp) return;
+            if (lostMp > this.vita.varProp.mp) return;
             /**
              * 以下为该技能可以释放
              */
             skill.executing = true;
-            this.vita.nmp -= lostMp;
+            this.vita.varProp.mp -= lostMp;
             this.vita.on('nmpchange');
             this.vita.on(new ItemEvent('createskill', skill, this.vita));
             skill.proto.stand > 0 && this.vita.stateController.setStateTime(StateCache.attack, skill.proto.stand);

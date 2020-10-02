@@ -1,14 +1,14 @@
-import { Affect } from "../../../anxi/affect";
-import { ShadowController } from "../../../anxi/controller/skill/shadow";
-import { SkillProto } from "../../../anxi/proto/skill";
-import { Circle } from "../../../anxi/shape/shape";
+import { Affect } from "../../../../anxi/affect";
+import { ShadowController } from "../../../../anxi/controller/skill/shadow";
+import { SkillProto } from "../../../../anxi/proto/skill";
+import { Circle } from "../../../../anxi/shape/shape";
 
 /**
  * 技能5 【被动】残影的滞留时间增加为5秒
  *          所有残影化为剑气，向自身飞回对途径敌人造成伤害，残影数量越多伤害越高，一个敌人可以被多个残影打中
  *          若残影数量为0，则由自身向外发出9只残影，造成伤害
  */
-export default new SkillProto('魔影杀', `【被动】残影的滞留时间增加为5秒。\n所有残影化为剑气，向自身飞回对途径敌人造成伤害，残影数量越多伤害越高，一个敌人可以被多个残影打中。若残影数量为0，则由自身向外发出9只残影，造成伤害`)
+export default new SkillProto(4, '魔影杀', `【被动】残影的滞留时间增加为5秒。\n所有残影化为剑气，向自身飞回对途径敌人造成伤害，残影数量越多伤害越高，一个敌人可以被多个残影打中。若残影数量为0，则由自身向外发出9只残影，造成伤害`)
     .active(true)
     .lost(100)
     .freezing(10)

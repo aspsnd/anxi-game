@@ -1,25 +1,28 @@
 import { TilingSprite } from "pixi.js";
 import { by, GameHeight, GameWidth } from "../../util";
 import { Conster } from "../const";
+import { WallProto } from "../proto/wall";
 
 /**
  * 墙体模拟器，地面，跳板...
  */
 export class Wall extends Conster {
     /**
-     * @param {WallData} proto 
+     * @param {WallProto} proto 
      */
     constructor(proto) {
         super();
         this.proto = proto;
-        this.width = proto.width;
+        this.width = proto.imgWidth;
         this.height = proto.height;
+        this.imgHeight = proto.imgHeight;
         this.canup = proto.up;
         this.candown = proto.down;
         this.glue = proto._glue;
-        this.sprite = proto._repeat ? new TilingSprite(by(proto.url), proto.width, proto.height) : new Sprite(by(proto.url));
-        this.sprite.width = proto.width;
-        this.sprite.height = proto.height;
+        this.sprite = proto._repeat ? new TilingSprite(by(proto.url), proto.imgWidth, proto.imgHeight) : new Sprite(by(proto.url));
+        this.sprite.width = proto.imgWidth;
+        this.sprite.height = proto.imgHeight;
+        this.offsetY = this.imgHeight - this.height;
     }
     get x() {
         return this.sprite.x;
@@ -29,10 +32,10 @@ export class Wall extends Conster {
         return x;
     }
     get y() {
-        return this.sprite.y;
+        return this.sprite.y + this.offsetY;
     }
     set y(y) {
-        this.sprite.y = y;
+        this.sprite.y = y - this.offsetY;
         return y;
     }
 
@@ -73,7 +76,7 @@ export class Wall extends Conster {
     willHitByX(nx, ny, height) {
         let x = this.x;
         let y = this.y;
-        return (nx > x && nx < x + this.width) && (ny + height > y - this.height && ny < y);
+        return (nx > x && nx < x + this.width) && (ny + height < y - this.height && ny > y);
     }
 
 }

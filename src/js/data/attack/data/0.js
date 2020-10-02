@@ -17,10 +17,10 @@ export default new AttackProto({
     getHitGraph(pos, face, vita) {
         let [x, y] = pos;
         return new Polygon(
-            new Point(x + 20 * face, vita.centerY + 5),
-            new Point(x + 20 * face, vita.centerY + 50),
-            new Point(x + 75 * face, vita.centerY + 50),
-            new Point(x + 75 * face, vita.centerY + 5)
+            new Point(x + 20 * face, vita.centerY -25),
+            new Point(x + 20 * face, vita.centerY + 20),
+            new Point(x + 75 * face, vita.centerY + 20),
+            new Point(x + 75 * face, vita.centerY -25)
         );
     },
     acitonData: {
@@ -28,16 +28,16 @@ export default new AttackProto({
             len: 15,
             changedFrame: 1,
             value: [
-                ...tween([34, 45, 185], [36, 56, 280], 12),
-                ...tween([36, 56, 280], [34, 45, 185], 3)
+                ...tween([34, 40, 185], [36, 51, 280], 12),
+                ...tween([36, 51, 280], [34, 40, 185], 3)
             ]
         },
         hand_r: {
             len: 15,
             changedFrame: 1,
             value: [
-                ...tween([14, 42, 15], [14, 42, 45], 12),
-                ...tween([14, 42, 45], [14, 42, 15], 3)
+                ...tween([14, 37, 15], [14, 37, 45], 12),
+                ...tween([14, 37, 45], [14, 37, 15], 3)
             ]
         }
     }
