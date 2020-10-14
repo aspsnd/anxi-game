@@ -40,18 +40,18 @@ export default new RoleProto({
                 money: 500
             }
         },
-        // {
-        //     index: 13,
-        //     cost: {
-        //         money: 1000
-        //     }
-        // },
-        // {
-        //     index: 14,
-        //     cost: {
-        //         money: 2000
-        //     }
-        // }
+        {
+            index: 13,
+            cost: {
+                money: 1000
+            }
+        },
+        {
+            index: 14,
+            cost: {
+                money: 2000
+            }
+        }
     ])
     .useFultureTalents([])
     .useNextLevel((role, nextLevel) => ({

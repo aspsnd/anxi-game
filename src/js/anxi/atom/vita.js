@@ -240,6 +240,11 @@ export class Vita extends Atom {
             if (this.stateController.includes(StateCache.jump, StateCache.jumpSec, StateCache.hover)) return;
             this.stateController.setStateInfinite(StateCache.drop, true);
         }, true);
+        this.on(`loststate_${StateCache.hover}`, e => {
+            if (this.stickingWall) return;
+            if (this.stateController.includes(StateCache.jump, StateCache.jumpSec, StateCache.hover)) return;
+            this.stateController.setStateInfinite(StateCache.drop, true);
+        }, true);
         this.slowSpeed = 0;
         this.fastSpeed = 0;
         this.on(`timing`, e => {

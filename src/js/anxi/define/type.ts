@@ -39,6 +39,7 @@ export type CardData = {
 }
 export type HAI = {
     intelli: number,
+    attackDistance:number,
     skill: {
         index: number,
         rate: number,

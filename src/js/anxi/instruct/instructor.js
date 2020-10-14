@@ -1,5 +1,5 @@
+import { AIController } from "../controller/ai";
 import { ItemEvent } from "../event";
-// import { AI } from "./ai";
 export const Instructer = {
     player(_keys = 'wsadjkyuiol h') {
         let keys = typeof _keys == 'string' ? _keys.split('') : _keys;
@@ -71,10 +71,9 @@ export const Instructer = {
     extraPlayer_old: ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', '1', '2', '8', '4', '5', '6', '3', '0', '7'],
     extraPlayer: [18, 40, 37, 39, 97, 98, 104, 100, 101, 102, 99, 96, 103],
     testPlayer: [-1, -1, 78, 77, 188, 190, 191, 186, 222, 220],
-    artificialIntelligence(_intelli) {
-        let intelli = _intelli;
+    artificialIntelligence() {
         return function (vita) {
-            vita.ai = new AI(vita, intelli ?? vita.intelli ?? vita.manager?.ai?.intelli ?? 3);
+            vita.aiController = new AIController(vita);
         }
     }
 };

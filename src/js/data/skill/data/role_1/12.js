@@ -1,5 +1,5 @@
 import { Sprite } from "pixi.js";
-import { StateItem } from "../../../../anxi/controller/state";
+import { StateCache, StateItem } from "../../../../anxi/controller/state";
 import { ItemEvent } from "../../../../anxi/event";
 import { SkillProto } from "../../../../anxi/proto/skill";
 import { by, tween } from "../../../../util";
@@ -48,7 +48,7 @@ export default new SkillProto(12, '量子挪移', '激怒第一个与自己对�
                 flag2._destroyed || flag2.destroy();
                 return;
             }
-            if (target.id !== vita.id && (!target.live || (target.face ^ face) >= 0 || ((target.x() - vita.x()) ^ face) <= 0)) return;
+            if (target.id !== vita.id && (target.dead || (target.face ^ face) >= 0 || ((target.x - vita.x) ^ face) <= 0)) return;
             target.viewController.view.addChild(flag2);
             let nowTimer = target.timer;
             for (let i = 1; i <= afterTime; i++) {
@@ -62,9 +62,9 @@ export default new SkillProto(12, '量子挪移', '激怒第一个与自己对�
             target.group = Symbol();
             let atkadder = bv => bv * 0.5;
             let hpadder = bv => bv * 0.8;
-            target.computeFunction['atk'].push(atkadder);
-            let rhp = target.nhp;
-            target.nhp += target.bhp * 0.8;
+            target.computeFunctions['atk'].push(atkadder);
+            let rhp = target.varProp.hp;
+            target.varProp.hp += target.baseProp.hp * 0.8;
             target.on(new ItemEvent('nhpchange', [rhp, target.varProp.hp], vita));
             target.computeFunctions['hp'].push(hpadder);
             target.timeChangeRates.push(0.8);
@@ -78,7 +78,6 @@ export default new SkillProto(12, '量子挪移', '激怒第一个与自己对�
                 }
             })
             target.needCompute = true;
-            // target.viewController.toDestory.push(flag2);
         })
     })
     .useCommonActionData({
