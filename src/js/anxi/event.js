@@ -117,7 +117,7 @@ export class ItemEventDispatcher {
             }
             j++;
         }
-        complexCache = complexCache.filter(handler=>handler);
+        complexCache = complexCache.filter(handler => handler);
         this._emitingEvents.shift();
     }
     /**
@@ -125,7 +125,7 @@ export class ItemEventDispatcher {
      */
     refreshHandler() {
         for (let en in this.commonHandlers) {
-            this.commonHandlers[en] = this.commonHandlers[en].filter(comt => comt.always);
+            this.commonHandlers[en] = this.commonHandlers[en].filter(comt => comt).filter(comt => comt.always);
         }
         this.complexHandlers = this.complexHandlers.filter(comt => comt.always);
     }

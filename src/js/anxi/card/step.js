@@ -72,8 +72,15 @@ export class StepManager {
     }
     attachRoles() {
         let { role, extraRole, container } = this;
-        let nowX = role.x();
-        let nowX2 = extraRole.x();
+        if(role.dead){
+            this.pointer = [this.extraRole];
+            this.attach = this.attachRole;
+        }
+        if(extraRole.dead){
+            this.attach = this.attachRole;
+        }
+        let nowX = role.x;
+        let nowX2 = extraRole.x;
         let leftLimit = 220;
         let rightLimit = GameWidth - 290;
         let gx1 = role.viewController.view.getGlobalPosition().x;
@@ -103,7 +110,7 @@ export class StepManager {
             }
         }
         if (this.step % 1 != 0 && this.step < 4.5) {
-            if (this.screenLeft >= CardStepManager.defaultLimits[this.step + 0.5][1] - GameWidth) {
+            if (this.screenLeft >= StepManager.defaultLimits[this.step + 0.5][1] - GameWidth) {
                 this.goToStep(this.step + 0.5);
             }
         }

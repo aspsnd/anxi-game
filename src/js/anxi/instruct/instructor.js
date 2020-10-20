@@ -1,4 +1,4 @@
-import { AIController } from "../controller/ai";
+import { AIController } from "../controller/ai/ai";
 import { ItemEvent } from "../event";
 export const Instructer = {
     player(_keys = 'wsadjkyuiol h') {

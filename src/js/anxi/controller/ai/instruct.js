@@ -8,7 +8,7 @@ export class Instruct {
         this.event = event;
     }
     waitTime = 0;
-    wait(time){
+    waitUntil(time){
         this.waitTime = time;
         return this;
     }

@@ -159,8 +159,8 @@ export class GUI {
         ura.endFill();
         urabar.addChild(ura);
         role.on('timing', e => {
-            // ura.height = 40 * role.uraController.uras;
-            // ura.y = 40 * (1 - role.uraController.uras) + 1;
+            ura.height = 40 * role.uraController.uras;
+            ura.y = 40 * (1 - role.uraController.uras) + 1;
         }, true);
     }
     refresh() {

@@ -1,5 +1,7 @@
 import { Vita } from "../../anxi/atom/vita";
+import { MoneyController } from "../../anxi/controller/money";
 import { StateCache } from "../../anxi/controller/state";
+import { URAController } from "../../anxi/controller/ura";
 import { ItemEvent } from "../../anxi/event";
 import { RoleProto } from "../../anxi/proto/role";
 import { RoleProtos } from "../../data/role/all";
@@ -55,6 +57,11 @@ export class Role extends Vita {
         this.bag = role_proto.bag || this.bag;
         this.equip = role_proto.equip || this.equip;
     }
+    initController() {
+        super.initController();
+        this.moneyController = new MoneyController(this);
+        this.uraController = new URAController(this);
+    }
     initEvent() {
         super.initEvent();
         this.on('overexp', e => {
@@ -90,24 +97,12 @@ export class Role extends Vita {
         this.on('getmoney', e => {
             let r = Math.random();
             if (r < 0.02) {
-                let rhp = this.varProp.hp;
-                this.varProp.hp += parseInt(this.prop.hp * 0.05 * (0.5 + Math.random()));
-                (this.nhp > this.hp) && (this.nhp = this.hp);
-                this.on(new ItemEvent('nhpchange', [rhp, this.nhp]));
+                this.getHP(parseInt(this.prop.hp * 0.05 * (0.5 + Math.random())), this);
             } else if (r < 0.04) {
-                let rmp = this.varProp.mp;
-                this.varProp.mp += parseInt(this.prop.mp * 0.05 * (0.5 + Math.random()));
-                (this.varProp.mp > this.prop.mp) && (this.varProp.mp = this.prop.mp);
-                this.on(new ItemEvent('nmpchange', [rmp, this.nmp]));
+                this.getMP(parseInt(this.prop.mp * 0.05 * (0.5 + Math.random())), this);
             } else if (r < 0.08) {
-                let rhp = this.varProp.hp;
-                this.varProp.hp += parseInt(this.prop.hp * 0.05 * (0.5 + Math.random()));
-                (this.nhp > this.hp) && (this.nhp = this.hp);
-                this.on(new ItemEvent('nhpchange', [rhp, this.nhp]));
-                let rmp = this.varProp.mp;
-                this.varProp.mp += parseInt(this.prop.mp * 0.05 * (0.5 + Math.random()));
-                (this.varProp.mp > this.prop.mp) && (this.varProp.mp = this.prop.mp);
-                this.on(new ItemEvent('nmpchange', [rmp, this.nmp]));
+                this.getHP(parseInt(this.prop.hp * 0.05 * (0.5 + Math.random())), this);
+                this.getMP(parseInt(this.prop.mp * 0.05 * (0.5 + Math.random())), this);
             }
         }, true);
         this.on(`stating_${StateCache.common}`, e => {
@@ -164,9 +159,9 @@ export class Role extends Vita {
         return true;
     }
     refresh() {
-        for(let p in this){
-            if(/Controller$/.test(p)){
-                this[p].refresh();
+        for (let p in this) {
+            if (/Controller$/.test(p)) {
+                this[p]?.refresh();
             }
         }
         this.compute();

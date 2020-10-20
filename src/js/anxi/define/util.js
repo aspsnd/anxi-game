@@ -25,6 +25,10 @@ export const EquipTypeIntro = {
 }
 export const EquipType = ['weapon', 'body', 'dcrt', 'wing'];
 export const ComtTypeName = ['head', 'body', 'hand_l', 'hand_r', 'leg_l', 'leg_r', 'weapon', 'wing'];
+export const Weapon = 0;
+export const Body = 1;
+export const Dcrt = 2;
+export const Wing = 3;
 export const HeadComt = 0;
 export const BodyComt = 1;
 export const Hand_lComt = 2;

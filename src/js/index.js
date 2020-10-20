@@ -48,7 +48,7 @@ export const init = () => {
                     new GTip('登录成功');
                     // gameRouter.to('main');
                     setTimeout(_ => {
-                        gameRouter.pageHandlers['world'].data.record = RecordController.getRecord(1);
+                        gameRouter.pageHandlers['world'].data.record = RecordController.getRecord(2);
                         gameRouter.to('world');
                     })
                 }).catch(e => {
@@ -166,7 +166,9 @@ export const init = () => {
                 gameApp.ticker.add(_ => {
                     filter2[0].time += 0.05;
                 })
+                let roles = [];
                 for (let i = 0; i < 4; i++) {
+                    let index = i;
                     let sprite = new Sprite(directBy(`role/face/role${i + 1}.png`));
                     sprite.position.set(240 * i, 0);
                     sprite.filters = filter1;
@@ -178,7 +180,13 @@ export const init = () => {
                         sprite.filters = filter1;
                     }
                     sprite.tap = _ => {
-
+                        sprite.out = undefined;
+                        let role = new Role(RoleProtos[index]);
+                        roles.push(role.toPlainObject());
+                        if (roles.length < 2) return;
+                        let record = RecordController.newRecord(roles);
+                        gameRouter.pageHandlers['save'].data.record = record;
+                        gameRouter.to('save');
                     }
                     data.roles = [];
                     container.addChild(sprite);

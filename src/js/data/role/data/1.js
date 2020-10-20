@@ -20,7 +20,7 @@ export default new RoleProto({
     attacks: [8],
     height: 80,
     bulletUrl: './res/util/role/1/9.png',
-}).useIndex(1).useRest().useFexpGetter(level => Math.round(50 * (1.25 ** level)))
+}).useIndex(1).useRest().useFexpGetter(level => Math.round(50 * (1.25 ** level))).useUraIndex(1)
     .useFultureSkills([
         {
             index: 10,

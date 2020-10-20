@@ -21,7 +21,7 @@ export default new SkillProto(3,'悲影落', '向前位移【途中无敌】 原
         role.stateController.removeState(StateCache.run, StateCache.go);
         role.getController('shadowController', ShadowController).create(role.x - 10 * face, role.centerY);
         role.stateController.insertState(StateCache.IME, new StateItem(15));
-        role.stateController.insertState(StateCache.URA, new StateCache(15));
+        role.stateController.insertState(StateCache.URA, new StateItem(15));
         role.viewController.view.alpha = 0;
         let headshadow = new Sprite(by('./res/util/role/0/shadow/headshoot.png'));
         role.world.vitaContainer.addChild(headshadow);

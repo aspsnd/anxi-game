@@ -12,6 +12,7 @@ import { AttackController } from "../controller/attack";
 import { SkillController } from "../controller/skill";
 import { Controller } from "../controller";
 import { Role } from "../../po/atom/role";
+import { AIController } from "../controller/ai/ai";
 
 export const typicalProp = ['hp', 'mp', 'atk', 'def', 'crt', 'dod', 'hpr', 'mpr', 'speed'];
 /**
@@ -133,6 +134,10 @@ export class Vita extends Atom {
         this.attackController = new AttackController(this, this.proto.attacks);
         this.skillController = new SkillController(this);
     }
+    /**
+     * @type {AIController}
+     */
+    aiController
     getCanRun() {
         var ps = this.stateController.states[StateCache.go];
         return this.timer - ps.lastGet < 25 && this.timer > 25;
@@ -143,6 +148,18 @@ export class Vita extends Atom {
      * 注册指令
      */
     initInstruct() {
+        /**
+         * 交给AI层调用
+         */
+        this.on('wantgo', e => {
+            if (this.stateController.includes(StateCache.hard, StateCache.beHitBehind, StateCache.dizzy, StateCache.attack, StateCache.go)) return;
+            if (e.value === true) {
+                this.stateController.setStateInfinite(StateCache.go, true);
+            } else {
+                this.stateController.setStateTime(StateCache.go, e.value ?? 60);
+            }
+        }, true);
+
         this.on('wantleft', e => {
             if (this.stateController.includes(StateCache.hard, StateCache.beHitBehind, StateCache.dizzy, StateCache.attack)) return;
             if (this.stateController.has(StateCache.go) && this.face == -1) return;
@@ -319,9 +336,7 @@ export class Vita extends Atom {
         this.on('timing', e => {
             if (this.die || this.timer % 60 > 0) return;
             if (this.varProp.hp < this.prop.hp && this.prop.hpr > 0) {
-                let rhp = this.varProp.hp;
-                this.varProp.hp = Math.min(this.prop.hpr + rhp, this.prop.hp);
-                this.on(new ItemEvent('nhpchange', [rhp, this.varProp.hp], this));
+                this.getHP(this.prop.hpr, this);
             }
             if (this.varProp.hp < this.prop.mp && this.prop.mpr > 0) {
                 let rmp = this.varProp.mp;
@@ -419,10 +434,7 @@ export class Vita extends Atom {
             /**
              * 触发掉血事件
              */
-            let rhp = this.varProp.hp;
-            let nhp = Math.max(rhp - affect.finalHarm, 0);
-            this.varProp.hp = nhp;
-            this.on(new ItemEvent('nhpchange', [rhp, nhp], e.from));
+            this.reduceHP(affect.finalHarm, e.from);
 
             //实现控制效果
             if (affect.finalDefuff.find(buff => [StateCache.beHitBehind, StateCache.dizzy].includes(buff.state))) {
@@ -441,10 +453,34 @@ export class Vita extends Atom {
             }
         }, true)
         this.on('dead', e => {
-            this.ai && this.ai.destory();
-            this.ai = null;
+            this.aiController = null;
             this.stateController.setStateInfinite(StateCache.dead, true);
+            this.viewController.dead();
         }, true)
+    }
+    reduceHP(lost, from) {
+        let rvalue = this.varProp.hp;
+        let endv = Math.max(0, rvalue - lost);
+        this.varProp.hp = endv;
+        this.on(new ItemEvent('nhpchange', [rvalue, endv], from));
+    }
+    getHP(added, from) {
+        let rvalue = this.varProp.hp;
+        let endv = Math.min(this.prop.hp, rvalue + added);
+        this.varProp.hp = endv;
+        this.on(new ItemEvent('nhpchange', [rvalue, endv], from));
+    }
+    reduceMP(lost, from) {
+        let rvalue = this.varProp.mp;
+        let endv = Math.max(0, rvalue - lost);
+        this.varProp.mp = endv;
+        this.on(new ItemEvent('nmpchange', [rvalue, endv], from));
+    }
+    getMP(added, from) {
+        let rvalue = this.varProp.mp;
+        let endv = Math.min(this.prop.mp, rvalue + added);
+        this.varProp.mp = endv;
+        this.on(new ItemEvent('nmpchange', [rvalue, endv], from));
     }
     initVar() {
         this.varProp = {

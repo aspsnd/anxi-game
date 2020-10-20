@@ -93,7 +93,7 @@ export class StateController extends Controller {
         }
         this.displayState = this.states[StateCache.common];
         this.states[StateCache.common].infinite = true;
-        this.belonger.on('timing', this.onTimer.bind(this));
+        this.belonger.on('timing', this.onTimer.bind(this), true);
     }
     includes(...stateIndexs) {
         return stateIndexs.some(stateIndex => {
@@ -287,9 +287,6 @@ export class SingleState {
      * @type {StateItem[]}
      */
     items = []
-    setInfinite(infinite) {
-        this.infinite = infinite;
-    }
     /**
      * 新加入状态 如减速 中毒
      * @return {number}
@@ -304,6 +301,9 @@ export class SingleState {
         this.items[this.itemIndex] = item;
         if (item.last > this.last) {
             this.last = item.last;
+        }
+        if(item.infinite){
+            this.infinite = true;
         }
         return this.itemIndex++;
     }

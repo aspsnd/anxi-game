@@ -65,21 +65,28 @@ export class SkillController extends Controller{
         })
         return added;
     }
+    /**
+     * @param {Skill} skill 
+     */
+    isExecutableSkill(skill){
+        if (!skill || !skill.active || skill.preventing()) return false;
+        if (this.belonger.timer < skill.freezeUtil) return false;
+        let lostMp = skill.getMp();
+        if (lostMp > this.belonger.varProp.mp) return false;
+        return true;
+    }
     init() {
         this.vita.on('wantskill', e => {
             let timer = this.vita.timer;
             let skill = e.value == 0 ?
                 this.skills.filter(s => s.commonType == 1)[0] : this.skills.filter(s => s.commonType == 0)[e.value - 1];
-            if (!skill || !skill.active || skill.preventing()) return;
-            if (timer < skill.freezeUtil) return;
+            if(!this.isExecutableSkill(skill))return;
             skill.freezeUtil = timer + skill.proto.freeze;
-            let lostMp = skill.getMp();
-            if (lostMp > this.vita.varProp.mp) return;
             /**
              * 以下为该技能可以释放
              */
             skill.executing = true;
-            this.vita.varProp.mp -= lostMp;
+            this.vita.varProp.mp -= skill.getMp();
             this.vita.on('nmpchange');
             this.vita.on(new ItemEvent('createskill', skill, this.vita));
             skill.proto.stand > 0 && this.vita.stateController.setStateTime(StateCache.attack, skill.proto.stand);

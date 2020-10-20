@@ -186,7 +186,7 @@ export default new SkillProto(14, '弑神星云', '进入最长8秒的蓄力，�
                         last: 15
                     }, {
                         state: StateCache.dizzy,
-                        last: (storeTime / 5) | 0
+                        last: (storeTime / 5 + 1) | 0
                     });
                     return affect;
                 });

@@ -7,6 +7,10 @@ import { StateCache } from "./state";
 import { Flyer } from "../atom/flyer";
 import { commonEnglishStyle, lostHpStyle } from "./view.util";
 import { Affect } from "../affect";
+import { World } from "../atom/world";
+import { RealWorld } from "../../po/world";
+import { uraFilter } from "../../data/ffilter/filter";
+import { Role } from "../../po/atom/role";
 
 export class ViewController extends Controller {
     static convert(arr) {
@@ -37,7 +41,7 @@ export class ViewController extends Controller {
     init() {
         this.initImage();
         this.initReact();
-        this.belonger.on('timing', this.onTimer.bind(this));
+        RealWorld.instance.on('timing', this.onTimer.bind(this));
     }
     initImage() {
         let { vita } = this;
@@ -137,6 +141,7 @@ export class ViewController extends Controller {
         wing: undefined,
     }
     onTimer() {
+        if (this.destroyed) return true;
         this.view.position.set(this.belonger.x, this.belonger.y);
         let state = this.belonger.stateController.displayState;
         let _s = state.index;
@@ -216,6 +221,18 @@ export class ViewController extends Controller {
         } else {
             return 0;
         }
+    }
+    destroyed = false;
+    dead() {
+        this.belonger.once(`timer_${this.belonger.timer + 120}`, e => {
+            if(this.belonger instanceof Role){
+                this.view.parent.removeChild(this.view);
+            }else{
+                this.view.destroy();
+            } 
+            this.destroyed = true;
+            this.belonger.refreshHandler();
+        })
     }
 }
 export const convert = ViewController.convert;
