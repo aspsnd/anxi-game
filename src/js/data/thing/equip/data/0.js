@@ -72,7 +72,7 @@ export const dcrt1 = EquipProto.Dcrt(8, '蜷星眼', {
     intro: '诸星蜷落,噩梦是劫'
 }).initDoubleUrl(1);
 
-export const wing1 = EquipProto.Wing('编制噩梦之翼', {
+export const wing1 = EquipProto.Wing(9, '编制噩梦之翼', {
     quality: QualityType.green,
     props: {
         hp: [95, 125],

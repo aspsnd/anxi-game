@@ -1,7 +1,3 @@
-// import { ThingProto } from "./base";
-import { Sprite } from "pixi.js";
-import { by } from "../../util";
-
 export const ThingKind = -1
 export const EquipKind = 0
 export const MaterialKind = 1
@@ -51,26 +47,4 @@ export const PropText = {
     body: '铠甲',
     dcrt: '能核',
     wing: '羽翼'
-}
-/**
- * @param {ThingProto} proto 
- */
-export function getSprite(proto) {
-    return new Sprite(by(proto.disUrl));
-}
-/**
- * @type {ThingProto[][]}
- */
-export const ThingProtoProtos = [];
-export function getSpriteFromThing(thing) {
-    return new Sprite(by(ThingProtoProtos[thing.kind][thing.id].disUrl));
-}
-export function getDisUrl(thing) {
-    return ThingProtoProtos[thing.kind][thing.id].disUrl;
-}
-export function getDropUrl(thing) {
-    return ThingProtoProtos[thing.kind][thing.id].dropUrl;
-}
-export function getProto(thing) {
-    return ThingProtoProtos[thing.kind][thing.id];
 }

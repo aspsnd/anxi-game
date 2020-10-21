@@ -141,7 +141,7 @@ export class ViewController extends Controller {
         wing: undefined,
     }
     onTimer() {
-        if (this.destroyed) return true;
+        if (this.destroyed) return;
         this.view.position.set(this.belonger.x, this.belonger.y);
         let state = this.belonger.stateController.displayState;
         let _s = state.index;
@@ -225,14 +225,24 @@ export class ViewController extends Controller {
     destroyed = false;
     dead() {
         this.belonger.once(`timer_${this.belonger.timer + 120}`, e => {
-            if(this.belonger instanceof Role){
+            if (this.belonger instanceof Role) {
                 this.view.parent.removeChild(this.view);
-            }else{
+            } else {
                 this.view.destroy();
-            } 
+            }
             this.destroyed = true;
             this.belonger.refreshHandler();
         })
+        this.toDestory.forEach(s=>s._destroyed || s.destroy());
     }
+    refresh() {
+        this.destroyed = false;
+        this.toDestory = [];
+        this.view.filters = [];
+    }
+    /**
+     * @type {Sprite[]}
+     */
+    toDestory = []
 }
 export const convert = ViewController.convert;

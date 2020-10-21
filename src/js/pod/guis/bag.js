@@ -11,8 +11,10 @@ import { SimpleOperator } from "./base/operate";
 // import { equipExtraProps } from "../../po/vita";
 import { SimpleDetail } from "./base/detail";
 import { Role } from "../../po/atom/role";
-import { EquipTypeIntro, getSpriteFromThing, EquipType, getProto } from "../../anxi/define/util";
+import { EquipTypeIntro,EquipType, } from "../../anxi/define/util";
 import { World } from "../../anxi/atom/world";
+import { getProto, getSpriteFromThing } from "../../data/thing/all";
+import { EquipProtos } from "../../data/thing/equip/all";
 
 export class BagController extends BaseGui {
 

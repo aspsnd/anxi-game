@@ -14,6 +14,7 @@ export const jumpSpeed = {
 };
 export const GameWidth = 960;
 export const GameHeight = 590;
+export const CardWidth = 4500;
 export const gameWindow = appCanvas;
 export const gameApp = new Application({
     view: appCanvas,

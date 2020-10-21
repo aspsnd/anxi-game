@@ -7,10 +7,11 @@ import { by, GameHeight, GameWidth } from "../../util";
 import { SingleThing } from "../guis/base/bagUitl";
 import { SimpleDetail } from "../guis/base/detail";
 import { CombineUtil } from "../../data/combine/util";
-// import { ThingProto } from "../../data/bag/base";
-// import { Game } from "../../po/game";
-import { getDisUrl, MaterialKind, getProto, getSprite } from "../../anxi/define/util";
+import { MaterialKind } from "../../anxi/define/util";
 import { Role } from "../../po/atom/role";
+import { getDisUrl, getSprite, getProto } from "../../data/thing/all";
+import { ThingProto } from "../../anxi/proto/thing/base";
+import { RealWorld } from "../../po/world";
 
 class Combine extends ToolGUI {
     static INSTANCE = new Combine();
@@ -150,7 +151,7 @@ class Combine extends ToolGUI {
             }
             this.work.addChild(workSprite);
             this.nowThingProto = null;
-            Game.save();
+            RealWorld.instance.save();
         }
     }
     roleSelectWrap = new Container();

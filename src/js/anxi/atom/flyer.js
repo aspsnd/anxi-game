@@ -185,18 +185,18 @@ export class Flyer extends Atom {
         return this;
     }
     die() {
+        super.die();
         this.deadTime = this.timer;
-        this.dead = true;
         this.on('dead');
         return this;
     }
     deadTime = -1
-    dead = false
     dieAfterHit = false
     ifDieAfterHit(bool) {
         this.dieAfterHit = bool;
         return this;
     }
+    wakeTime = 2
     /**
      * 苟活时间
      */
@@ -269,9 +269,7 @@ export class Flyer extends Atom {
         this.root._destroyed || this.root.destroy();
         this.world.elseAtoms[this.id] = undefined;
         this.belonger = null;
-        this.refreshAbsolute();
-        this.root = null;
-        this.world = null;
+        // this.refreshAbsolute();
     }
     livetime = true
     /**

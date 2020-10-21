@@ -25,11 +25,12 @@ export default new MonstProto({
         exp: 1
     },
     drops: {
+        rate:0.2,
         equip: [
-            [0, 0.05],
-            [1, 0.05],
-            [2, 0.08],
-            [3, 0.08]
+            [0, 5],
+            [1, 5],
+            [2, 8],
+            [3, 8]
         ],
         material: [],
         extra: []

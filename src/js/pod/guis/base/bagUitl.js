@@ -1,4 +1,5 @@
 import { Graphics, Sprite, TextStyle, Text } from "pixi.js";
+import { getDisUrl, getProto } from "../../../data/thing/all";
 import { by, gameTink } from "../../../util";
 // import { getDisUrl, getProto } from "../../../data/bag/util";
 import { SimpleDetail } from "./detail";

@@ -87,35 +87,24 @@ export class ItemEventDispatcher {
         this._emitingEvents.unshift(event);
         if (this.commonHandlers[event.type]) {
             let handlers = this.commonHandlers[event.type];
-            // this.commonHandlers[event.type] = [];
-            // for (let handler of handlers) {
-            //     if (!handler.handler(event)) {
-            //         this.commonHandlers[event.type].push(handler);
-            //     }
-            // }
-            let i = 0;
+            let i = -1;
             for (let handler of handlers) {
+                i++;
                 if (!handler) continue;
                 if (handler.handler(event)) {
                     handlers[i] = undefined;
                 }
-                i++;
             }
             handlers = handlers.filter(handler => handler);
         };
         let complexCache = this.complexHandlers;
-        // this.complexHandlers = [];
-        // for (let comt of complexCache) {
-        //     if (comt.checker(event) && comt.handler(event)) continue;
-        //     this.complexHandlers.push(comt);
-        // }
-        let j = 0;
+        let j = -1;
         for (let handler of complexCache) {
+            j++;
             if (!handler) continue;
             if (handler.handler(event)) {
                 handlers[j] = undefined;
             }
-            j++;
         }
         complexCache = complexCache.filter(handler => handler);
         this._emitingEvents.shift();

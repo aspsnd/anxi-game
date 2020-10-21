@@ -1,13 +1,18 @@
-import { Vita } from "../../anxi/atom/vita";
+import { typicalProp, Vita } from "../../anxi/atom/vita";
+import { EquipController } from "../../anxi/controller/equip";
 import { MoneyController } from "../../anxi/controller/money";
 import { StateCache } from "../../anxi/controller/state";
 import { URAController } from "../../anxi/controller/ura";
+import { EquipKind, ExtraKind, MaterialKind } from "../../anxi/define/util";
+import { AnxiError } from "../../anxi/error/base";
 import { ItemEvent } from "../../anxi/event";
 import { RoleProto } from "../../anxi/proto/role";
+import { ThingProto } from "../../anxi/proto/thing/base";
 import { RoleProtos } from "../../data/role/all";
 
 export class Role extends Vita {
-    group = 0
+    static RoleGroup = 0
+    group = Role.RoleGroup
     exp = 0
     fexp = 1
     money = 0
@@ -61,6 +66,7 @@ export class Role extends Vita {
         super.initController();
         this.moneyController = new MoneyController(this);
         this.uraController = new URAController(this);
+        this.equipController = new EquipController(this);
     }
     initEvent() {
         super.initEvent();
@@ -125,6 +131,7 @@ export class Role extends Vita {
             money: this.money,
             bag: this.bag,
             equip: this.equip,
+            wingSkill: this.wingSkill
         });
     }
     // 获取经验
@@ -159,6 +166,18 @@ export class Role extends Vita {
         return true;
     }
     refresh() {
+        this.dead = false;
+        this.group = Role.RoleGroup;
+        this.lastTimerFrame = 0;
+        this.frame = 0;
+        this.stickingWall = null;
+        this.timer = 0;
+        this.face = 1;
+        this.computeFunctions = {};
+        this.timeChangeRates = [];
+        typicalProp.forEach(p => {
+            this.computeFunctions[p] = [];
+        })
         for (let p in this) {
             if (/Controller$/.test(p)) {
                 this[p]?.refresh();
@@ -167,7 +186,45 @@ export class Role extends Vita {
         this.compute();
         this.varProp.hp = this.prop.hp;
         this.varProp.mp = this.prop.mp;
+        this.on('nhpchange');
+        this.on('nmpchange');
         this.gui.refresh();
-        this.dead = false;
+        this.refreshHandler();
+    }
+    /**
+     * @param {ThingProto} thing 
+     */
+    getThing(thing) {
+        switch (thing.kind) {
+            case EquipKind: this.bag.equip.push(thing); break;
+            case MaterialKind: {
+                this.getMaterial(thing);
+            }; break;
+            case ExtraKind: this.bag.extra.push(thing); break;
+        }
+    }
+    getMaterial(material) {
+        let index = this.bag.material.findIndex(tb => tb.id == material.id);
+        if (index == -1) {
+            this.bag.material.push(material);
+        } else {
+            this.bag.material[index].count += material.count;
+        };
+    }
+    reduceThing(obj) {
+        switch (obj.kind) {
+            case 0: this.bag.equip.splice(this.bag.equip.indexOf(obj), 1); break;
+            case 1: {
+                this.reduceMaterial(obj, 1);
+            }; break;
+            case 2: this.bag.extra.splice(this.bag.extra.indexOf(obj), 1); break;
+        }
+    }
+    reduceMaterial(thing, count = 1) {
+        thing.count -= count;
+        if (thing.count < 0) throw new AnxiError('imposible error!');
+        if (thing.count == 0) {
+            this.bag.material.splice(this.bag.material.indexOf(thing), 1);
+        }
     }
 }

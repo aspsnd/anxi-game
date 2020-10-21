@@ -7,7 +7,7 @@ import { directBy, GameWidth } from "../../../../util";
 export default new SkillProto(16, '月之净化', '血量少于一半时召唤出月亮图腾，对敌人造成持续伤害')
     .standing(30)
     .initListen('nhpchange', (vita, skill) => e => {
-        if ((e.value[1] << 1) >= vita.hp || skill.data.executed) return;
+        if ((e.value[1] << 1) >= vita.prop.hp || skill.data.executed) return;
         skill.data.executed = true;
         skill.execute();
     })

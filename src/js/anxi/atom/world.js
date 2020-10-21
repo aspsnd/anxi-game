@@ -13,6 +13,7 @@ import { QualityColor } from "../define/util";
 import { QuickOpen } from "../../po/gui/open";
 import { RealWorld } from "../../po/world";
 import { Flyer } from "./flyer";
+import { HPBarController } from "../controller/hp.view";
 
 export class ForeverWorld extends Atom {
     /**
@@ -24,6 +25,10 @@ export class ForeverWorld extends Atom {
     }
 }
 export class World extends Atom {
+    /**
+     * 相对掉宝倍率
+     */
+    dropRate = 1
     /**
      * @type {Wall[]}
      */
@@ -61,6 +66,7 @@ export class World extends Atom {
             if (48 <= e.keyCode && e.keyCode <= 57) {
                 e.preventDefault();
                 let monst = new Monst(MonstProtos[parseInt(e.key) - 1]);
+                new HPBarController(monst);
                 window.monst = monst;
                 this.vitaContainer.addChild(monst.viewController.view);
                 monst.link(this);
@@ -172,6 +178,11 @@ export class World extends Atom {
         }
         this.roles.forEach(role => role.refresh());
         this.die();
+        this.toDestory.forEach(s=>s._destroyed ||s.destroy());
         RealWorld.instance.quitCard();
     }
+    /**
+     * @type {Sprite[]}
+     */
+    toDestory = []
 }

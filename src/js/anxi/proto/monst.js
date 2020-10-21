@@ -50,12 +50,14 @@ export class MonstProto extends VitaProto {
     }
     /**
      * @type {{
+     *  rate:number
      *  equip:[number,number][],
      *  material: [number,number][],
      *  extra: [number,number][]
      * }}
      */
     drops = {
+        rate: 1,
         equip: [],
         material: [],
         extra: []

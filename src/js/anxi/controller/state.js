@@ -44,10 +44,16 @@ export class StateController extends Controller {
     getSingleState(stateIndex) {
         return this.states[stateIndex] || this.registerState(stateIndex, StateController.complexState.includes(stateIndex));
     }
+    _displayIndex
     /**
      * @type {SingleState}
      */
-    displayState
+    get displayState(){
+        return this.states[this._displayIndex];
+    }
+    set displayState(ds){
+        this._displayIndex = ds.index;
+    }
     isRegistered(stateIndex) {
         return !!this.states[stateIndex];
     }
@@ -241,6 +247,15 @@ export class StateController extends Controller {
                 this.belonger.on(new ItemEvent(`stating_${ss.index}`, ss));
             }
         }
+    }
+    refresh(){
+        this.states = {};
+        for (const key of StateController.baseState) {
+            let value = StateCache[key];
+            this.registerState(value, StateController.complexState.includes(value));
+        }
+        this.states[StateCache.common].infinite = true;
+        this.displayState = this.states[StateCache.common];
     }
 }
 export class SingleState {

@@ -1,5 +1,5 @@
 import { SkillProtos } from "../../../../data/skill/all";
-import { Body, Dcrt, EquipType, Weapon, Wing } from "../../../define/util";
+import { Body, ComtTypeName, Dcrt, EquipKind, EquipType, Weapon, Wing } from "../../../define/util";
 import { ThingProto } from "../base";
 
 export class EquipProto extends ThingProto {

@@ -119,6 +119,7 @@ export class RealWorld extends ForeverWorld {
             role.use(Instructer.player(index == 0 ? Instructer.defaultPlayer : Instructer.extraPlayer));
         });
         window.role = this.roles[0];
+        window.role2 = this.roles[1];
         simpleCombine.load(this.roles);
     }
     loadCard(carddata) {

@@ -34,6 +34,9 @@ export class AttackController extends Controller {
             this.jumptype = Number(rule.jump);
         }
     }
+    changeBullet(bulletUrl){
+        this.bulletTexture = by(bulletUrl); 
+    }
     init() {
         this.bulletTexture = by(this.belonger.proto.bulletUrl);
         this.belonger.on('wantattack', e => {

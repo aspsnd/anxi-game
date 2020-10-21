@@ -1,6 +1,10 @@
+import { MonstProtos } from "../../data/monst/all"
+import { Monst } from "../../po/atom/monst"
 import { Role } from "../../po/atom/role"
-import { GameWidth } from "../../util"
+import { GameWidth, CardWidth } from "../../util"
 import { World } from "../atom/world"
+import { BigHPBarController, HPBarController } from "../controller/hp.view"
+import { Instructer } from "../instruct/instructor"
 
 export class StepManager {
     screenLeft = 0
@@ -18,6 +22,7 @@ export class StepManager {
      * @param {World} world 
      */
     constructor(world) {
+        window.step = this;
         this.world = world;
         this.container = world.baseContainer;
         world.on('timing', this.onTimer.bind(this));
@@ -72,11 +77,11 @@ export class StepManager {
     }
     attachRoles() {
         let { role, extraRole, container } = this;
-        if(role.dead){
+        if (role.dead) {
             this.pointer = [this.extraRole];
             this.attach = this.attachRole;
         }
-        if(extraRole.dead){
+        if (extraRole.dead) {
             this.attach = this.attachRole;
         }
         let nowX = role.x;
@@ -124,17 +129,17 @@ export class StepManager {
         }
         if (step == 4) {
             let _boss = carddata.boss;
-            _boss.forEach(arr => {
+            _boss.forEach((arr, index) => {
                 deadCount.monstNum++;
-                this.world.on(`timing_${timer + arr[1]}`, e => {
-                    this.place(arr, deadCount);
+                this.world.on(`timer_${timer + arr[1]}`, e => {
+                    this.place(arr, deadCount, index);
                 })
             })
             return;
         }
         carddata.monsts[step].forEach(arr => {
             deadCount.monstNum += arr[1];
-            this.world.on(`timing_${timer + arr[2]}`, e => {
+            this.world.once(`timer_${timer + arr[2]}`, e => {
                 for (let i = 0; i < arr[1]; i++) {
                     this.drop(arr, deadCount);
                 }
@@ -157,45 +162,39 @@ export class StepManager {
      *   }} deadCount 
     */
     drop(arr, deadCount) {
-        // let monst = new Monst(arr[0]);
-        // Fight.container.addChild(monst.viewController.view);
-        // monst.link(this.fight);
-        // monst.use(Instructer.artificialIntelligence());
-        // monst.viewController.useHPBar();
-        // monst.face = arr[4] || (arr[3] > 480 ? -1 : 1);
-        // this.fight.vitas[monst.id] = monst;
-        // monst.x((arr[3] ?? 300) + this.screenLeft).y(250);
-        // monst.on('dead', e => {
-        // if (++deadCount.deadNum == deadCount.monstNum) {
-        // this.goToStep(this.step + 0.5);
-        // }
-        // })
+        let monst = new Monst(MonstProtos[arr[0]]);
+        new HPBarController(monst);
+        this.world.vitaContainer.addChild(monst.viewController.view);
+        monst.link(this.world);
+        monst.use(Instructer.artificialIntelligence());
+        monst.face = arr[4] || (arr[3] > 480 ? -1 : 1);
+        this.world.vitas[monst.id] = monst;
+        monst.x = (arr[3] ?? 300) + this.screenLeft;
+        monst.y = 250;
+        monst.landIn(this.world);
+        monst.on('dead', e => {
+            if (++deadCount.deadNum == deadCount.monstNum) {
+                this.goToStep(this.step + 0.5);
+            }
+        })
     }
     bossNum = 0
-    place(_boss, deadCount) {
-        // let monst = new Monst(_boss[0]);
-        // Fight.container.addChild(monst.viewController.view);
-        // monst.link(this.fight);
-        // monst.isBoss = true;
-        // monst.use(Instructer.artificialIntelligence());
-        // monst.viewController.useBigHPbar(this.bossNum++);
-        // monst.face = _boss[3] || -1;
-        // this.fight.vitas[monst.id] = monst;
-        // monst.x((_boss[2] ?? 300) + this.screenLeft).y(250);
-        // monst.on('dead', e => {
-        //     if (++deadCount.deadNum == deadCount.monstNum) {
-        //         this.fight.openQuit();
-        //     }
-        // })
-    }
-    dropTest(arr) {
-        // let monst = new Monst(arr[0]);
-        // Fight.container.addChild(monst.viewController.view);
-        // monst.link(this.fight);
-        // monst.use(Instructer.artificialIntelligence());
-        // monst.viewController.useHPBar();
-        // monst.face = arr[4] || (arr[3] > 480 ? -1 : 1);
-        // this.fight.vitas[monst.id] = monst;
-        // monst.x((arr[3] ?? 300) + this.screenLeft).y(250);
+    place(_boss, deadCount, index) {
+        let monst = new Monst(MonstProtos[_boss[0]]);
+        this.world.vitaContainer.addChild(monst.viewController.view);
+        new BigHPBarController(monst, index);
+        monst.link(this.world);
+        monst.isBoss = true;
+        monst.use(Instructer.artificialIntelligence());
+        monst.face = _boss[3] || -1;
+        this.world.vitas[monst.id] = monst;
+        monst.x = (_boss[2] ?? 300) + this.screenLeft;
+        monst.y = 250;
+        monst.landIn(this.world);
+        monst.on('dead', e => {
+            if (++deadCount.deadNum == deadCount.monstNum) {
+                this.fight.openQuit();
+            }
+        })
     }
 }

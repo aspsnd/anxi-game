@@ -38,11 +38,12 @@ export default new MonstProto({
         exp: 50
     },
     drops: {
+        rate:0.7,
         equip: [
-            [7, 0.2]
+            [7, 2]
         ],
         material: [
-            [0, 0.5]
+            [0, 5]
         ]
     },
 }).useView(5).useAnchors({

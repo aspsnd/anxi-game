@@ -22,3 +22,13 @@ export const commonEnglishStyle = new TextStyle({
     dropShadowDistance: 0,
     dropShadowBlur: 5,
 })
+export const NameStyle = new TextStyle({
+    fontSize: 24,
+    fill: 0xffffff,
+    fontWeight: 'bold',
+    dropShadow: true,
+    dropShadowBlur: 5,
+    dropShadowDistance: 0,
+    dropShadowAlpha: 1,
+    dropShadowColor: 0x000000
+});

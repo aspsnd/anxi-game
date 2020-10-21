@@ -27,6 +27,7 @@ export default new SkillProto(12, '量子挪移', '激怒第一个与自己对�
         let flag2 = new Sprite(by('./res/util/role/1/shadow/31.png'));
         flag2.anchor.set(0.5, 0.5);
         flag2.position.set(0, -5);
+        target.viewController.toDestory.push(flag2);
         vita.viewController.view.addChild(flag1);
         for (let i = 1; i <= preTime * 0.5; i++) {
             let k = i;
