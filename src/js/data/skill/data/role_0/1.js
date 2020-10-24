@@ -13,7 +13,6 @@ export default new SkillProto(1,'轻斩', '发出自己的残影，对路过敌�
     .standing(30)
     .execute(function () {
         let role = this.vita;
-        role.stateController.removeState(StateCache.run, StateCache.go);
         let shadow = role.getController('shadowController', ShadowController).create(role.x - 10, role.centerY);
         shadow.vx = role.face * 10;
         role.on(`timer_${role.timer + 30}`, e => {

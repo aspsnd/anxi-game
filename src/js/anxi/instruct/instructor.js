@@ -1,5 +1,8 @@
 import { AIController } from "../controller/ai/ai";
 import { ItemEvent } from "../event";
+/**
+ * @deprecated
+ */
 export const Instructer = {
     player(_keys = 'wsadjkyuiol h') {
         let keys = typeof _keys == 'string' ? _keys.split('') : _keys;

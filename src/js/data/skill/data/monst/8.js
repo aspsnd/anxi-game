@@ -19,6 +19,7 @@ export default new SkillProto(8, '大杀四方', '蓄力产生多个瞄准敌人
         let flyTime = 40;
         let arrows = Array.from(new Array(arrowCount), () => new Sprite(by('./res/util/monst/5/10.png')));
         vita.world.vitaContainer.addChild(...arrows);
+        vita.viewController.toDestory.push(...arrows);
         arrows.forEach((arrow, index) => {
             arrow.alpha = 0;
             arrow.anchor.set(1, 0.5);
@@ -91,6 +92,6 @@ export default new SkillProto(8, '大杀四方', '蓄力产生多个瞄准敌人
             }
         })
         vita.once(`timer_${timer + preTime + findTime + flyTime + 1}`, e => {
-            vita.dead || arrows.forEach(a => a.destroy());
+            arrows.forEach(a => a._destroyed || a.destroy());
         })
     });

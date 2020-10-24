@@ -23,6 +23,13 @@ export class QuickOpen {
             tool.bind(world);
         }
     }
+    static debind(){
+        this.world = null;
+        for(let key in this.instance.kvs){
+            let tool = this.instance.kvs[key];
+            tool.world = null;
+        }
+    }
     static emit(key) {
         if (!this.world || this.world.dead) return;
         if (!this.instance) return;

@@ -112,7 +112,6 @@ export class BagController extends BaseGui {
         this.baseContainer.endFill();
         this.baseContainer.addChild(this.smallVita.view);
         this.smallVita.view.position.set(150, 80);
-        window.svv = this.smallVita.view;
     }
     initRealBag() {
         let all = this;

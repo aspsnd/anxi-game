@@ -18,8 +18,8 @@ export default new SkillProto(2,'影攻心', '【被动】残影会在3秒后爆
         let role = this.vita;
         let face = role.face;
         let monsts = role.world.selectableVitas().filter(vita => vita.group != role.group)
-            .filter(monst => (monst.x - role.x * face > 0))
-            .sort((m1, m2) => (m1.x - m2.x * face));
+            .filter(monst => ((monst.x - role.x) * face > 0))
+            .sort((m1, m2) => ((m1.x - m2.x) * face));
         if (monsts.length == 0) return;
         let monst = monsts[0];
         let x = role.x;

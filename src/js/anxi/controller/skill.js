@@ -20,7 +20,6 @@ export class SkillController extends Controller{
         vita.skills.forEach(_s => {
             this.add(new Skill(SkillProtos[_s]).link(this.vita));
         });
-        if (vita.wingSkill >= 0) this.add(new Skill(SkillProtos[vita.wingSkill]).link(this.vita), 1);
         vita.talents.forEach(_s => {
             this.add(new Skill(SkillProtos[_s]).link(this.vita), 2);
         });
@@ -36,7 +35,9 @@ export class SkillController extends Controller{
         if (!skill.inited) skill.init();
         this.vita.compute();
     }
-
+    initWingSkill(vita = this.belonger){
+        if (vita.wingSkill >= 0) this.add(new Skill(SkillProtos[vita.wingSkill]).link(this.vita), 1);
+    }
     /**
      * @param {Skill} skill 
      */

@@ -11,7 +11,6 @@ export class HPBarController extends Controller {
      */
     constructor(monst, color = 0xff0000) {
         super(monst);
-        window.hpbar = this;
         let hpbar = new Container();
         hpbar.x = -25;
         hpbar.y = -20;

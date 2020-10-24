@@ -79,6 +79,7 @@ export class Atom extends ItemEventDispatcher {
         this.world = world;
         this.btimespeed = timespeed;
         return world.on('timing', e => {
+            if (!world.running) return;
             this.onFrame();
             return this.realDead;
         });

@@ -26,7 +26,7 @@ export default new SkillProto(12, '量子挪移', '激怒第一个与自己对�
         flag1.position.set(0, -5);
         let flag2 = new Sprite(by('./res/util/role/1/shadow/31.png'));
         flag2.anchor.set(0.5, 0.5);
-        flag2.position.set(0, -5);
+        flag2.position.set(0, -25);
         target.viewController.toDestory.push(flag2);
         vita.viewController.view.addChild(flag1);
         for (let i = 1; i <= preTime * 0.5; i++) {
@@ -85,6 +85,6 @@ export default new SkillProto(12, '量子挪移', '激怒第一个与自己对�
         hand_l: {
             len: 31,
             changedFrame: 1,
-            value: tween([14, 60, 105], 10, [14, 62, 0], 15, [14, 62, 0], 5, [14, 60, 105])
+            value: tween([14, 35, 105], 10, [14, 37, 0], 15, [14, 37, 0], 5, [14, 35, 105])
         }
     })

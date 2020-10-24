@@ -6,11 +6,9 @@ import { cardDatas } from "../data/card/card";
 import { Role } from "./atom/role";
 import { simpleCombine } from "../pod/home/combine";
 import { RoleProto } from "../anxi/proto/role";
-import { Instructer } from "../anxi/instruct/instructor";
 import { GUI } from "./gui";
-import { Monst } from "./atom/monst";
-import { QuickOpen } from "./gui/open";
 import { RecordController } from "../record/record";
+import { SuperInstructor } from "../anxi/instruct/inst";
 
 export class RealWorld extends ForeverWorld {
     /**
@@ -24,7 +22,6 @@ export class RealWorld extends ForeverWorld {
     constructor(app, container) {
         super(app);
         RealWorld.instance = this;
-        window.RealWorld = this;
         this.container = container;
     }
     record
@@ -82,9 +79,11 @@ export class RealWorld extends ForeverWorld {
             refresher(container, data) {
                 let carddata = data.carddata;
                 let world = data.world = new World(carddata, all.roles, container);
-                window.world = world;
                 container.visible = true;
                 world.landIn(all);
+                world.once('die', e => {
+                    data.world = null;
+                })
             }
         });
         router.register('combine', {
@@ -100,7 +99,6 @@ export class RealWorld extends ForeverWorld {
         }, simpleCombine.container, _ => {
             simpleCombine.init();
         });
-        window.simpleCombine = simpleCombine;
         this.loadRoles(record.roles);
         router.start();
     }
@@ -116,7 +114,7 @@ export class RealWorld extends ForeverWorld {
             let role = new Role(_role);
             new GUI(role, index == 0);
             this.roles.push(role);
-            role.use(Instructer.player(index == 0 ? Instructer.defaultPlayer : Instructer.extraPlayer));
+            role.use(SuperInstructor.player(index == 0 ? SuperInstructor.defaultPlayer : SuperInstructor.extraPlayer));
         });
         window.role = this.roles[0];
         window.role2 = this.roles[1];
@@ -128,11 +126,11 @@ export class RealWorld extends ForeverWorld {
         }
         this.router.to('world');
     }
-    save(){
+    save() {
         this.record.roles = this.roles.map(role => role.toPlainObject());
         RecordController.saveRecord(this.record.index, this.record);
     }
-    quitCard(){
+    quitCard() {
         this.router.to('map');
     }
 }

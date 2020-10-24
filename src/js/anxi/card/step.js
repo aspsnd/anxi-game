@@ -1,10 +1,12 @@
+import { res } from "../../../res"
 import { MonstProtos } from "../../data/monst/all"
 import { Monst } from "../../po/atom/monst"
 import { Role } from "../../po/atom/role"
 import { GameWidth, CardWidth } from "../../util"
+import { Exit } from "../atom/exit"
 import { World } from "../atom/world"
 import { BigHPBarController, HPBarController } from "../controller/hp.view"
-import { Instructer } from "../instruct/instructor"
+import { SuperInstructor } from "../instruct/inst"
 
 export class StepManager {
     screenLeft = 0
@@ -22,10 +24,15 @@ export class StepManager {
      * @param {World} world 
      */
     constructor(world) {
-        window.step = this;
         this.world = world;
         this.container = world.baseContainer;
         world.on('timing', this.onTimer.bind(this));
+        // setTimeout(_ => {
+        //     this.place([5, 0, 600, 1], {
+        //         deadNum:0,
+        //         monstNum:1
+        //     }, 0);
+        // }, 1000);
     }
     onTimer() {
         this.attach();
@@ -162,11 +169,10 @@ export class StepManager {
      *   }} deadCount 
     */
     drop(arr, deadCount) {
-        let monst = new Monst(MonstProtos[arr[0]]);
+        let monst = new Monst(MonstProtos[arr[0]], this.world);
         new HPBarController(monst);
         this.world.vitaContainer.addChild(monst.viewController.view);
-        monst.link(this.world);
-        monst.use(Instructer.artificialIntelligence());
+        monst.use(SuperInstructor.artificialIntelligence());
         monst.face = arr[4] || (arr[3] > 480 ? -1 : 1);
         this.world.vitas[monst.id] = monst;
         monst.x = (arr[3] ?? 300) + this.screenLeft;
@@ -180,12 +186,11 @@ export class StepManager {
     }
     bossNum = 0
     place(_boss, deadCount, index) {
-        let monst = new Monst(MonstProtos[_boss[0]]);
+        let monst = new Monst(MonstProtos[_boss[0]],this.world);
         this.world.vitaContainer.addChild(monst.viewController.view);
-        new BigHPBarController(monst, index);
-        monst.link(this.world);
+        new BigHPBarController(monst, 0xff0000, index);
         monst.isBoss = true;
-        monst.use(Instructer.artificialIntelligence());
+        monst.use(SuperInstructor.artificialIntelligence());
         monst.face = _boss[3] || -1;
         this.world.vitas[monst.id] = monst;
         monst.x = (_boss[2] ?? 300) + this.screenLeft;
@@ -193,7 +198,7 @@ export class StepManager {
         monst.landIn(this.world);
         monst.on('dead', e => {
             if (++deadCount.deadNum == deadCount.monstNum) {
-                this.fight.openQuit();
+                new Exit(monst).landIn(this.world);
             }
         })
     }

@@ -266,6 +266,5 @@ export const init = () => {
             let world = data.world = new RealWorld(gameApp, container);
         });
         gameRouter.start();
-        window.gameRouter = gameRouter;
     })
 }

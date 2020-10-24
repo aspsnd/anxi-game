@@ -259,7 +259,3 @@ export class Circle extends Shape {
         return (this.rad + circle.rad) ** 2 > (this.x - circle.x) ** 2 + (this.y - circle.y) ** 2;
     }
 }
-window.Polygon = Polygon;
-window.Circle = Circle;
-window.Line = Line;
-window.Point = Point;

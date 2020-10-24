@@ -54,4 +54,3 @@ export class RecordController {
         })
     }
 }
-window.RecordController = RecordController;

@@ -1,4 +1,5 @@
 import { Application, Container, Sprite } from "pixi.js";
+import * as PIXI from "pixi.js";
 import { WallProtos } from "../../data/wall/wall";
 import { Role } from "../../po/atom/role";
 import { by, GameHeight } from "../../util";
@@ -8,12 +9,12 @@ import { Vita } from "./vita";
 import { Wall } from "../conster/wall";
 import { Monst } from "../../po/atom/monst";
 import { MonstProtos } from "../../data/monst/all";
-import { Instructer } from "../instruct/instructor";
-import { QualityColor } from "../define/util";
 import { QuickOpen } from "../../po/gui/open";
 import { RealWorld } from "../../po/world";
-import { Flyer } from "./flyer";
 import { HPBarController } from "../controller/hp.view";
+import Dust from "pixi-dust";
+import { SuperInstructor } from "../instruct/inst";
+import { GlobalEventCaster } from "../instruct/global";
 
 export class ForeverWorld extends Atom {
     /**
@@ -44,12 +45,16 @@ export class World extends Atom {
      * @type {World}
      */
     static instance
+    dust = new Dust(PIXI);
     /**
      * @param {Role[]} roles 
      * @param {Container} container 
      */
     constructor(carddata, roles, container) {
         super();
+        this.on('timing', e => {
+            this.dust.update();
+        })
         World.instance = this;
         QuickOpen.bind(this);
         this.container = container;
@@ -61,16 +66,16 @@ export class World extends Atom {
         /**
          * @test
          */
-        document.addEventListener('keydown', e => {
+        let comt = GlobalEventCaster.on('keydown', ee => {
             if (!this.running) return;
+            let e = ee.value;
             if (48 <= e.keyCode && e.keyCode <= 57) {
                 e.preventDefault();
                 let monst = new Monst(MonstProtos[parseInt(e.key) - 1]);
                 new HPBarController(monst);
-                window.monst = monst;
                 this.vitaContainer.addChild(monst.viewController.view);
                 monst.link(this);
-                monst.use(e.ctrlKey ? Instructer.artificialIntelligence() : Instructer.player(Instructer.testPlayer));
+                monst.use(e.ctrlKey ? SuperInstructor.artificialIntelligence() : SuperInstructor.player(SuperInstructor.testPlayer));
                 this.vitas[monst.id] = monst;
                 monst.x = 600 + this.stepManager.screenLeft;
                 monst.y = 250;
@@ -83,6 +88,19 @@ export class World extends Atom {
             //     flyer.landIn(this, 1);
             //     console.log('landIn World', this.timer);
             // }
+        });
+        this.once('die', e => {
+            GlobalEventCaster.removeHandler(comt);
+            this.vitas.forEach(vita => {
+                vita instanceof Monst && vita.viewController.view.destroy({
+                    children: true
+                });
+                vita?.viewController?.toDestory.forEach(s => s._destroyed || s.destroy());
+            })
+            this.vitas = [];
+            World.instance = null;
+            QuickOpen.debind();
+            this.toDestory.forEach(s => s._destroyed || s.destroy());
         })
     }
     wallContainer = new Container();
@@ -142,8 +160,9 @@ export class World extends Atom {
     initRole(role, index) {
         this.vitaContainer.addChild(role.viewController.view);
         this.guiContainer.addChild(role.gui.basebar);
-        role.link(this);
+        this.guiContainer.addChild(role.gui.detailContainer);
         role.refresh();
+        role.link(this);
         this.vitas[role.id] = role;
         this.roles.push(role);
         role.x = 100 + index * 50;
@@ -154,7 +173,7 @@ export class World extends Atom {
      * 存活且可选中的角色 不可选中 == 不会受到任何效果， 但不会防止曾经受到的持续效果
      */
     selectableVitas() {
-        return this.vitas.filter(vita => vita.selectable && !vita.dead);
+        return this.vitas.filter(vita => vita?.selectable && !vita.dead);
     }
     win = false
     /**
@@ -176,9 +195,9 @@ export class World extends Atom {
         if (save) {
             RealWorld.instance.save();
         }
+        this.running = false;
         this.roles.forEach(role => role.refresh());
         this.die();
-        this.toDestory.forEach(s=>s._destroyed ||s.destroy());
         RealWorld.instance.quitCard();
     }
     /**

@@ -1,6 +1,7 @@
 import { Matrix } from "pixi.js";
 import { StateCache } from "../../../anxi/controller/state";
 import { MonstProto } from "../../../anxi/proto/monst";
+import { Circle } from "../../../anxi/shape/shape";
 import { tween } from "../../../util";
 
 export default new MonstProto({

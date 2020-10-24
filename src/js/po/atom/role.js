@@ -1,4 +1,6 @@
+import { Graphics } from "pixi.js";
 import { typicalProp, Vita } from "../../anxi/atom/vita";
+import { World } from "../../anxi/atom/world";
 import { EquipController } from "../../anxi/controller/equip";
 import { MoneyController } from "../../anxi/controller/money";
 import { StateCache } from "../../anxi/controller/state";
@@ -9,9 +11,14 @@ import { ItemEvent } from "../../anxi/event";
 import { RoleProto } from "../../anxi/proto/role";
 import { ThingProto } from "../../anxi/proto/thing/base";
 import { RoleProtos } from "../../data/role/all";
+import { GUI } from "../gui";
 
 export class Role extends Vita {
     static RoleGroup = 0
+    /**
+     * @type {GUI}
+     */
+    gui
     group = Role.RoleGroup
     exp = 0
     fexp = 1
@@ -46,9 +53,9 @@ export class Role extends Vita {
         extra: []
     }
     maxJumpTimes = 2
-    constructor(role_proto) {
+    constructor(role_proto, world = World.instance) {
         let realProto = Object.assign({}, role_proto, RoleProtos[role_proto.index], role_proto);
-        super(realProto);
+        super(realProto, world);
         this.initRole(realProto);
     }
     /**
@@ -61,6 +68,8 @@ export class Role extends Vita {
         this.money = role_proto.money || this.money;
         this.bag = role_proto.bag || this.bag;
         this.equip = role_proto.equip || this.equip;
+        this.wingSkill = role_proto.wingSkill || this.wingSkill;
+        this.skillController.initWingSkill();
     }
     initController() {
         super.initController();
@@ -92,12 +101,6 @@ export class Role extends Vita {
                     this.world.stop();
                     this.world.end(true);
                 })
-            }
-        }, true);
-        this.on('finishcard', e => {
-            if (this.world.win) {
-                this.world.cross();
-                this.world.end(true);
             }
         }, true);
         this.on('getmoney', e => {
@@ -167,6 +170,8 @@ export class Role extends Vita {
     }
     refresh() {
         this.dead = false;
+        this.realDead = false;
+        this.world = null;
         this.group = Role.RoleGroup;
         this.lastTimerFrame = 0;
         this.frame = 0;

@@ -8,12 +8,13 @@ import { Role } from "./role";
 
 export class Monst extends Vita {
     group = -1
-    constructor(monst_proto) {
-        super(monst_proto);
+    constructor(monst_proto, world) {
+        super(monst_proto, world);
         this.initDeadReward();
     }
     initDeadReward() {
         this.on('dead', e => {
+            this.world.vitas[this.id] = null;
             /**
              * @type Role
              */
@@ -27,7 +28,7 @@ export class Monst extends Vita {
             }
             let dropRate = this.proto.drops.rate * this.world.dropRate;
             if (dropRate > Math.random()) {
-                let drops = Object.assign({equip:[],material:[],extra:[]}, this.proto.drops);
+                let drops = Object.assign({ equip: [], material: [], extra: [] }, this.proto.drops);
                 let n = drops.equip.reduce((n, e) => n + e[1], 0) +
                     drops.material.reduce((n, e) => n + e[1], 0) + drops.extra.reduce((n, e) => n + e[1], 0);
                 let na = Math.random() * n;
@@ -63,6 +64,6 @@ export class Monst extends Vita {
                 if (dropExtra) return;
                 //掉落普通物品， 基本材料 或 血瓶 蓝瓶
             }
-        })
+        });
     }
 }

@@ -51,7 +51,11 @@ export function formatDate(date, fmt) {
     }
     return fmt;
 }
+export function defaultBy(...url) {
+    return gameApp.loader.resources[url.find(u => res.includes(u))].texture;
+}
 export function by(url) {
+    if (arguments.length > 1) return defaultBy(...arguments);
     return res.includes(url) ? gameApp.loader.resources[url].texture : null;
 }
 export function directBy(durl, url = './res/util/' + durl) {
@@ -180,6 +184,7 @@ export const r2a = r => r * 180 / Math.PI;
 export const a2r = a => a * Math.PI / 180;
 export const randomInt = (min, max) => (min + Math.random() * (max + 1 - min)) | 0
 export const randomNode = arr => arr[(arr.length * Math.random()) | 0];
+export const getSkillIcon = index => res.includes(`./res/util/icon/skill/${index}.png`) ? `./res/util/icon/skill/${index}.png` : './res/util/icon/skill/default.png';
 export const loadAndAfter = callback => {
     gameApp.loader.add(['./res/util/_load/sec.png']).load(_ => {
         let i = 0;

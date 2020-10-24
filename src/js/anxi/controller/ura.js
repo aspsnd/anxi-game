@@ -16,16 +16,13 @@ export class URAController extends Controller {
     uring = false;
     uras = 0
     init() {
-        typicalProp.forEach(prop => {
-            this.belonger.computeFunctions[prop].push(bv => this.caculate(prop, bv));
-        })
         this.belonger.on('wantura', e => {
             if (this.uring || this.uras < 1) return;
             this.uring = true;
             this.belonger.on('getura');
             this.proto.getHandler.call(this);
             this.belonger.needCompute = true;
-        })
+        }, true)
         this.belonger.on('resAffect', e => {
             if (this.uras == 1 && !this.uring) return;
             /**
@@ -63,6 +60,9 @@ export class URAController extends Controller {
         return 0;
     }
     refresh() {
+        typicalProp.forEach(prop => {
+            this.belonger.computeFunctions[prop].push(bv => this.caculate(prop, bv));
+        })
         this.uring = false;
         this.uras = 0;
     }

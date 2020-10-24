@@ -1,5 +1,5 @@
 import { Sprite, Container, Text, TextStyle, Graphics } from "pixi.js";
-import { gameApp, GameWidth } from "../util";
+import { by, gameApp, GameHeight, GameWidth, getSkillIcon } from "../util";
 import { Role } from "./atom/role";
 export class GUI {
     /**
@@ -7,6 +7,8 @@ export class GUI {
      * @param {boolean} left 
      */
     constructor(role, left) {
+        this.role = role;
+        this.left = left;
         role.gui = this;
         let barContainer = new Container();
         let width = 250;
@@ -162,6 +164,7 @@ export class GUI {
             ura.height = 40 * role.uraController.uras;
             ura.y = 40 * (1 - role.uraController.uras) + 1;
         }, true);
+        this.initDetail();
     }
     refresh() {
         let hpper = role.varProp.hp / role.prop.hp;
@@ -170,5 +173,19 @@ export class GUI {
         let mpper = role.varProp.mp / role.prop.mp;
         this.mpbar.width = 150 * mpper;
         this.mptext.text = `${role.varProp.mp | 0}/${role.prop.mp | 0}`;
+    }
+    detailContainer = new Container();
+    initDetail() {
+        let left = this.left;
+        const width = 250;
+        const leftoffset = 5;
+        this.detailContainer.position.set(left ? 0 : GameWidth, GameHeight - 40 - 3);
+        let skillIcons = [];
+        for (let i = 0; i < 5; i++) {
+            let sprite = new Sprite(by(getSkillIcon(this.role.skills[i])));
+            sprite.position.set(left ? leftoffset + i * 43 : -sprite.width - leftoffset - i * 43, 0);
+            skillIcons.push(sprite);
+        }
+        this.detailContainer.addChild(...skillIcons);
     }
 }

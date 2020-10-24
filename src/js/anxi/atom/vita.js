@@ -98,8 +98,9 @@ export class Vita extends Atom {
         return this.stickingWall == null;
     }
     needCompute = false
-    constructor(vita_proto) {
+    constructor(vita_proto, world = World.instance) {
         super(vita_proto);
+        this.link(world);
         this.init(vita_proto);
     }
     init(proto) {
@@ -334,7 +335,7 @@ export class Vita extends Atom {
             }
         }, true);
         this.on('timing', e => {
-            if (this.die || this.timer % 60 > 0) return;
+            if (this.dead || this.timer % 60 > 0) return;
             if (this.varProp.hp < this.prop.hp && this.prop.hpr > 0) {
                 this.getHP(this.prop.hpr, this);
             }
@@ -380,6 +381,7 @@ export class Vita extends Atom {
          * 状态免疫判定
          */
         this.on('getAffect', e => {
+            if (this.dead) return;
             /**
              * @type {Affect}
              */
@@ -427,6 +429,7 @@ export class Vita extends Atom {
             }
         }, true);
         this.on('beAffect', e => {
+            if (this.dead) return;
             /**
              * @type {Affect}
              */
@@ -447,7 +450,7 @@ export class Vita extends Atom {
         this.on('nhpchange', e => {
             if (this.varProp.hp <= 0) {
                 if (!this.dead) {
-                    this.dead = true;
+                    this.die();
                     this.on(new ItemEvent('dead', undefined, e.from));
                 }
             }
@@ -459,24 +462,28 @@ export class Vita extends Atom {
         }, true)
     }
     reduceHP(lost, from) {
+        if (this.dead) return;
         let rvalue = this.varProp.hp;
         let endv = Math.max(0, rvalue - lost);
         this.varProp.hp = endv;
         this.on(new ItemEvent('nhpchange', [rvalue, endv], from));
     }
     getHP(added, from) {
+        if (this.dead) return;
         let rvalue = this.varProp.hp;
         let endv = Math.min(this.prop.hp, rvalue + added);
         this.varProp.hp = endv;
         this.on(new ItemEvent('nhpchange', [rvalue, endv], from));
     }
     reduceMP(lost, from) {
+        if (this.dead) return;
         let rvalue = this.varProp.mp;
         let endv = Math.max(0, rvalue - lost);
         this.varProp.mp = endv;
         this.on(new ItemEvent('nmpchange', [rvalue, endv], from));
     }
     getMP(added, from) {
+        if (this.dead) return;
         let rvalue = this.varProp.mp;
         let endv = Math.min(this.prop.mp, rvalue + added);
         this.varProp.mp = endv;
@@ -567,4 +574,5 @@ export class Vita extends Atom {
         }
         return this[name];
     }
+    wakeTime = 120
 }

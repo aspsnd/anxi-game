@@ -41,7 +41,11 @@ export class ViewController extends Controller {
     init() {
         this.initImage();
         this.initReact();
-        RealWorld.instance.on('timing', this.onTimer.bind(this));
+        if (this.belonger.world) {
+            this.belonger.world.on('timing', this.onTimer.bind(this));
+        } else {
+            RealWorld.instance.on('timing', this.onTimer.bind(this));
+        }
     }
     initImage() {
         let { vita } = this;
@@ -141,7 +145,8 @@ export class ViewController extends Controller {
         wing: undefined,
     }
     onTimer() {
-        if (this.destroyed) return;
+        if (!this.belonger.world?.running || this.destroyed) return;
+        if (this.needRealDestory) return true;
         this.view.position.set(this.belonger.x, this.belonger.y);
         let state = this.belonger.stateController.displayState;
         let _s = state.index;
@@ -223,17 +228,19 @@ export class ViewController extends Controller {
         }
     }
     destroyed = false;
+    needRealDestory = false;
     dead() {
         this.belonger.once(`timer_${this.belonger.timer + 120}`, e => {
             if (this.belonger instanceof Role) {
                 this.view.parent.removeChild(this.view);
             } else {
                 this.view.destroy();
+                this.needRealDestory = true;
             }
             this.destroyed = true;
             this.belonger.refreshHandler();
         })
-        this.toDestory.forEach(s=>s._destroyed || s.destroy());
+        this.toDestory.forEach(s => s._destroyed || s.destroy());
     }
     refresh() {
         this.destroyed = false;

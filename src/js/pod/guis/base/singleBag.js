@@ -30,7 +30,6 @@ export class SingleBag extends Container {
         this.bagCenter.position.set(0, 55);
         this.bagUtil[0].visible = true;
         this.pageCtrl.position.set(195, 373);
-        window.pageCtrl = this.pageCtrl;
         this.addChild(this.pageCtrl);
     }
     refresh() {

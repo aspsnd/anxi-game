@@ -1,10 +1,7 @@
 const path = require('path');
 const html_plugin = require('html-webpack-plugin');
-const OpenBrowserPlugin = require('open-browser-webpack-plugin');
-const webpack = require('webpack');
 const minicss = require('mini-css-extract-plugin');
 const copy_plugin = require('copy-webpack-plugin');
-const GetResPlugin = require('./plugins/resBuild');
 const { ResPlugin } = require('./plugins/resBuild');
 module.exports = {
   // mode: 'production',
@@ -22,40 +19,42 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel-loader'
       },
-      {
-        test:/res.js/,
-        loader:'resloader'
-      }
+      // {
+      //   test: /res.js/,
+      //   loader: 'resloader'
+      // }
     ]
   },
-  resolveLoader:{
-    modules: ['node_modules','./plugins/'],
+  resolveLoader: {
+    modules: ['node_modules', './plugins/'],
   },
   plugins: [
-    // new OpenBrowserPlugin({
-    //   url:'http://localhost:8080',
-    //   delay:1000 * 12
-    // }),
     new html_plugin({
       template: './src/index.html'
     }),
     new minicss({
       filename: 'css/build.css'
     }),
-    new copy_plugin([
-      {
-        from: './src/libs',
-        to: 'libs',
-        // ignore: ['*.js']
-      }, {
-        from: './src/res',
-        to: 'res',
-      }, {
-        from: './src/css',
-        to: 'css'
-      } 
-    ]),
-    // new ResPlugin()
+    new copy_plugin({
+      patterns: [
+        {
+          from: './src/libs',
+          to: 'libs',
+        }, {
+          from: './src/res',
+          to: 'res',
+          globOptions:{
+            ignore:[
+              '**/re/**'
+            ]
+          }
+        }, {
+          from: './src/css',
+          to: 'css'
+        }
+      ],
+    }),
+    new ResPlugin()
   ],
   devServer: {
     contentBase: path.join(__dirname, 'build'),
@@ -63,5 +62,5 @@ module.exports = {
     port: 8080,
     open: true,
   },
-  devtool:'source-map'
+  devtool: 'source-map'
 };

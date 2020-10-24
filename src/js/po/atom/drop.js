@@ -104,17 +104,17 @@ export class Drop extends Atom {
     }
     destory() {
         super.die();
-        let flyer = new Flyer(this.root).useLiveTime(100).useConstAngle(0).useConstSpeed([0, -1]).onTime(_ => {
-            this.root.alpha -= 0.01;
+        let flyer = new Flyer(this.root).useLiveTime(60).useConstAngle(0).useConstSpeed([0, -1]).onTime(_ => {
+            this.root.alpha -= 0.016;
         });
         flyer.landIn(this.world, 1);
     }
     getBelonger() {
         let roles = this.world.roles.filter(role => !role.dead).filter(role => {
-            let dy = role.y - this.y;
-            if (dy > 10 || dy > 100) return false;
+            let dy = role.centerY - this.y;
+            if (dy > 50 || dy < -50) return false;
             let dx = role.x - this.x;
-            if (Math.abs(dx) > 30) return false;
+            if (Math.abs(dx) > 25) return false;
             return true;
         })
         if (roles.length == 0) return;
