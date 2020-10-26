@@ -108,6 +108,7 @@ export const res = [
     "./res/util/monst/5/2.png",
     "./res/util/monst/5/8.png",
     "./res/util/monst/5/9.png",
+    "./res/util/monst/5/line.png",
     "./res/util/monst/6/1.png",
     "./res/util/monst/6/2.png",
     "./res/util/monst/6/3.png",
@@ -175,7 +176,11 @@ export const res = [
     "./res/util/scene/ground/2.png",
     "./res/util/scene/ground/3.png",
     "./res/util/scene/test/back.png",
-    "./res/util/scene/test/ground.png"
+    "./res/util/scene/test/ground.png",
+    "./res/util/talent/0/0.png",
+    "./res/util/talent/1/0.png",
+    "./res/util/talent/2/0.png",
+    "./res/util/talent/2/1.png"
 ];
 export const ressound = [
     "./res/audio/bg.mp3",

@@ -27,6 +27,7 @@ export class VitaProto extends AtomProto {
     }
     skills = []
     talents = []
+    talentStars = 0
     height = 100
     /**
      * @param {AtomProto} proto 

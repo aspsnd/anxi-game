@@ -93,6 +93,7 @@ export class Atom extends ItemEventDispatcher {
             this.onTimer();
             return this.realDead;
         })
+        return this;
     }
     onlyDie() {
         if (this.dead) throw new AlreadyDoneError('this atom already is dead!');

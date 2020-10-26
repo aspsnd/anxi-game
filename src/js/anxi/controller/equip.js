@@ -5,6 +5,7 @@ import { Skill } from "../../po/skill";
 import { by } from "../../util";
 import { typicalProp } from "../atom/vita";
 import { Controller } from "../controller";
+import { ComtTypeName } from "../define/util";
 import { AnxiError } from "../error/base";
 import { EquipProto } from "../proto/thing/util/equip";
 

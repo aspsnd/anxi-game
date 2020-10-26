@@ -11,6 +11,7 @@ import { World } from "../atom/world";
 import { RealWorld } from "../../po/world";
 import { uraFilter } from "../../data/ffilter/filter";
 import { Role } from "../../po/atom/role";
+import { ComtTypeName } from "../define/util";
 
 export class ViewController extends Controller {
     static convert(arr) {
@@ -51,6 +52,14 @@ export class ViewController extends Controller {
         let { vita } = this;
         let { proto } = vita;
         let { defaultView, defaultViewAnchor } = proto;
+        // ComtTypeName.forEach(comt => {
+        //     let container = this.outBlocks[comt] = new Container();
+        //     container.sortableChildren = true;
+        //     let sprite = this.blocks[comt] = new Sprite(by(defaultView[comt]));
+        //     sprite.anchor.set(...(defaultViewAnchor[comt] || [0,0]));
+        //     container.addChild(sprite);
+        //     this.view.addChild(container);
+        // })
         this.blocks.body = new Sprite(by(defaultView.body));
         this.blocks.body.anchor.set(...(defaultViewAnchor.body || [0, 0]));
         this.blocks.head = new Sprite(by(defaultView.head));
@@ -144,6 +153,28 @@ export class ViewController extends Controller {
         weapon: undefined,
         wing: undefined,
     }
+    /**
+     * @type {{
+        * body: PIXI.Container,
+        head: PIXI.Container,
+        hand_l: PIXI.Container,
+        hand_r: PIXI.Container,
+        leg_l: PIXI.Container,
+        leg_r: PIXI.Container,
+        weapon: PIXI.Container,
+        wing: PIXI.Container,
+        * }}
+    */
+    // outBlocks = {
+    //     body: undefined,
+    //     head: undefined,
+    //     hand_l: undefined,
+    //     hand_r: undefined,
+    //     leg_l: undefined,
+    //     leg_r: undefined,
+    //     weapon: undefined,
+    //     wing: undefined,
+    // }
     onTimer() {
         if (!this.belonger.world?.running || this.destroyed) return;
         if (this.needRealDestory) return true;
@@ -243,6 +274,7 @@ export class ViewController extends Controller {
         this.toDestory.forEach(s => s._destroyed || s.destroy());
     }
     refresh() {
+        this.toDestory.forEach(s => s._destroyed || s.destroy());
         this.destroyed = false;
         this.toDestory = [];
         this.view.filters = [];

@@ -49,10 +49,16 @@ export class Affect {
     }
     bedoded = false
     setout() {
+        //施法者放出效果，此时可以附加效果
         this.from.on(new ItemEvent('setAffect', this, this.to));
         this.finalDefuff = this.debuff;
+        // 被击者对伤害进行数值减免
+        // this.to.on(new ItemEvent('getAffectpre', this, this.from));
+        //被击者对伤害进行减免
         this.to.on(new ItemEvent('getAffect', this, this.from));
+        //被击者结算伤害
         this.bedoded || this.to.on(new ItemEvent('beAffect', this, this.from));
+        //施法者结算
         this.from.on(new ItemEvent('resAffect', this, this.to));
     }
 }

@@ -27,11 +27,12 @@ export class StateController extends Controller {
         dead: 10000,
         slow: this.autoChangeIndex++,
         fast: this.autoChangeIndex++,
-        silence: this.autoChangeIndex++
+        silence: this.autoChangeIndex++,
+        border: this.autoChangeIndex++
     }
     static complexState = [
         this.cache.hard, this.cache.URA, this.cache.IME, this.cache.poison, this.cache.dizzy, this.cache.slow, this.cache.beHitBehind,
-        this.cache.fast
+        this.cache.fast, this.cache.border
     ]
     /**
      * @type {SingleState[]}
@@ -48,10 +49,10 @@ export class StateController extends Controller {
     /**
      * @type {SingleState}
      */
-    get displayState(){
+    get displayState() {
         return this.states[this._displayIndex];
     }
-    set displayState(ds){
+    set displayState(ds) {
         this._displayIndex = ds.index;
     }
     isRegistered(stateIndex) {
@@ -248,7 +249,7 @@ export class StateController extends Controller {
             }
         }
     }
-    refresh(){
+    refresh() {
         this.states = {};
         for (const key of StateController.baseState) {
             let value = StateCache[key];
@@ -317,7 +318,7 @@ export class SingleState {
         if (item.last > this.last) {
             this.last = item.last;
         }
-        if(item.infinite){
+        if (item.infinite) {
             this.infinite = true;
         }
         return this.itemIndex++;

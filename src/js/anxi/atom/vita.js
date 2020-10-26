@@ -85,6 +85,7 @@ export class Vita extends Atom {
     }
     skills = []
     wingSkill = undefined
+    talentStars = 0
     talents = []
     height = 100
     jumpTimes = 0
@@ -124,6 +125,7 @@ export class Vita extends Atom {
         this.level = proto.level;
         this.skills = proto.skills;
         this.talents = proto.talents;
+        this.talentStars = proto.talentStars;
         this.initEvent();
     }
     /**
@@ -351,6 +353,12 @@ export class Vita extends Atom {
         this.once(`timer_${1}`, e => {
             this.on('wantdrop');
         });
+        this.on(`getstate_${StateCache.border}`, e => {
+            this.selectable = false;
+        })
+        this.on(`loststate_${StateCache.border}`, e => {
+            this.selectable = true;
+        })
     }
     // 初始化最基本的变化 基础(额外)属性变化-> 最终属性变化
     initEvent() {
@@ -399,6 +407,22 @@ export class Vita extends Atom {
              */
             affect.reduce.common += this.prop.def >= 0 ? affect.harm.common * this.prop.def / (this.prop.def + 100) : affect.harm * this.prop.def / 100;
 
+            /**
+             * 免控减少机制
+             */
+            if (this.stateController.has(StateCache.URA)) {
+                affect.finalDefuff = [];
+            } else {
+
+            }
+        }, true);
+        this.on('beAffect', e => {
+            if (this.dead) return;
+            /**
+             * @type {Affect}
+             */
+            let affect = e.value;
+            
             if (affect.harm.common < affect.reduce.common) {
                 affect.reduce.common = affect.harm.common;
             }
@@ -420,21 +444,6 @@ export class Vita extends Atom {
             }
 
             /**
-             * 免控减少机制
-             */
-            if (this.stateController.has(StateCache.URA)) {
-                affect.finalDefuff = [];
-            } else {
-
-            }
-        }, true);
-        this.on('beAffect', e => {
-            if (this.dead) return;
-            /**
-             * @type {Affect}
-             */
-            let affect = e.value;
-            /**
              * 触发掉血事件
              */
             this.reduceHP(affect.finalHarm, e.from);
@@ -450,17 +459,25 @@ export class Vita extends Atom {
         this.on('nhpchange', e => {
             if (this.varProp.hp <= 0) {
                 if (!this.dead) {
+                    this.on(new ItemEvent('wantdie'));
+                    if (this.varProp.hp > 0) return;
                     this.die();
                     this.on(new ItemEvent('dead', undefined, e.from));
                 }
             }
-        }, true)
+        }, true);
+        this.on('killenemy', e => {
+            this.killedEnemyIds.push(e.value.id);
+        })
         this.on('dead', e => {
+            let killer = e.from;
+            killer?.on(new ItemEvent('killenemy', this));
             this.aiController = null;
             this.stateController.setStateInfinite(StateCache.dead, true);
             this.viewController.dead();
         }, true)
     }
+    killedEnemyIds = [];
     reduceHP(lost, from) {
         if (this.dead) return;
         let rvalue = this.varProp.hp;
@@ -544,6 +561,7 @@ export class Vita extends Atom {
             level: this.level,
             skills: this.skills,
             talents: this.talents,
+            talentStars: this.talentStars,
             baseProp: this.baseProp
         };
     }

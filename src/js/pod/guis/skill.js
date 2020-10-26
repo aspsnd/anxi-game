@@ -17,14 +17,7 @@ export class SkillPanel extends BaseGui{
     sprites = [[], [], [], [], []]
 
     /**
-    * @param {{
-    *  bag:boolean,
-    *  bagExtra:boolean,
-    *  quit:boolean,
-    *  skill:boolean
-    * }} opened
     * @param {[Role]} roles
-    * @param {string} key 
     */
     constructor(roles) {
         super();
@@ -49,7 +42,7 @@ export class SkillPanel extends BaseGui{
     bind(world){
         this.world = world;
         this.roles = world.roles;
-        world.parallelContainer.addChild(this.baseContainer);
+        world.toolContainer.addChild(this.baseContainer);
     }
     ctrlContainer = new Container();
     refreshCtrl() {

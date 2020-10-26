@@ -1,15 +1,20 @@
 import { SkillProtos } from "../../data/skill/all";
+import { TalentProtos } from "../../data/talent/all";
 import { Skill } from "../../po/skill";
 import { typicalProp, Vita } from "../atom/vita";
 import { Controller } from "../controller";
 import { ItemEvent } from "../event";
 import { StateCache } from "./state";
 
-export class SkillController extends Controller{
+export class SkillController extends Controller {
     /**
      * @type [Skill]
      */
     skills = []
+    /**
+     * @type [Skill]
+     */
+    talents = []
     /**
      * @param {Vita} vita 
      * @param {[number]} skills 
@@ -21,7 +26,7 @@ export class SkillController extends Controller{
             this.add(new Skill(SkillProtos[_s]).link(this.vita));
         });
         vita.talents.forEach(_s => {
-            this.add(new Skill(SkillProtos[_s]).link(this.vita), 2);
+            this.addTalent(new Skill(TalentProtos[_s]).link(this.vita), 2);
         });
         this.init();
     }
@@ -35,7 +40,17 @@ export class SkillController extends Controller{
         if (!skill.inited) skill.init();
         this.vita.compute();
     }
-    initWingSkill(vita = this.belonger){
+    /**
+     * @param {Skill} skill 
+     */
+    addTalent(skill, type = 2) {
+        if (this.talents.some(s => s.index == skill.index)) return;
+        skill.commonType = type;
+        this.talents.push(skill);
+        if (!skill.inited) skill.init();
+        this.vita.compute();
+    }
+    initWingSkill(vita = this.belonger) {
         if (vita.wingSkill >= 0) this.add(new Skill(SkillProtos[vita.wingSkill]).link(this.vita), 1);
     }
     /**
@@ -43,6 +58,14 @@ export class SkillController extends Controller{
      */
     remove(skill) {
         this.skills.splice(this.skills.indexOf(skill), 1);
+        skill.remove();
+        this.vita.compute();
+    }
+    /**
+     * @param {Skill} skill 
+     */
+    removeTalent(skill) {
+        this.talents.splice(this.talents.indexOf(skill), 1);
         skill.remove();
         this.vita.compute();
     }
@@ -57,11 +80,27 @@ export class SkillController extends Controller{
         skill.remove();
         this.vita.compute();
     }
+    /**
+     * @param {Number} si 
+     */
+    removeTalentByIndex(si) {
+        let index = this.talents.findIndex(s => s.index == si);
+        if (index < 0) return;
+        let skill = this.talents[index];
+        this.talents.splice(index, 1);
+        skill.remove();
+        this.vita.compute();
+    }
+    removeAllTalent() {
+        this.talents.forEach(talent => talent.remove());
+        this.talents = [];
+        this.vita.compute();
+    }
     caculate(prop, bv) {
         let added = 0;
         this.skills.forEach(skill => {
             skill.proto.initedProps[prop]?.forEach(fn => {
-                added += fn(bv, this.vita);
+                added += fn(bv, this.vita, skill);
             })
         })
         return added;
@@ -69,7 +108,7 @@ export class SkillController extends Controller{
     /**
      * @param {Skill} skill 
      */
-    isExecutableSkill(skill){
+    isExecutableSkill(skill) {
         if (!skill || !skill.active || skill.preventing()) return false;
         if (this.belonger.timer < skill.freezeUtil) return false;
         let lostMp = skill.getMp();
@@ -81,7 +120,7 @@ export class SkillController extends Controller{
             let timer = this.vita.timer;
             let skill = e.value == 0 ?
                 this.skills.filter(s => s.commonType == 1)[0] : this.skills.filter(s => s.commonType == 0)[e.value - 1];
-            if(!this.isExecutableSkill(skill))return;
+            if (!this.isExecutableSkill(skill)) return;
             skill.freezeUtil = timer + skill.proto.freeze;
             /**
              * 以下为该技能可以释放

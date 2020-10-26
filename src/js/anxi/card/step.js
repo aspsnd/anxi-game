@@ -28,7 +28,7 @@ export class StepManager {
         this.container = world.baseContainer;
         world.on('timing', this.onTimer.bind(this));
         // setTimeout(_ => {
-        //     this.place([5, 0, 600, 1], {
+        //     this.place([6, 0, 600, 1], {
         //         deadNum:0,
         //         monstNum:1
         //     }, 0);

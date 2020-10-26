@@ -1,7 +1,9 @@
 import { World } from "../../anxi/atom/world";
+import { GlobalEventCaster } from "../../anxi/instruct/global";
 import { BagController } from "../../pod/guis/bag";
 import { OpenQuit } from "../../pod/guis/quit";
 import { SkillPanel } from "../../pod/guis/skill";
+import { TalentPanel } from "../../pod/guis/talent";
 // import { RealWorld } from "../world";
 
 /**
@@ -18,14 +20,14 @@ export class QuickOpen {
      */
     static bind(world) {
         this.world = world;
-        for(let key in this.instance.kvs){
+        for (let key in this.instance.kvs) {
             let tool = this.instance.kvs[key];
             tool.bind(world);
         }
     }
-    static debind(){
+    static debind() {
         this.world = null;
-        for(let key in this.instance.kvs){
+        for (let key in this.instance.kvs) {
             let tool = this.instance.kvs[key];
             tool.world = null;
         }
@@ -50,16 +52,18 @@ export class QuickOpen {
         }
     }
     nowOpen = false
-    constructor(roles, keys = ['c', 'z', 'v']) {
+    constructor(roles, keys = ['c', 'z', 'v', 'b']) {
         this.keys = keys;
         this.nowOpenKey = keys[0];
         let openQuit = new OpenQuit();
         let skillPanel = new SkillPanel(roles);
         let bagController = new BagController(roles);
+        let talentPanel = new TalentPanel(roles);
         this.kvs = {
             [keys[0]]: bagController,
             [keys[1]]: openQuit,
             [keys[2]]: skillPanel,
+            [keys[3]]: talentPanel
         }
         QuickOpen.instance = this;
     }
@@ -73,6 +77,6 @@ export class QuickOpen {
         }
     }
 }
-document.addEventListener('keydown', e => {
-    QuickOpen.emit(e.key);
+GlobalEventCaster.on('keydown', e => {
+    QuickOpen.emit(e.value.key);
 })

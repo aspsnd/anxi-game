@@ -266,7 +266,9 @@ export class Flyer extends Atom {
         if (this._disposed) return;
         this._disposed = true;
         this.on('clear');
-        this.root._destroyed || this.root.destroy();
+        this.root._destroyed || this.root.destroy({
+            children: true
+        });
         this.world.elseAtoms[this.id] = undefined;
         this.belonger = null;
         // this.refreshAbsolute();

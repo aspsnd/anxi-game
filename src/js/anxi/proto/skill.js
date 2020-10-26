@@ -50,7 +50,7 @@ export class SkillProto {
     initedProps = {}
     /**
      * 初始化属性加成
-     * @param {function(number,Vita)} func 
+     * @param {function(number,Vita,Skill)} func 
      */
     initProp(prop, func) {
         if (!this.initedProps[prop]) {
@@ -65,7 +65,7 @@ export class SkillProto {
     initedListens = []
     /**
      * 初始化监听器
-     * @param {import("../../po/eventName").EventName} eventName
+     * @param {import("../eventName").EventName} eventName
      * @param {function(Vita,Skill):function(ItemEvent)} handlerGetter
      */
     initListen(eventName, handlerGetter) {

@@ -58,8 +58,8 @@ export class World extends Atom {
         World.instance = this;
         QuickOpen.bind(this);
         this.container = container;
-        this.container.addChild(this.baseContainer, this.guiContainer, this.parallelContainer);
-        this.baseContainer.addChild(this.wallContainer, this.vitaContainer, this.toolContainer);
+        this.container.addChild(this.baseContainer, this.parallelContainer, this.guiContainer, this.toolContainer);
+        this.baseContainer.addChild(this.wallContainer, this.vitaContainer);
         this.initCard(carddata);
         this.stepManager = new StepManager(this).bind(roles);
         roles.forEach((role, index) => this.initRole(role, index));
@@ -81,13 +81,6 @@ export class World extends Atom {
                 monst.y = 250;
                 monst.landIn(this);
             }
-            // if (e.key == 't') {
-            //     let flyer = window.flyer = new Flyer(new Sprite()).useLiveTime(120).onTime(timer => {
-            //         console.log(this.timer, timer);
-            //     });
-            //     flyer.landIn(this, 1);
-            //     console.log('landIn World', this.timer);
-            // }
         });
         this.once('die', e => {
             GlobalEventCaster.removeHandler(comt);

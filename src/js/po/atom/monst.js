@@ -1,5 +1,6 @@
 import { Vita } from "../../anxi/atom/vita";
 import { HPBarController } from "../../anxi/controller/hp.view";
+import { ItemEvent } from "../../anxi/event";
 import { EquipProtos } from "../../data/thing/equip/all";
 import { ExtraProtos } from "../../data/thing/extra/all";
 import { MaterialProtos } from "../../data/thing/material/all";
