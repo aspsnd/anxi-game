@@ -168,6 +168,11 @@ export class SkillController extends Controller {
             skill.data = {};
             skill.initfunc(skill.data);
         });
+        this.talents.forEach(skill => {
+            skill.freezeUtil = -1;
+            skill.data = {};
+            skill.initfunc(skill.data);
+        });
         typicalProp.forEach(prop => {
             this.vita.computeFunctions[prop].push(bv => this.caculate(prop, bv));
         });

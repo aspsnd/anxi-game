@@ -90,7 +90,7 @@ export class Flyer extends Atom {
             this.root.x += vx;
             this.root.y += vy;
         }
-        if (!this.ifcheck()) return;
+        if (!this.ifcheck(this.timer)) return;
         let area = this.areaGetter(this.checker.x, this.checker.y);
         let hits = this.checkFilter(this.belonger.world.selectableVitas()).filter(v => !this.shootedVitas.includes(v.id)).filter(v => area.hit(v.getHitGraph()));
         let belonger = this.belonger;

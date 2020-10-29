@@ -51,7 +51,7 @@ export function formatDate(date, fmt) {
     }
     return fmt;
 }
-export const DynamicLoadMode = true;
+export const DynamicLoadMode = false;
 export function by(...url) {
     return baseBy(url.find(u => res.includes(u)));
 }
