@@ -352,13 +352,13 @@ export class Vita extends Atom {
         }, true)
         this.once(`timer_${1}`, e => {
             this.on('wantdrop');
-        });
+        }, true);
         this.on(`getstate_${StateCache.border}`, e => {
             this.selectable = false;
-        })
+        }, true)
         this.on(`loststate_${StateCache.border}`, e => {
             this.selectable = true;
-        })
+        }, true)
     }
     // 初始化最基本的变化 基础(额外)属性变化-> 最终属性变化
     initEvent() {
@@ -407,6 +407,14 @@ export class Vita extends Atom {
              */
             affect.reduce.common += this.prop.def >= 0 ? affect.harm.common * this.prop.def / (this.prop.def + 100) : affect.harm * this.prop.def / 100;
 
+
+            /**
+             * 是否无敌
+             */
+            if (this.stateController.has(StateCache.IME)) {
+                affect.reduce.common = affect.harm.common;
+                affect.reduce.absolute = affect.harm.absolute;
+            }
             /**
              * 免控减少机制
              */
@@ -422,26 +430,6 @@ export class Vita extends Atom {
              * @type {Affect}
              */
             let affect = e.value;
-            
-            if (affect.harm.common < affect.reduce.common) {
-                affect.reduce.common = affect.harm.common;
-            }
-            if (affect.harm.absolute < affect.reduce.absolute) {
-                affect.reduce.absolute = affect.harm.absolute;
-            }
-
-            /**
-             * 确定应掉血量
-             */
-            affect.finalHarm = Math.round(affect.harm.common + affect.harm.absolute - affect.reduce.common - affect.reduce.absolute);
-
-            /**
-             * 是否无敌
-             */
-            if (this.stateController.has(StateCache.IME)) {
-                affect.reduce.common = affect.harm.common;
-                affect.reduce.absolute = affect.harm.absolute;
-            }
 
             /**
              * 触发掉血事件

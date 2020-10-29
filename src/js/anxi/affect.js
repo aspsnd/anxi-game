@@ -38,14 +38,16 @@ export class Affect {
      * @param {Hurt} proto 
      * @param {Vita} from 
      * @param {Vita} to 
+     * @param {(this:Affect, affect:Affect)=>void} initer
      */
-    constructor(proto, from, to) {
+    constructor(proto, from, to, initer = _ => { }) {
         this.proto = proto;
         this.from = from;
         this.to = to;
         this.debuff = proto.debuff ?? this.debuff;
         this.isCrt = proto.isCrt ?? this.isCrt;
         this.harm = proto.harm ?? this.harm;
+        initer.call(this, this);
     }
     bedoded = false
     setout() {
@@ -56,6 +58,20 @@ export class Affect {
         // this.to.on(new ItemEvent('getAffectpre', this, this.from));
         //被击者对伤害进行减免
         this.to.on(new ItemEvent('getAffect', this, this.from));
+
+        if (this.harm.common < this.reduce.common) {
+            this.reduce.common = this.harm.common;
+        }
+        if (this.harm.absolute < this.reduce.absolute) {
+            this.reduce.absolute = this.harm.absolute;
+        }
+
+        /**
+         * 确定应掉血量
+         */
+        this.finalHarm = Math.round(this.harm.common + this.harm.absolute - this.reduce.common - this.reduce.absolute);
+
+
         //被击者结算伤害
         this.bedoded || this.to.on(new ItemEvent('beAffect', this, this.from));
         //施法者结算

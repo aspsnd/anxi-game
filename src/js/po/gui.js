@@ -14,7 +14,7 @@ export class GUI {
         let width = 250;
         barContainer.position.set(left ? 0 : GameWidth - width, 0);
         this.basebar = barContainer;
-        let aveterSprite = new Sprite(gameApp.loader.resources[role.proto.defaultView.head].texture);
+        let aveterSprite = new Sprite(by(role.proto.defaultView.head));
         aveterSprite.anchor.set(0.5, 0.5);
         aveterSprite.scale.set(left ? 1.4 : -1.4, 1.4);
         aveterSprite.x = left ? 30 : width - 30;

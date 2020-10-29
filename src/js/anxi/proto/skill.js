@@ -76,6 +76,9 @@ export class SkillProto {
         return this;
     }
     recacutimes = []
+    /**
+     * @param {import("../eventName").EventName[]} eventNames 
+     */
     whenReCacu(eventNames = []) {
         this.recacutimes = eventNames;
         return this;

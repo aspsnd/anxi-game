@@ -64,7 +64,7 @@ export default new SkillProto(2, '超凡', '每击杀一个敌人，会获得1�
                     affect.harm.absolute = (120 + from.prop.atk) * (0.15 + 0.08 * power);
                     affect.harm.common = (120 + from.prop.atk) * (0.15 + 0.08 * power);
                     return affect;
-                })
+                }).useFilter(vitas => vitas.filter(v => v.group != vita.group));
         });
         vita.once('lostura', e => {
             vita.removeHandler(comt);

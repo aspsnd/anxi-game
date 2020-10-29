@@ -7,6 +7,7 @@ export default new SkillProto(4, '掠杀', '开启无双时，进入世界的边
     .execute(function () {
         let { vita } = this;
         let lastTime = (Math.min(8, vita.level / 3 + 2) * 60) | 0;
+        console.log(lastTime);
         let index = vita.stateController.insertState(StateCache.border, new StateItem(lastTime));
         vita.once(`timer_${vita.timer + lastTime}`, e => {
             vita.removeHandler(vita.on('resAffect', e => {

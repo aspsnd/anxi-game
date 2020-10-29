@@ -9,6 +9,7 @@ import { RoleProto } from "../anxi/proto/role";
 import { GUI } from "./gui";
 import { RecordController } from "../record/record";
 import { SuperInstructor } from "../anxi/instruct/inst";
+import { SingleTalent } from "../pod/home/talent";
 
 export class RealWorld extends ForeverWorld {
     /**
@@ -40,11 +41,15 @@ export class RealWorld extends ForeverWorld {
                 combineSprite.tap = _ => {
                     router.to('combine');
                 };
+                let talentSprite = new BaseTool(by('./res/util/gui/talent.png')).useText('天 赋').appendTo(container, 140, 530);
+                talentSprite.tap = _ => {
+                    router.to('talent');
+                }
                 cardDatas.forEach(cd => {
                     let s = gameTink.button([
-                        gameApp.loader.resources[cd.card[0]].texture,
-                        gameApp.loader.resources[cd.card[1]].texture,
-                        gameApp.loader.resources[cd.card[2]].texture,
+                        by(cd.card[0]),
+                        by(cd.card[1]),
+                        by(cd.card[2]),
                     ], ...cd.position);
                     data.mapCards[cd.index] = s;
                     s.anchor.x = 0.5;
@@ -63,11 +68,11 @@ export class RealWorld extends ForeverWorld {
                     let canIn = all.record.opened.includes(index);
                     let srcs = cardDatas[index].card;
                     if (canIn) {
-                        sprite._textures[1] = gameApp.loader.resources[srcs[1]].texture;
-                        sprite._textures[2] = gameApp.loader.resources[srcs[2]].texture;
+                        sprite._textures[1] = by(srcs[1]);
+                        sprite._textures[2] = by(srcs[2]);
                     } else {
-                        sprite._textures[1] = gameApp.loader.resources[srcs[0]].texture;
-                        sprite._textures[2] = gameApp.loader.resources[srcs[0]].texture;
+                        sprite._textures[1] = by(srcs[0]);
+                        sprite._textures[2] = by(srcs[0]);
                     }
                 })
             }
@@ -99,6 +104,19 @@ export class RealWorld extends ForeverWorld {
         }, simpleCombine.container, _ => {
             simpleCombine.init();
         });
+        router.register('talent', {
+            initer(container, data) {
+                SingleTalent.hide = _ => {
+                    router.back();
+                }
+                all.container.addChild(container);
+            },
+            refresher() {
+                SingleTalent.show();
+            }
+        }, SingleTalent.container, _ => {
+            SingleTalent.init();
+        });
         this.loadRoles(record.roles);
         router.start();
     }
@@ -119,6 +137,7 @@ export class RealWorld extends ForeverWorld {
         window.role = this.roles[0];
         window.role2 = this.roles[1];
         simpleCombine.load(this.roles);
+        SingleTalent.load(this.roles);
     }
     loadCard(carddata) {
         this.router.pageHandlers['world'].data = {

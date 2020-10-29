@@ -34,7 +34,6 @@ class Combine extends ToolGUI {
     }
     init() {
         super.init();
-        this.container.texture = by(this.textureUrl);
         this.initCommon();
     }
     /**

@@ -51,15 +51,17 @@ export function formatDate(date, fmt) {
     }
     return fmt;
 }
-export function defaultBy(...url) {
-    return gameApp.loader.resources[url.find(u => res.includes(u))].texture;
-}
-export function by(url) {
-    if (arguments.length > 1) return defaultBy(...arguments);
-    return res.includes(url) ? gameApp.loader.resources[url].texture : null;
+export const DynamicLoadMode = true;
+export function by(...url) {
+    return baseBy(url.find(u => res.includes(u)));
 }
 export function directBy(durl, url = './res/util/' + durl) {
-    return res.includes(url) ? gameApp.loader.resources[url].texture : null;
+    // return res.includes(url) ? gameApp.loader.resources[url].texture : null;
+    return baseBy(url);
+}
+function baseBy(url) {
+    if (url == undefined) return null;
+    return DynamicLoadMode ? PIXI.Texture.from(url) : gameApp.loader.resources[url].texture;
 }
 const baseDefaultViewSrc = './res/util/role';
 export const getDefaultView = function (index) {
@@ -185,6 +187,7 @@ export const a2r = a => a * Math.PI / 180;
 export const randomInt = (min, max) => (min + Math.random() * (max + 1 - min)) | 0
 export const randomNode = arr => arr[(arr.length * Math.random()) | 0];
 export const getSkillIcon = index => res.includes(`./res/util/icon/skill/${index}.png`) ? `./res/util/icon/skill/${index}.png` : './res/util/icon/skill/default.png';
+export const getTalentIcon = index => res.includes(`./res/util/icon/talent/${index}.png`) ? `./res/util/icon/talent/${index}.png` : './res/util/icon/talent/default.png';
 export const loadAndAfter = callback => {
     gameApp.loader.add(['./res/util/_load/sec.png']).load(_ => {
         let i = 0;
@@ -236,14 +239,23 @@ export const loadAndAfter = callback => {
         g.endFill();
         gameApp.stage.addChild(g);
         var perw = GameWidth * 0.01;
-        gameApp.loader.add(res).on('progress', function (p) {
-            g.x = p.progress * perw;
-        }).load(() => {
+        if (DynamicLoadMode) {
             gameApp.ticker.remove(loadingFunction);
-            setTimeout(_ => {
-                gameApp.stage.removeChildren();
-                callback();
-            })
-        });
+                setTimeout(_ => {
+                    gameApp.stage.removeChildren();
+                    callback();
+                })
+        } else {
+            gameApp.loader.add(res).on('progress', function (p) {
+                g.x = p.progress * perw;
+            }).load(() => {
+                gameApp.ticker.remove(loadingFunction);
+                setTimeout(_ => {
+                    gameApp.stage.removeChildren();
+                    callback();
+                })
+            });
+        }
+
     });
 }

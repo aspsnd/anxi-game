@@ -260,6 +260,7 @@ export const init = () => {
                 container.visible = true;
                 let world = data.world;
                 world.init(data.record);
+                // world.router.to('talent');
                 world.loadCard(cardDatas[0]);
             }
         }, undefined, (container, data) => {

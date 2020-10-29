@@ -102,7 +102,12 @@ export class SkillController extends Controller {
             skill.proto.initedProps[prop]?.forEach(fn => {
                 added += fn(bv, this.vita, skill);
             })
-        })
+        });
+        this.talents.forEach(skill => {
+            skill.proto.initedProps[prop]?.forEach(fn => {
+                added += fn(bv, this.vita, skill);
+            })
+        });
         return added;
     }
     /**

@@ -35,6 +35,7 @@ export const res = [
     "./res/util/gui/out2.png",
     "./res/util/gui/outbg.png",
     "./res/util/gui/sec.png",
+    "./res/util/gui/talent.png",
     "./res/util/gui/use1.png",
     "./res/util/gui/use2.png",
     "./res/util/gui/use3.png",
@@ -54,6 +55,7 @@ export const res = [
     "./res/util/icon/skill/3.png",
     "./res/util/icon/skill/4.png",
     "./res/util/icon/skill/default.png",
+    "./res/util/icon/talent/default.png",
     "./res/util/map/1.png",
     "./res/util/map/10.png",
     "./res/util/map/10h.png",
@@ -180,7 +182,17 @@ export const res = [
     "./res/util/talent/0/0.png",
     "./res/util/talent/1/0.png",
     "./res/util/talent/2/0.png",
-    "./res/util/talent/2/1.png"
+    "./res/util/talent/2/1.png",
+    "./res/util/talent/3/1.png",
+    "./res/util/talent/3/2.png",
+    "./res/util/talent/3/3.png",
+    "./res/util/talent/3/4.png",
+    "./res/util/talent/3/5.png",
+    "./res/util/talent/3/6.png",
+    "./res/util/talent/6/0.png",
+    "./res/util/talent/6/1.png",
+    "./res/util/talent/8/0.png",
+    "./res/util/talent/8/1.png"
 ];
 export const ressound = [
     "./res/audio/bg.mp3",

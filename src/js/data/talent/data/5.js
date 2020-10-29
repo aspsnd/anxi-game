@@ -7,6 +7,7 @@ export default new SkillProto(5, '不灭', '进入濒死状态后，自己会复
         data.used = false;
     })
     .initListen('wantdie', (vita, skill) => e => {
+        if (skill.data.used) return;
         if (vita.varProp.hp <= 0) {
             skill.data.used = true;
             skill.execute();

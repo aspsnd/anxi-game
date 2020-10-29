@@ -261,6 +261,11 @@ export class Flyer extends Atom {
         this.checkFilter = filter;
         return this;
     }
+    static noGroupFilter = function (vitas) { return vitas.filter(v => v.group != this.belonger.group) }
+    useNoGroupFilter() {
+        this.checkFilter = Flyer.noGroupFilter;
+        return this;
+    }
     _disposed = false;
     dispose() {
         if (this._disposed) return;

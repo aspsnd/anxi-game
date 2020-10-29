@@ -9,6 +9,10 @@ export class ToolGUI {
     }
     init() {
         this._initCloseButton();
+        this._initBg();
+    }
+    _initBg(){
+        this.container.texture = by(this.textureUrl);
     }
     closeBtn
     _initCloseButton() {
