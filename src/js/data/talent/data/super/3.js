@@ -1,10 +1,10 @@
 import { AnimatedSprite } from "pixi.js";
-import { Affect } from "../../../anxi/affect";
-import { Flyer } from "../../../anxi/atom/flyer";
-import { Vita } from "../../../anxi/atom/vita";
-import { SkillProto } from "../../../anxi/proto/skill";
-import { Point, Polygon } from "../../../anxi/shape/shape";
-import { directBy } from "../../../util";
+import { Affect } from "../../../../anxi/affect";
+import { Flyer } from "../../../../anxi/atom/flyer";
+import { Vita } from "../../../../anxi/atom/vita";
+import { SkillProto } from "../../../../anxi/proto/skill";
+import { Point, Polygon } from "../../../../anxi/shape/shape";
+import { directBy } from "../../../../util";
 
 export default new SkillProto(3, '雷劫', '每造成10次伤害，会在最后一次伤害的敌人引发雷击，3s冷却')
     .active(false)

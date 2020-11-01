@@ -38,6 +38,11 @@ export class RecordController {
             opened: [0]
         }
     }
+    static logout(){
+        this.id = undefined;
+        this.uuid = undefined;
+        this.records = [];
+    }
     static saveRecord(index, record) {
         record.updateTime = formatDate(new Date(), 'yy-MM-dd hh:mm:ss');
         record.index = index;

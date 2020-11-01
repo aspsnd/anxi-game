@@ -9,6 +9,7 @@ import { RoleProtos } from "./data/role/all";
 import { Role } from "./po/atom/role";
 import { cardDatas } from "./data/card/card";
 import { QuickOpen } from "./po/gui/open";
+import { autoLogin, autoLoginTarget } from "./boot";
 const { myAler } = ZY;
 const { Question } = myAler;
 
@@ -44,17 +45,22 @@ export const init = () => {
                 /**
                  * @test autologin 
                  */
-                RecordController.login('aspsnd3', 'aspsnd').then(res => {
-                    new GTip('登录成功');
-                    // gameRouter.to('main');
-                    setTimeout(_ => {
-                        gameRouter.pageHandlers['world'].data.record = RecordController.getRecord(2);
-                        gameRouter.to('world');
+                if (autoLogin) {
+                    RecordController.login(...autoLogin).then(res => {
+                        new GTip('登录成功');
+                        if (autoLoginTarget == undefined) {
+                            gameRouter.to('main');
+                        } else {
+                            setTimeout(_ => {
+                                gameRouter.pageHandlers['world'].data.record = RecordController.getRecord(autoLoginTarget);
+                                gameRouter.to('world');
+                            })
+                        }
+                    }).catch(e => {
+                        console.error(e);
+                        new GDanger('登录失败');
                     })
-                }).catch(e => {
-                    console.error(e);
-                    new GDanger('登录失败');
-                })
+                }
 
             }
         });
@@ -86,6 +92,26 @@ export const init = () => {
                 }
                 continueGame.tap = _ => {
                     gameRouter.to('loadRecord');
+                }
+                helpPage.tap = _ => {
+                    HelpPage.classList.remove('hide');
+                }
+                aboutPage.tap = _ => {
+                    AboutPage.classList.remove('hide');
+                }
+                document.querySelectorAll('.hideHelp').forEach(btn => {
+                    btn.onclick = _ => {
+                        HelpPage.classList.add('hide');
+                    }
+                })
+                document.querySelectorAll('.hideAbout').forEach(btn => {
+                    btn.onclick = _ => {
+                        AboutPage.classList.add('hide');
+                    }
+                })
+                exitLogin.tap = _ => {
+                    RecordController.logout();
+                    gameRouter.to('login');
                 }
             }
         })
@@ -261,7 +287,7 @@ export const init = () => {
                 let world = data.world;
                 world.init(data.record);
                 // world.router.to('talent');
-                world.loadCard(cardDatas[0]);
+                // world.loadCard(cardDatas[0]);
             }
         }, undefined, (container, data) => {
             let world = data.world = new RealWorld(gameApp, container);

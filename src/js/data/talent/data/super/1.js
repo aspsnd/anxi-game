@@ -1,7 +1,7 @@
 import { Sprite } from "pixi.js";
-import { Flyer } from "../../../anxi/atom/flyer";
-import { SkillProto } from "../../../anxi/proto/skill";
-import { directBy, IFC } from "../../../util";
+import { Flyer } from "../../../../anxi/atom/flyer";
+import { SkillProto } from "../../../../anxi/proto/skill";
+import { directBy, IFC } from "../../../../util";
 
 export default new SkillProto(1, '成神之路', '每击杀一个单位会增加自身1--5攻击力，最多10次，满层后自身造成伤害后会回复伤害值5%的血量')
     .active(false)

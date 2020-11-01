@@ -1,10 +1,10 @@
 import { Container, Sprite } from "pixi.js";
-import { Affect } from "../../../anxi/affect";
-import { Flyer } from "../../../anxi/atom/flyer";
-import { StateCache } from "../../../anxi/controller/state";
-import { SkillProto } from "../../../anxi/proto/skill";
-import { Point, Polygon } from "../../../anxi/shape/shape";
-import { directBy } from "../../../util";
+import { Affect } from "../../../../anxi/affect";
+import { Flyer } from "../../../../anxi/atom/flyer";
+import { StateCache } from "../../../../anxi/controller/state";
+import { SkillProto } from "../../../../anxi/proto/skill";
+import { Point, Polygon } from "../../../../anxi/shape/shape";
+import { directBy } from "../../../../util";
 
 export default new SkillProto(6, '钢铁化身', '每累计损失20%生命值，增加自身4-12防御，并由自身产生一次使敌人眩晕的爆炸，防御最多增加8次。')
     .active(false)
@@ -41,7 +41,7 @@ export default new SkillProto(6, '钢铁化身', '每累计损失20%生命值，
         let { x } = vita;
         let y = vita.y + vita.height;
         if (fullact) {
-            let sprite = window.ear = new Sprite(directBy('talent/6/1.png'));
+            let sprite = new Sprite(directBy('talent/6/1.png'));
             sprite.anchor.set(1, 1);
             sprite.alpha = 0;
             sprite.position.set(-1, 3);

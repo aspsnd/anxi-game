@@ -49,4 +49,3 @@ class TalentDetail {
     }
 }
 export const SingleTalentDetail = TalentDetail.INSTANCE;
-window.SingleTalentDetail = SingleTalentDetail;

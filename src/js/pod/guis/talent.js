@@ -37,6 +37,7 @@ export class TalentPanel extends BaseGui {
     }
     ctrlContainer = new Container();
     refreshCtrl() {
+        this.ctrlContainer.removeChildren();
         let posx = 150;
         this.roles.forEach((role, index) => {
             let name = TalentPanel.nameText(role.name);

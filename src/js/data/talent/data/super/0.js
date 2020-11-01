@@ -1,10 +1,10 @@
 import { Sprite } from "pixi.js";
-import { Affect } from "../../../anxi/affect";
-import { Flyer } from "../../../anxi/atom/flyer";
-import { Vita } from "../../../anxi/atom/vita";
-import { Attack } from "../../../anxi/hurt/attack";
-import { SkillProto } from "../../../anxi/proto/skill";
-import { directBy } from "../../../util";
+import { Affect } from "../../../../anxi/affect";
+import { Flyer } from "../../../../anxi/atom/flyer";
+import { Vita } from "../../../../anxi/atom/vita";
+import { Attack } from "../../../../anxi/hurt/attack";
+import { SkillProto } from "../../../../anxi/proto/skill";
+import { directBy } from "../../../../util";
 
 export default new SkillProto(0, '强攻', '对每个敌人造成第三次普攻后，对其造成此次伤害110%的真实伤害, 永久降低其5+自身等级*50%的防御。')
     .initListen('resAffect', (vita, skill) => e => {

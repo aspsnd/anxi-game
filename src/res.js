@@ -34,6 +34,7 @@ export const res = [
     "./res/util/gui/out.png",
     "./res/util/gui/out2.png",
     "./res/util/gui/outbg.png",
+    "./res/util/gui/refresh.png",
     "./res/util/gui/sec.png",
     "./res/util/gui/talent.png",
     "./res/util/gui/use1.png",

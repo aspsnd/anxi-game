@@ -15,6 +15,7 @@ import { HPBarController } from "../controller/hp.view";
 import Dust from "pixi-dust";
 import { SuperInstructor } from "../instruct/inst";
 import { GlobalEventCaster } from "../instruct/global";
+import { exposeToWindow, openDropMonst } from "../../boot";
 
 export class ForeverWorld extends Atom {
     /**
@@ -66,24 +67,31 @@ export class World extends Atom {
         /**
          * @test
          */
-        let comt = GlobalEventCaster.on('keydown', ee => {
-            if (!this.running) return;
-            let e = ee.value;
-            if (48 <= e.keyCode && e.keyCode <= 57) {
-                e.preventDefault();
-                let monst = new Monst(MonstProtos[parseInt(e.key) - 1]);
-                new HPBarController(monst);
-                this.vitaContainer.addChild(monst.viewController.view);
-                monst.link(this);
-                monst.use(e.ctrlKey ? SuperInstructor.artificialIntelligence() : SuperInstructor.player(SuperInstructor.testPlayer));
-                this.vitas[monst.id] = monst;
-                monst.x = 600 + this.stepManager.screenLeft;
-                monst.y = 250;
-                monst.landIn(this);
-            }
-        });
+        if (openDropMonst) {
+            let comt = GlobalEventCaster.on('keydown', ee => {
+                if (!this.running) return;
+                let e = ee.value;
+                if (48 <= e.keyCode && e.keyCode <= 57) {
+                    e.preventDefault();
+                    let monst = new Monst(MonstProtos[parseInt(e.key) - 1]);
+                    if(exposeToWindow){
+                        window.monst = monst;
+                    }
+                    new HPBarController(monst);
+                    this.vitaContainer.addChild(monst.viewController.view);
+                    monst.link(this);
+                    monst.use(e.ctrlKey ? SuperInstructor.artificialIntelligence() : SuperInstructor.player(SuperInstructor.testPlayer));
+                    this.vitas[monst.id] = monst;
+                    monst.x = 600 + this.stepManager.screenLeft;
+                    monst.y = 250;
+                    monst.landIn(this);
+                }
+            });
+            this.once('die', e => {
+                GlobalEventCaster.removeHandler(comt);
+            })
+        }
         this.once('die', e => {
-            GlobalEventCaster.removeHandler(comt);
             this.vitas.forEach(vita => {
                 vita instanceof Monst && vita.viewController.view.destroy({
                     children: true

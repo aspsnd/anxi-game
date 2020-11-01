@@ -1,5 +1,5 @@
-import { StateCache, StateItem } from "../../../anxi/controller/state";
-import { SkillProto } from "../../../anxi/proto/skill";
+import { StateCache, StateItem } from "../../../../anxi/controller/state";
+import { SkillProto } from "../../../../anxi/proto/skill";
 
 export default new SkillProto(4, '掠杀', '开启无双时，进入世界的边缘，一般的攻击无效，最多持续8秒。当造成伤害时，会提前结束该状态。')
     .active(false)

@@ -8,7 +8,7 @@ import { by } from "../../../../util";
 /**
  * 技能4 向前位移【途中无敌】 原地留下一只残影
  */
-export default new SkillProto(3,'悲影落', '向前位移【途中无敌】 原地留下一只残影')
+export default new SkillProto(3, '悲影落', '向前位移【途中无敌】 原地留下一只残影')
     .active(true)
     .lost(40)
     .standing(15)
@@ -44,7 +44,13 @@ export default new SkillProto(3,'悲影落', '向前位移【途中无敌】 原
             })
         };
         role.on(`timer_${nowTime + 8}`, e => {
-            let hitarea = new Polygon(new Point(x - 35 * face, y + 50), new Point(x - 35 * face, y - 50), new Point(x + distance + 50, y - 50), new Point(x + distance + 50, y + 50));
+            let hitarea = new Polygon(
+                new Point(x - 35 * face, y + 50),
+                new Point(x - 35 * face, y),
+                new Point(x - 35 * face, y - 50),
+                new Point(x + distance + 50, y - 50),
+                new Point(x + distance + 50, y),
+                new Point(x + distance + 50, y + 50));
             let shoots = role.world.selectableVitas().filter(vita => Boolean(vita)).filter(vita => vita.group != role.group)
                 .filter(vita => hitarea.hit(vita.getHitGraph()));
             shoots.forEach(vita => {

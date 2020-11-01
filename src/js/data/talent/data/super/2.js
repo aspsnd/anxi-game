@@ -1,11 +1,11 @@
 import { Container, Rectangle, Sprite, Texture } from "pixi.js";
-import { Affect } from "../../../anxi/affect";
-import { Flyer } from "../../../anxi/atom/flyer";
-import { Vita } from "../../../anxi/atom/vita";
-import { StateCache, StateItem } from "../../../anxi/controller/state";
-import { SkillProto } from "../../../anxi/proto/skill";
-import { Circle } from "../../../anxi/shape/shape";
-import { directBy } from "../../../util";
+import { Affect } from "../../../../anxi/affect";
+import { Flyer } from "../../../../anxi/atom/flyer";
+import { Vita } from "../../../../anxi/atom/vita";
+import { StateCache, StateItem } from "../../../../anxi/controller/state";
+import { SkillProto } from "../../../../anxi/proto/skill";
+import { Circle } from "../../../../anxi/shape/shape";
+import { directBy } from "../../../../util";
 
 export default new SkillProto(2, '超凡', '每击杀一个敌人，会获得1层魔能，当角色开启无双时会消耗所有魔能，每个魔能为角色提供0.5s霸体状态，并使角色无双结束前第一次造成伤害时对目标所在区域造成高额伤害。')
     .active(false)

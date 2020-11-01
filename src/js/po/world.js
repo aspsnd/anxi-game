@@ -10,6 +10,7 @@ import { GUI } from "./gui";
 import { RecordController } from "../record/record";
 import { SuperInstructor } from "../anxi/instruct/inst";
 import { SingleTalent } from "../pod/home/talent";
+import { exposeToWindow } from "../boot";
 
 export class RealWorld extends ForeverWorld {
     /**
@@ -134,8 +135,10 @@ export class RealWorld extends ForeverWorld {
             this.roles.push(role);
             role.use(SuperInstructor.player(index == 0 ? SuperInstructor.defaultPlayer : SuperInstructor.extraPlayer));
         });
-        window.role = this.roles[0];
-        window.role2 = this.roles[1];
+        if (exposeToWindow) {
+            window.role = this.roles[0];
+            window.role2 = this.roles[1];
+        }
         simpleCombine.load(this.roles);
         SingleTalent.load(this.roles);
     }

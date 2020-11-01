@@ -4,6 +4,7 @@ import { Tink } from "../js/anxi/lib/tink"
 import { res } from "../res";
 import Dust from "pixi-dust";
 import { PIXIRouter } from "./lib/router";
+import { dynamicResource } from "./boot";
 export const jumpContinue = {
     jump: 30,
     jumpSec: 30
@@ -51,7 +52,7 @@ export function formatDate(date, fmt) {
     }
     return fmt;
 }
-export const DynamicLoadMode = false;
+export const DynamicLoadMode = dynamicResource;
 export function by(...url) {
     return baseBy(url.find(u => res.includes(u)));
 }

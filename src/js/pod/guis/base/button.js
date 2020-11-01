@@ -2,9 +2,9 @@ import { Graphics, Text, TextStyle } from "pixi.js";
 import { gameTink } from "../../../util";
 
 export class TextButton extends Graphics {
-    constructor(_text, x = 0, y = 0, style = {}, width = 70, height = 25) {
+    constructor(_text, x = 0, y = 0, style = {}, width = 70, height = 25, fill = 0xeeaa00) {
         super();
-        this.beginFill(0xeeaa00);
+        this.beginFill(fill);
         this.drawRoundedRect(0, 0, width, height, 5);
         this.endFill();
         let text = new Text(_text, new TextStyle({
@@ -26,7 +26,7 @@ export class TextButton extends Graphics {
         this.over = _ => {
             this.text.style.fill = color2;
         }
-        this.out = _=>{
+        this.out = _ => {
             this.text.style.fill = color1;
         }
         return this;

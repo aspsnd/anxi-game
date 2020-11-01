@@ -13,6 +13,7 @@ import { SkillController } from "../controller/skill";
 import { Controller } from "../controller";
 import { Role } from "../../po/atom/role";
 import { AIController } from "../controller/ai/ai";
+import { res } from "../../../res";
 
 export const typicalProp = ['hp', 'mp', 'atk', 'def', 'crt', 'dod', 'hpr', 'mpr', 'speed'];
 /**
@@ -155,6 +156,7 @@ export class Vita extends Atom {
          * 交给AI层调用
          */
         this.on('wantgo', e => {
+            if (this.dead) return;
             if (this.stateController.includes(StateCache.hard, StateCache.beHitBehind, StateCache.dizzy, StateCache.attack, StateCache.go)) return;
             if (e.value === true) {
                 this.stateController.setStateInfinite(StateCache.go, true);
@@ -164,6 +166,7 @@ export class Vita extends Atom {
         }, true);
 
         this.on('wantleft', e => {
+            if (this.dead) return;
             if (this.stateController.includes(StateCache.hard, StateCache.beHitBehind, StateCache.dizzy, StateCache.attack)) return;
             if (this.stateController.has(StateCache.go) && this.face == -1) return;
             if (this.getCanRun() && this.face == -1) {
@@ -175,6 +178,7 @@ export class Vita extends Atom {
             }
         }, true)
         this.on('wantright', e => {
+            if (this.dead) return;
             if (this.stateController.includes(StateCache.hard, StateCache.beHitBehind, StateCache.dizzy, StateCache.attack)) return;
             if (this.stateController.has(StateCache.go) && this.face == 1) return;
             if (this.getCanRun() && this.face == 1) {
@@ -186,16 +190,19 @@ export class Vita extends Atom {
             }
         }, true);
         this.on('cancelleft', e => {
+            if (this.dead) return;
             if (this.face == 1) return;
             this.stateController.setStateInfinite(StateCache.go, false);
             this.stateController.setStateInfinite(StateCache.run, false);
         }, true)
         this.on('cancelright', e => {
+            if (this.dead) return;
             if (this.face == -1) return;
             this.stateController.setStateInfinite(StateCache.go, false);
             this.stateController.setStateInfinite(StateCache.run, false);
         }, true);
         this.on('wantjump', e => {
+            if (this.dead) return;
             if (this.stateController.includes(StateCache.hard, StateCache.attack, StateCache.beHitBehind, StateCache.dizzy)) return;
             if (this.maxJumpTimes < 1 || this.jumpTimes == this.maxJumpTimes) return;
             if (this.stickingWall?.glue) {
@@ -210,12 +217,14 @@ export class Vita extends Atom {
             }
         }, true);
         this.on('wantdown', e => {
+            if (this.dead) return;
             if (this.stateController.has(StateCache.drop) || this.stateController.includes(StateCache.jumpSec, StateCache.jump, StateCache.hover)) return;
             if (!this.stickingWall) return;
             if (!this.stickingWall.candown) return;
             this.stateController.setStateInfinite(StateCache.drop, true);
         }, true);
         this.on('wantdrop', e => {
+            if (this.dead) return;
             if (this.stateController.has(StateCache.drop) || this.stateController.includes(StateCache.jumpSec, StateCache.jump, StateCache.hover)) return;
             if (this.stickingWall) return;
             this.stateController.setStateInfinite(StateCache.drop, true);
@@ -271,6 +280,8 @@ export class Vita extends Atom {
             let despeed = Math.max(0, ...this.stateController.getSingleState(StateCache.slow).items.map(item => item.data));
             let fastspeed = this.stateController.getSingleState(StateCache.fast).items.reduce((p, c) => p + c.data, 0);
             let newExtra = fastspeed - despeed;
+            this.slowSpeed = despeed;
+            this.fastSpeed = fastspeed;
             if (this.extraProp.speed != newExtra) {
                 let revalue = this.extraProp.speed;
                 this.extraProp.speed = newExtra;
@@ -460,6 +471,7 @@ export class Vita extends Atom {
         this.on('dead', e => {
             let killer = e.from;
             killer?.on(new ItemEvent('killenemy', this));
+            this.world.on(new ItemEvent('somedie', this, killer));
             this.aiController = null;
             this.stateController.setStateInfinite(StateCache.dead, true);
             this.viewController.dead();

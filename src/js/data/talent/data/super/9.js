@@ -1,4 +1,4 @@
-import { SkillProto } from "../../../anxi/proto/skill";
+import { SkillProto } from "../../../../anxi/proto/skill";
 
 export default new SkillProto(9, '冰冻世界', '开启无双时，冻结场上所有敌人时间，持续2-4秒。')
     .active(false)

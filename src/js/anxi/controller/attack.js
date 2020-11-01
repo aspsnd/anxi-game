@@ -34,15 +34,16 @@ export class AttackController extends Controller {
             this.jumptype = Number(rule.jump);
         }
     }
-    changeBullet(bulletUrl){
-        this.bulletTexture = by(bulletUrl); 
+    changeBullet(bulletUrl) {
+        this.bulletTexture = by(bulletUrl);
     }
     init() {
         this.bulletTexture = by(this.belonger.proto.bulletUrl);
         this.belonger.on('wantattack', e => {
+            if (this.belonger.dead) return;
             let { timer, stateController } = this.belonger;
             if (this.freezeUntil > timer) return;
-            if (stateController.includes(StateCache.beHitBehind, StateCache.dizzy, StateCache.hard)) return;
+            if (stateController.includes(StateCache.beHitBehind, StateCache.dizzy, StateCache.hard, StateCache.attack)) return;
             if (stateController.includes(StateCache.jump, StateCache.jumpSec, StateCache.drop)) {
                 this.execute(this.jumptype);
             } else if (stateController.includes(StateCache.go, StateCache.run)) {
@@ -71,5 +72,9 @@ export class AttackController extends Controller {
         } else {
             return (this.lastAttackType = 0);
         }
+    }
+    refresh() {
+        this.lastAttackType = 0;
+        this.freezeUntil = 0;
     }
 }

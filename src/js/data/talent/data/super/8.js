@@ -1,8 +1,8 @@
 import { Graphics, Sprite } from "pixi.js";
-import { Flyer } from "../../../anxi/atom/flyer";
-import { SkillProto } from "../../../anxi/proto/skill";
-import { RealWorld } from "../../../po/world";
-import { directBy, gameApp, GameWidth } from "../../../util";
+import { Flyer } from "../../../../anxi/atom/flyer";
+import { SkillProto } from "../../../../anxi/proto/skill";
+import { RealWorld } from "../../../../po/world";
+import { directBy, gameApp, GameWidth } from "../../../../util";
 
 export default new SkillProto(8, '绯红之王', '开启无双时，会使自身时间迅速跳跃4——9秒。')
     .active(false)

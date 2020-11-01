@@ -11,9 +11,69 @@
 </head>
 
 <body>
-    <canvas id="appCanvas">
-        
-    </canvas>
+    <div id="allPages">
+        <canvas id="appCanvas"></canvas>
+        <div id="AboutPage" class="page hide">
+            <div class="show-father">
+                <button primary class="hideAbout">返回</button>
+                <div class="show-item">程序: Anxyser</div>
+                <div class="show-item">美术: Anxyser<span style="width: 50px;display: inline-block;"></span>54dyourc</div>
+                <div class="show-item">策划: Anxyser</div>
+                <div class="show-item">音效: Anxyser</div>
+                <div class="show-item">qq交流群: 833489208</div>
+                <div class="show-item">反馈邮箱: 2546697613@qq.com(欢迎反馈你发现的各种bug)</div>
+            </div>
+        </div>
+        <div id="HelpPage" class="hide page">
+            <div class="show-father">
+                <div class="show-title">游戏基本操作</div>
+                <button primary class="hideHelp">返回</button>
+                <div class="show-item">玩家一：
+                    <div class="show-item">A、D :-> 左右移动</div>
+                    <div class="show-item">W :-> 退出已完成的关卡/进入特殊关卡</div>
+                    <div class="show-item">S :-> 按住时跳跃可下跳</div>
+                    <div class="show-item">J :-> 普通攻击</div>
+                    <div class="show-item">K :-> 跳跃</div>
+                    <div class="show-item">空格[SPACE] :-> 开启无双</div>
+                    <div class="show-item">H :-> 释放羽翼技能</div>
+                    <div class="show-item">Y、U、I、O、L :-> 角色五个技能</div>
+                </div>
+                <div class="show-item">玩家二：
+                    <div class="show-item">左箭头、右箭头 :-> 左右移动</div>
+                    <div class="show-item">上箭头 :-> 退出已完成的关卡/进入特殊关卡</div>
+                    <div class="show-item">下箭头 :-> 按住时跳跃可下跳</div>
+                    <div class="show-item">小键盘1 :-> 普通攻击</div>
+                    <div class="show-item">小键盘12 :-> 跳跃</div>
+                    <div class="show-item">小键盘ENTER :-> 开启无双</div>
+                    <div class="show-item">小键盘7 :-> 释放羽翼技能</div>
+                    <div class="show-item">小键盘8、4、5、6、3 :-> 角色五个技能</div>
+                </div>
+                <div class="show-title">游戏中快捷键</div>
+                <div class="show-item">Z :-> 显示/隐藏菜单界面</div>
+                <div class="show-item">C :-> 显示/隐藏背包界面</div>
+                <div class="show-item">V :-> 显示/隐藏技能界面</div>
+                <div class="show-title">合成系统</div>
+                <div class="show-item">某些三个物品可以合成一个新的物品</div>
+                <div class="show-item">具体合成策略请玩家自主探索</div>
+                <div class="show-title">天赋系统</div>
+                <div class="show-item">角色在3/6/9/12/15级时会获得一个天赋点，每个天赋点可以学习一个天赋</div>
+                <div class="show-title">升级奖励</div>
+                <div class="show-item">升级会获取攻击/防御/血/蓝等基础属性增加</div>
+                <div class="show-item">升级可能获取天赋点</div>
+                <div class="show-item">升级会增强某些技能或天赋的效果</div>
+                <div class="show-title">游戏时间机制</div>
+                <div class="show-item">每进入一个关卡都相当于生成一个新的世界，世界有自己的时间速度，一般等同于现实速度。
+                    关卡内的玩家角色和怪物都有自己的时间速度，一般伴随所处世界的时间。在本游戏中时间速度是一个很奇妙的属性。
+                    依赖时间速度，以下事件成为可能。
+                    <div class="show-item">加快自己时间速度以加快技能释放，移动速度</div>
+                    <div class="show-item">减慢敌人时间速度使他们变得愚钝</div>
+                    <div class="show-item">暂停世界的时间，并使自己的时间正常流动</div>
+                    <div class="show-item">时间速度的用法还请玩家思考利用</div>
+                </div>
+                <button primary class="hideHelp">返回</button>
+            </div>
+        </div>
+    </div>
     <script src="./libs/zy/zy.js"></script>
 </body>
 

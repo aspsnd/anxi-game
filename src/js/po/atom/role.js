@@ -183,6 +183,7 @@ export class Role extends Vita {
         typicalProp.forEach(p => {
             this.computeFunctions[p] = [];
         })
+        this.refreshHandler();
         for (let p in this) {
             if (/Controller$/.test(p)) {
                 this[p]?.refresh();
@@ -194,7 +195,6 @@ export class Role extends Vita {
         this.on('nhpchange');
         this.on('nmpchange');
         this.gui.refresh();
-        this.refreshHandler();
     }
     /**
      * @param {ThingProto} thing 

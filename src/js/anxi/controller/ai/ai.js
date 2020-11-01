@@ -32,7 +32,7 @@ export class AIController extends Controller {
      */
     constructor(atom) {
         super(atom);
-        this.hai = atom.proto.ai;
+        this.hai = Object.assign({}, atom.proto.ai);
         this.init();
     }
     init() {

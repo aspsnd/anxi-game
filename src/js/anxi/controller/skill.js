@@ -122,6 +122,7 @@ export class SkillController extends Controller {
     }
     init() {
         this.vita.on('wantskill', e => {
+            if (this.belonger.dead) return;
             let timer = this.vita.timer;
             let skill = e.value == 0 ?
                 this.skills.filter(s => s.commonType == 1)[0] : this.skills.filter(s => s.commonType == 0)[e.value - 1];
@@ -168,10 +169,9 @@ export class SkillController extends Controller {
             skill.data = {};
             skill.initfunc(skill.data);
         });
-        this.talents.forEach(skill => {
-            skill.freezeUtil = -1;
-            skill.data = {};
-            skill.initfunc(skill.data);
+        this.removeAllTalent();
+        this.belonger.talents.forEach(_s => {
+            this.addTalent(new Skill(TalentProtos[_s]).link(this.belonger), 2);
         });
         typicalProp.forEach(prop => {
             this.vita.computeFunctions[prop].push(bv => this.caculate(prop, bv));
