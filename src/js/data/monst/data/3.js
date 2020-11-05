@@ -2,6 +2,7 @@ import { Matrix } from "pixi.js";
 import { StateCache } from "../../../anxi/controller/state";
 import { MonstProto } from "../../../anxi/proto/monst";
 import { Circle } from "../../../anxi/shape/shape";
+import { defaultArrowUrl } from "../../../sound/util";
 import { tween } from "../../../util";
 
 export default new MonstProto({
@@ -35,16 +36,17 @@ export default new MonstProto({
     level: 6,
     reward: {
         money: 20,
-        exp: 15
+        exp: 20
     },
     drops: {
-        rate:0.4,
+        rate: 0.4,
         equip: [
             [5, 1],
             [8, 1],
         ],
     },
-    attacks:[5]
+    attacks: [5],
+    sound: defaultArrowUrl
 }).useHitGraph((pos, face, vita) => new Circle(pos[0], vita.centerY, 20)).useView(3).useAnchors({
     head: [0.5, 0.5],
     weapon: [-1, 0.5],

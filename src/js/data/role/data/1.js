@@ -1,12 +1,13 @@
 import { StateCache } from "../../../anxi/controller/state";
 import { RoleProto } from "../../../anxi/proto/role";
 import { Point, Polygon } from "../../../anxi/shape/shape";
+import { defaultArrowUrl } from "../../../sound/util";
 import { tween } from "../../../util";
 
 export default new RoleProto({
     baseProp: {
         hp: 80,
-        mp: 120,
+        mp: 80,
         atk: 12,
         def: 0,
         crt: 0,
@@ -20,12 +21,14 @@ export default new RoleProto({
     attacks: [8],
     height: 80,
     bulletUrl: './res/util/role/1/9.png',
+    sound:defaultArrowUrl,
+    skills:[10]
 }).useIndex(1).useRest().useFexpGetter(level => Math.round(50 * (1.25 ** level))).useUraIndex(1)
     .useFultureSkills([
         {
             index: 10,
             cost: {
-                money: 100
+                money: 0
             }
         },
         {
@@ -37,28 +40,30 @@ export default new RoleProto({
         {
             index: 12,
             cost: {
-                money: 500
+                money: 200
             }
         },
         {
             index: 13,
             cost: {
-                money: 1000
+                money: 900
             }
         },
         {
             index: 14,
             cost: {
-                money: 2000
+                money: 2500
             }
         }
     ])
     .useFultureTalents([])
     .useNextLevel((role, nextLevel) => ({
-        hp: 40,
-        mp: 60,
-        atk: 6,
-        def: 1.2
+        hp: 20,
+        mp: 20,
+        atk: 4,
+        def: 1.5,
+        hpr: (nextLevel % 10 == 0) ? 1 : 0,
+        mpr: (nextLevel % 10 == 5) ? 1 : 0
     }))
     .useView(1)
     .useHitGraph((pos, face, vita) => {

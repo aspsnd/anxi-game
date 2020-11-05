@@ -2,7 +2,7 @@ import { Sprite } from "pixi.js";
 import { StateCache, StateItem } from "../../../../anxi/controller/state";
 import { ItemEvent } from "../../../../anxi/event";
 import { SkillProto } from "../../../../anxi/proto/skill";
-import { by, tween } from "../../../../util";
+import { by, gameSound, tween } from "../../../../util";
 
 export default new SkillProto(12, '量子挪移', '激怒第一个与自己对视的人，使其陷入疯狂与所有其他单位为敌，增加血量，攻击力，时间速度，免除控制，但每秒失去10%最大生命值。对老怪无法使用，当找不到目标时且自身生命值低于10%该技能会对自己使用')
     .active(true)
@@ -21,6 +21,7 @@ export default new SkillProto(12, '量子挪移', '激怒第一个与自己对�
                 target = vita;
             }
         }
+        gameSound.showInCard('./res/util/role/1/sound/2.m4a');
         let flag1 = new Sprite(by('./res/util/role/1/shadow/32.png'));
         flag1.anchor.set(0.5, 0.5);
         flag1.position.set(0, -5);

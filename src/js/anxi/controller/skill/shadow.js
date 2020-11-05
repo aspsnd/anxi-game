@@ -4,11 +4,12 @@ import { by, gameDust, GameHeight } from "../../../util";
 import { Affect } from "../../affect";
 import { World } from "../../atom/world";
 import { Controller } from "../../controller";
+import { ItemEvent } from "../../event";
 import { Circle } from "../../shape/shape";
 /**
  * 残影控制器
  */
-export class ShadowController extends Controller{
+export class ShadowController extends Controller {
     static bodyUrl = './res/util/role/0/shadow/1.png'
     static weaponUrl = './res/util/role/0/shadow/2.png'
     /**
@@ -52,6 +53,7 @@ export class ShadowController extends Controller{
                 return true;
             }
         });
+        let hits = [];
         this.weapons = this.weapons.filter(_w => {
             let role = this.role;
             let sprite = _w.weapon;
@@ -66,6 +68,7 @@ export class ShadowController extends Controller{
             let shootedVitas = role.world.selectableVitas().filter(vita => Boolean(vita)).filter(vita => vita.group != role.group)
                 .filter(vita => !_w.shootedVitas.includes(vita.id))
                 .filter(vita => circle.hit(vita.getHitGraph()));
+            hits.push(...shootedVitas);
             shootedVitas.forEach(vita => {
                 _w.shootedVitas.push(vita.id);
                 let affect = new Affect(_w.proto, role, vita);
@@ -77,7 +80,10 @@ export class ShadowController extends Controller{
                 sprite.destroy();
                 return false;
             }
-        })
+        });
+        if (hits.length > 0) {
+            this.belonger.on(new ItemEvent('hitenemys', hits, this.belonger.skillController.skills.find(skill => skill.index == 4)));
+        }
     }
     static ReturnTime = 45
     /**
@@ -163,6 +169,9 @@ export class ShadowController extends Controller{
         let role = this.role;
         let shoots = World.instance.selectableVitas().filter(vita => vita.group != role.group)
             .filter(vita => circle.hit(vita.getHitGraph()));
+        if (shoots.length > 0) {
+            this.belonger.on(new ItemEvent('hitenemys', shoots, this.belonger.skillController.skills.find(skill => skill.index == 2)));
+        }
         shoots.forEach(vita => {
             /**
              * 这是单位之间一对一的效果 可以包括伤害和debuff

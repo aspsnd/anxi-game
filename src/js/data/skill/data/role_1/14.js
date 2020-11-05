@@ -4,7 +4,7 @@ import { Flyer } from "../../../../anxi/atom/flyer";
 import { StateCache } from "../../../../anxi/controller/state";
 import { SkillProto } from "../../../../anxi/proto/skill";
 import { Point, Polygon } from "../../../../anxi/shape/shape";
-import { by, directBy, r2a, tween } from "../../../../util";
+import { by, directBy, gameSound, r2a, tween } from "../../../../util";
 
 export default new SkillProto(14, '弑神星云', '进入最长8秒的蓄力，蓄力中保持浮空状态，结束蓄力时向前发射星云箭，随蓄力时间提升伤害')
     .active(true)
@@ -24,7 +24,7 @@ export default new SkillProto(14, '弑神星云', '进入最长8秒的蓄力，�
         vita.stateController.setStateInfinite(StateCache.hover, true);
         this.beginTimer = timer;
         let x = vita.x;
-        let y = vita.centerY;
+        let y = vita.centerY - 10;
         let [headAppear, lineAppear, lineWait, lightWait, lightMove] = [30, 50, [0, 15, 30], 50, 120];
         let parent = new Flyer(new Container(), container => {
             container.position.set(x, y + 12);
@@ -64,6 +64,7 @@ export default new SkillProto(14, '弑神星云', '进入最长8秒的蓄力，�
         let oneTime = 6;
         let lightTexture = [directBy('role/1/shadow/52.png'), directBy('role/1/shadow/51.png')];
         let lights = [];
+        let sound = gameSound.showInCard('./res/util/role/1/sound/40.m4a');
         parent.onTime(function (timer) {
             if (timer > 60 * 8 - lightMove) return;
             if (timer < 60) return;
@@ -124,6 +125,8 @@ export default new SkillProto(14, '弑神星云', '进入最长8秒的蓄力，�
             vita.stateController.setStateInfinite(StateCache.hover, false);
         }
         data.disappear = () => {
+            sound.paused = true;
+            sound.complete = true;
             ended = true;
             parent.timeHandler = [];
             lights.forEach(light => {
@@ -159,6 +162,7 @@ export default new SkillProto(14, '弑神星云', '进入最长8秒的蓄力，�
             vita.stateController.setStateInfinite(StateCache.hover, false);
             let speed = 12;
             let head = new Sprite(directBy('role/1/shadow/56.png'));
+            gameSound.showInCard('./res/util/role/1/sound/41.m4a').speed = 0.5;
             new Flyer(new Sprite(directBy('role/1/shadow/57.png')), sprite => {
                 sprite.anchor.set(1, 0.5);
                 sprite.position.set(x + 120 * face, y + 12);
@@ -189,7 +193,7 @@ export default new SkillProto(14, '弑神星云', '进入最长8秒的蓄力，�
                         last: (storeTime / 5 + 1) | 0
                     });
                     return affect;
-                });
+                }).createFrom(this);
         }
     })
     .useCommonActionData({

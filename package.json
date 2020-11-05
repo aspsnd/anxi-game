@@ -44,6 +44,7 @@
     "pixi-dust": "^4.5.3",
     "pixi-filters": "^3.1.1",
     "pixi-plugin-bump": "^1.1.8",
+    "pixi-smoothie": "^4.5.3",
     "pixi-sound": "^3.0.4",
     "pixi-text-input": "^1.0.5",
     "pixi.js": "^5.2.1",

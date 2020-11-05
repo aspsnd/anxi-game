@@ -2,7 +2,7 @@ import { Application, Container, Sprite } from "pixi.js";
 import * as PIXI from "pixi.js";
 import { WallProtos } from "../../data/wall/wall";
 import { Role } from "../../po/atom/role";
-import { by, GameHeight } from "../../util";
+import { by, GameHeight, gameSound } from "../../util";
 import { Atom } from "../atom";
 import { StepManager } from "../card/step";
 import { Vita } from "./vita";
@@ -56,7 +56,15 @@ export class World extends Atom {
         this.on('timing', e => {
             this.dust.update();
         })
+        this.on('runchange', e => {
+            if (e.value) {
+                gameSound.runInCard();
+            } else {
+                gameSound.stopInCard();
+            }
+        }, true)
         World.instance = this;
+        this.bg = gameSound.showCardBg(carddata);
         QuickOpen.bind(this);
         this.container = container;
         this.container.addChild(this.baseContainer, this.parallelContainer, this.guiContainer, this.toolContainer);
@@ -74,7 +82,7 @@ export class World extends Atom {
                 if (48 <= e.keyCode && e.keyCode <= 57) {
                     e.preventDefault();
                     let monst = new Monst(MonstProtos[parseInt(e.key) - 1]);
-                    if(exposeToWindow){
+                    if (exposeToWindow) {
                         window.monst = monst;
                     }
                     new HPBarController(monst);
@@ -92,6 +100,7 @@ export class World extends Atom {
             })
         }
         this.once('die', e => {
+            gameSound.closeCardBg();
             this.vitas.forEach(vita => {
                 vita instanceof Monst && vita.viewController.view.destroy({
                     children: true
@@ -101,7 +110,13 @@ export class World extends Atom {
             this.vitas = [];
             World.instance = null;
             QuickOpen.debind();
+            this.roles.forEach(role => {
+                this.vitaContainer.removeChild(role.viewController.view);
+                this.guiContainer.removeChild(role.gui.basebar);
+                this.guiContainer.removeChild(role.gui.detailContainer);
+            });
             this.toDestory.forEach(s => s._destroyed || s.destroy());
+            this.container.removeChildren();
         })
     }
     wallContainer = new Container();
@@ -120,6 +135,9 @@ export class World extends Atom {
      * @type {Atom[]}
      */
     elseAtoms = []
+    /**
+     * @type {import("../define/type").CardData}
+     */
     carddata
     /**
      * @param {Role} role 
@@ -186,8 +204,10 @@ export class World extends Atom {
     cross() {
         let cards = this.carddata.crossOpen;
         cards.forEach(c => {
+            this.carddata.whenCross?.();
             if (!RealWorld.instance.record.opened.includes(c)) {
                 RealWorld.instance.record.opened.push(c);
+                this.carddata.whenFirstCross?.();
             }
         })
     }

@@ -1,4 +1,3 @@
-import { Graphics } from "pixi.js";
 import { typicalProp, Vita } from "../../anxi/atom/vita";
 import { World } from "../../anxi/atom/world";
 import { EquipController } from "../../anxi/controller/equip";
@@ -8,9 +7,12 @@ import { URAController } from "../../anxi/controller/ura";
 import { EquipKind, ExtraKind, MaterialKind } from "../../anxi/define/util";
 import { AnxiError } from "../../anxi/error/base";
 import { ItemEvent } from "../../anxi/event";
+import { Attack } from "../../anxi/hurt/attack";
 import { RoleProto } from "../../anxi/proto/role";
 import { ThingProto } from "../../anxi/proto/thing/base";
 import { RoleProtos } from "../../data/role/all";
+import { defaultAttackMusicUrl, defaultHitMusicUrl } from "../../sound/util";
+import { gameSound } from "../../util";
 import { GUI } from "../gui";
 
 export class Role extends Vita {
@@ -77,8 +79,31 @@ export class Role extends Vita {
         this.uraController = new URAController(this);
         this.equipController = new EquipController(this);
     }
+    initSound() {
+        this.on('hitenemys', e => {
+            /**
+             * @type {Hurt}
+             */
+            let hurt = e.from;
+            let soundurl = hurt?.proto?.hitsound ?? this.proto.hitsound ?? defaultHitMusicUrl;
+            gameSound.showInCard(soundurl);
+        }, true);
+        this.on('createAttack', e => {
+            /**
+             * @type {Attack}
+             */
+            let attack = e.value;
+            gameSound.showInCard(attack.proto.sound ?? this.proto.sound ?? defaultAttackMusicUrl);
+        }, true);
+        this.on('beAffect', e => {
+            if (e.value.finalHarm > 0) {
+                gameSound.showInCard(this.proto.behitsound ?? defaultHitMusicUrl);
+            }
+        }, true);
+    }
     initEvent() {
         super.initEvent();
+        this.initSound();
         this.on('overexp', e => {
             this.reduceEXP(this.fexp);
             let growth = this.proto.nextLevel(this, this.level + 1);
@@ -91,6 +116,9 @@ export class Role extends Vita {
             this.on('nhpchange');
             this.on('nmpchange');
             this.level = this.level + 1;
+            if (this.level % 3 == 0 && this.level < 16) {
+                this.talentStars++;
+            }
             this.fexp = this.proto.getFexp(this.level);
             this.on(new ItemEvent('addlevel', this.level));
         }, true);
@@ -103,17 +131,20 @@ export class Role extends Vita {
                 })
             }
         }, true);
-        this.on('getmoney', e => {
-            let r = Math.random();
-            if (r < 0.02) {
-                this.getHP(parseInt(this.prop.hp * 0.05 * (0.5 + Math.random())), this);
-            } else if (r < 0.04) {
-                this.getMP(parseInt(this.prop.mp * 0.05 * (0.5 + Math.random())), this);
-            } else if (r < 0.08) {
-                this.getHP(parseInt(this.prop.hp * 0.05 * (0.5 + Math.random())), this);
-                this.getMP(parseInt(this.prop.mp * 0.05 * (0.5 + Math.random())), this);
-            }
-        }, true);
+        /**
+         * 关闭得灵魂概率回蓝回血，与天赋冲突
+         */
+        // this.on('getmoney', e => {
+        //     let r = Math.random();
+        //     if (r < 0.02) {
+        //         this.getHP(parseInt(this.prop.hp * 0.05 * (0.5 + Math.random())), this);
+        //     } else if (r < 0.04) {
+        //         this.getMP(parseInt(this.prop.mp * 0.05 * (0.5 + Math.random())), this);
+        //     } else if (r < 0.08) {
+        //         this.getHP(parseInt(this.prop.hp * 0.05 * (0.5 + Math.random())), this);
+        //         this.getMP(parseInt(this.prop.mp * 0.05 * (0.5 + Math.random())), this);
+        //     }
+        // }, true);
         this.on(`stating_${StateCache.common}`, e => {
             if (e.value.behaveTime >= this.proto.restInterval) {
                 this.stateController.setStateTime(StateCache.rest, this.proto.restTime);
@@ -169,6 +200,7 @@ export class Role extends Vita {
         return true;
     }
     refresh() {
+        this.jumpTimes = 0;
         this.dead = false;
         this.realDead = false;
         this.world = null;

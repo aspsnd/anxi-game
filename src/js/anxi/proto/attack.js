@@ -1,3 +1,4 @@
+import { defaultAttackMusicUrl, defaultHitMusicUrl } from "../../sound/util";
 import { Vita } from "../atom/vita";
 import { StateCache } from "../controller/state";
 import { Attack } from "../hurt/attack";
@@ -28,7 +29,7 @@ export class AttackProto extends HurtProto {
     /**
      * @type {(this:Attack)=>void}
      */
-    executeProto = () => {}
+    executeProto = () => { }
     /**
      * @type {ActionData}
      */
@@ -49,7 +50,7 @@ export class AttackProto extends HurtProto {
 export const defaultDebuff = [
     {
         state: StateCache.beHitBehind,
-        last: 10
+        last: 8
     }
 ];
 export const behindDebuff = num => [

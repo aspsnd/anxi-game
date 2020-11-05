@@ -1,8 +1,9 @@
 import { Matrix, RenderTexture, Sprite } from "pixi.js";
 import { Flyer } from "../../../../anxi/atom/flyer";
 import { SkillProto } from "../../../../anxi/proto/skill";
-import { gameApp } from "../../../../util";
+import { gameApp, gameSound } from "../../../../util";
 
+const soundUrl = './res/util/role/0/sound/2.wav';
 /**
  * 技能3 【被动】残影会在3秒后爆炸造成伤害并消失
  *       的
@@ -41,4 +42,5 @@ export default new SkillProto(2,'影攻心', '【被动】残影会在3秒后爆
             sprite.alpha = 0.8 - 0.3 * timer / behaveTime;
         }).from(role).useConstSpeed([(role.x - x) / behaveTime, (role.y - y) / behaveTime]);
         renderer.render(container, rt, true, new Matrix().translate(-container.x + 150, -container.y));
+        gameSound.showInCard(soundUrl);
     })

@@ -1,13 +1,16 @@
 import { Affect } from "../../../../anxi/affect";
 import { ShadowController } from "../../../../anxi/controller/skill/shadow";
 import { StateCache } from "../../../../anxi/controller/state";
+import { ItemEvent } from "../../../../anxi/event";
 import { SkillProto } from "../../../../anxi/proto/skill";
 import { Point, Polygon } from "../../../../anxi/shape/shape";
-import { IFC } from "../../../../util";
+import { gameSound, IFC } from "../../../../util";
+
+const soundUrl = './res/util/role/0/sound/1.wav'
 /**
 * 技能2 向前挥剑，发出自己的残影，对路过敌人造成伤害，并在终点滞留3秒
 */
-export default new SkillProto(1,'轻斩', '发出自己的残影，对路过敌人造成伤害，并在终点滞留')
+export default new SkillProto(1, '轻斩', '发出自己的残影，对路过敌人造成伤害，并在终点滞留')
     .active(true)
     .lost(20)
     .standing(30)
@@ -19,6 +22,7 @@ export default new SkillProto(1,'轻斩', '发出自己的残影，对路过敌�
             shadow.vx = 0;
             return true;
         });
+        gameSound.showInCard(soundUrl);
         let shootedVitas = [];
         for (let i = 0; i < 11; i++) {
             role.on(`timer_${role.timer + i * 3}`, e => {
@@ -28,13 +32,16 @@ export default new SkillProto(1,'轻斩', '发出自己的残影，对路过敌�
                 let shoots = role.world.selectableVitas().filter(vita => vita.group != role.group)
                     .filter(vita => !shootedVitas.includes(vita.id))
                     .filter(vita => hitarea.hit(vita.getHitGraph()));
+                if (shoots.length > 0) {
+                    this.vita.on(new ItemEvent('hitenemys', shoots, this));
+                }
                 shoots.forEach(vita => {
                     shootedVitas.push(vita.id);
                     /**
                      * 这是单位之间一对一的效果 可以包括伤害和debuff
                      */
                     let affect = new Affect(this, role, vita);
-                    affect.harm.common = 30 + role.prop.atk * 1.5;
+                    affect.harm.common = 10 + role.prop.atk * 1.5;
                     affect.setout();
                 });
                 return true;

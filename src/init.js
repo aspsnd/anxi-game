@@ -29,7 +29,7 @@ function fileDisplay(filePath, res, ressound) {
             var p = '.' + filedir.split('src')[1].replace(/\\/g, '/');
             res.push(p);
         }
-        if (isFile && (filename.endsWith('.mp3') || filename.endsWith('.wav'))) {
+        if (isFile && (filename.endsWith('.mp3') || filename.endsWith('.wav') || filename.endsWith('.m4a'))) {
             var p = '.' + filedir.split('src')[1].replace(/\\/g, '/');
             ressound.push(p);
         }

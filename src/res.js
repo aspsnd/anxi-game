@@ -169,7 +169,9 @@ export const res = [
     "./res/util/role_select_bg_span.png",
     "./res/util/scene/back/0.png",
     "./res/util/scene/back/1.png",
+    "./res/util/scene/back/2.png",
     "./res/util/scene/back/3.png",
+    "./res/util/scene/back/4.png",
     "./res/util/scene/board/0.png",
     "./res/util/scene/board/1.png",
     "./res/util/scene/board/砖3.png",
@@ -196,6 +198,23 @@ export const res = [
     "./res/util/talent/8/1.png"
 ];
 export const ressound = [
+    "./res/audio/attack/default.wav",
     "./res/audio/bg.mp3",
-    "./res/audio/小话东游.mp3"
+    "./res/audio/default/arrow.wav",
+    "./res/audio/default/hammer.wav",
+    "./res/audio/default/刀斧砍声1－xh20070515.wav",
+    "./res/audio/hit/default.wav",
+    "./res/audio/skill/抡剑-WQ20070510.wav",
+    "./res/audio/wing/0.wav",
+    "./res/audio/小话东游.mp3",
+    "./res/util/role/0/sound/1.wav",
+    "./res/util/role/0/sound/2.wav",
+    "./res/util/role/0/sound/3.wav",
+    "./res/util/role/0/sound/40.wav",
+    "./res/util/role/0/sound/41.m4a",
+    "./res/util/role/1/sound/0.wav",
+    "./res/util/role/1/sound/1.wav",
+    "./res/util/role/1/sound/2.m4a",
+    "./res/util/role/1/sound/40.m4a",
+    "./res/util/role/1/sound/41.m4a"
 ]

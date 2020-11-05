@@ -4,7 +4,7 @@ import { Flyer } from "../../../../anxi/atom/flyer";
 import { StateCache, StateItem } from "../../../../anxi/controller/state";
 import { SkillProto } from "../../../../anxi/proto/skill";
 import { Circle } from "../../../../anxi/shape/shape";
-import { by, r2a, tween } from "../../../../util";
+import { by, gameSound, r2a, tween } from "../../../../util";
 
 export default new SkillProto(11, '净化', '免除自身所有控制，向前下射出箭矢，自身收到冲击向后上方移动。【可在被控状态使用】')
     .active(true)
@@ -12,7 +12,7 @@ export default new SkillProto(11, '净化', '免除自身所有控制，向前�
     .bePrevent([StateCache.attack])
     .standing(20)
     .execute(function () {
-        let [preTime, relTime, flyTime, moveTime] = [5, 20, 25, 15]
+        let [preTime, relTime, flyTime, moveTime] = [5, 20, 25, 15];
         let vita = this.vita;
         let timer = vita.timer;
         let face = vita.face;
@@ -20,6 +20,7 @@ export default new SkillProto(11, '净化', '免除自身所有控制，向前�
         vita.stateController.insertState(StateCache.URA, new StateItem(preTime + moveTime));
         let x = vita.x;
         let y = vita.centerY;
+        gameSound.showInCard('./res/util/role/1/sound/1.wav');
         let vortex = new Sprite(by('./res/util/role/1/shadow/22.png'));
         vortex.position.set(x, y + 20);
         vortex.anchor.set(0.5, 0.5);
@@ -57,13 +58,13 @@ export default new SkillProto(11, '净化', '免除自身所有控制，向前�
             .checkFromBool(true)
             .useAffectGetter((from, to) => {
                 let affect = new Affect(this, from, to);
-                affect.harm.common = 100 + vita.prop.atk * 1.5;
+                affect.harm.common = vita.prop.atk * 1.5;
                 affect.debuff.push({
                     state: StateCache.beHitBehind,
                     last: 25
                 });
                 return affect;
-            });
+            }).createFrom(this);
     })
     .useCommonActionData({
         hand_r: {

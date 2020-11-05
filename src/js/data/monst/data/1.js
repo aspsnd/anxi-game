@@ -18,11 +18,11 @@ export default new MonstProto({
     },
     level: 1,
     ai: {
-        intelli: 1
+        intelli: 5
     },
     reward: {
-        money: 3,
-        exp: 1
+        money: 4,
+        exp: 3
     },
     drops: {
         rate:0.2,

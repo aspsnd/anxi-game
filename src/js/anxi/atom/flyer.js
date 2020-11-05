@@ -1,4 +1,5 @@
 import { Graphics, Sprite } from "pixi.js";
+import { Skill } from "../../po/skill";
 import { a2r } from "../../util";
 import { Affect } from "../affect";
 import { Atom } from "../atom";
@@ -102,6 +103,7 @@ export class Flyer extends Atom {
             this.constAngle = 0;
         }
         this.on(new ItemEvent('hittarget', hits, belonger));
+        this.skill?.vita?.on(new ItemEvent('hitenemys', hits, this.skill));
         hits.forEach(enemy => {
             this.shootedVitas.push(enemy.id);
             if (!this.affectGetter) return;
@@ -288,5 +290,12 @@ export class Flyer extends Atom {
     }
     link(world) {
         this.world = world;
+    }
+    /**
+     * @param {Skill} skill 
+     */
+    createFrom(skill) {
+        this.skill = skill;
+        return this;
     }
 }

@@ -5,26 +5,61 @@ import { res } from "../res";
 import Dust from "pixi-dust";
 import { PIXIRouter } from "./lib/router";
 import { dynamicResource } from "./boot";
+import { SoundManager } from "./sound/sound";
+import Smoothie from "pixi-smoothie";
+var axios = require('axios').default;
 export const jumpContinue = {
     jump: 30,
     jumpSec: 30
 };
 export const jumpSpeed = {
-    jump: (jumpTime, speed) => (2.25 - 0.0025 * jumpTime * jumpTime) * speed,
-    jumpSec: (jumpTime, speed) => (2.25 - 0.0025 * jumpTime * jumpTime) * speed
+    jump: (jumpTime, speed) => (900 - jumpTime * jumpTime) * speed * 0.25 * 0.011,
+    jumpSec: (jumpTime, speed) => (900 - jumpTime * jumpTime) * speed * 0.25 * 0.011
 };
 export const GameWidth = 960;
 export const GameHeight = 590;
 export const CardWidth = 4500;
 export const gameWindow = appCanvas;
-export const gameApp = new Application({
-    view: appCanvas,
+export const gameRenderer = PIXI.autoDetectRenderer({
     width: GameWidth,
     height: GameHeight,
+    view: appCanvas,
     transparent: true,
-    autoStart: false,
-    antialias: true,
+    antialias: true
 });
+export const gameStage = new PIXI.Container();
+export const gameApp = {
+    renderer: gameRenderer,
+    loader: PIXI.Loader.shared,
+    stage: gameStage,
+    start() {
+        gameSmoothie.start();
+    },
+    ticker: {
+        add(func) {
+            this.updateFunctions.push(func);
+        },
+        remove(func) {
+            let index = this.updateFunctions.indexOf(func);
+            if (index > -1) {
+                this.updateFunctions.splice(index, 1);
+            }
+        },
+        updateFunctions: []
+    }
+}
+export const gameSmoothie = new Smoothie({
+    engine: PIXI,
+    renderer: gameRenderer,
+    root: gameStage,
+    fps: 60,
+    update() {
+        gameApp.ticker.updateFunctions.forEach(fc => fc());
+    }
+})
+
+
+export const gameSound = new SoundManager();
 export const gameRouter = new PIXIRouter();
 const Bump = require('pixi-plugin-bump');
 export const gameBump = new Bump();
@@ -229,7 +264,7 @@ export const loadAndAfter = callback => {
             dropShadowBlur: 10,
             wordWrap: false,
         }
-        var t = new Text('火柴人之梦', style);
+        var t = new Text('判若莱宇宙', style);
         t.x = (GameWidth - t.width) / 2;
         t.y = 100;
         gameApp.stage.addChild(t);
@@ -242,18 +277,22 @@ export const loadAndAfter = callback => {
         var perw = GameWidth * 0.01;
         if (DynamicLoadMode) {
             gameApp.ticker.remove(loadingFunction);
-                setTimeout(_ => {
-                    gameApp.stage.removeChildren();
-                    callback();
-                })
+            setTimeout(_ => {
+                gameApp.stage.removeChildren();
+                callback();
+            })
         } else {
             gameApp.loader.add(res).on('progress', function (p) {
-                g.x = p.progress * perw;
+                g.x = p.progress * perw * 0.5;
             }).load(() => {
-                gameApp.ticker.remove(loadingFunction);
-                setTimeout(_ => {
-                    gameApp.stage.removeChildren();
-                    callback();
+                gameSound.init(p => {
+                    g.x = (p + 100) * perw * 0.5;
+                }, e => {
+                    gameApp.ticker.remove(loadingFunction);
+                    setTimeout(_ => {
+                        gameApp.stage.removeChildren();
+                        callback();
+                    })
                 })
             });
         }

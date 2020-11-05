@@ -1,7 +1,9 @@
 import { Graphics, Text, TextStyle, Filter } from "pixi.js";
 import { World } from "../../anxi/atom/world";
+import { GlobalEventCaster } from "../../anxi/instruct/global";
+import { openPtoCtrlRun } from "../../boot";
 import { QuickOpen } from "../../po/gui/open";
-import { gameTink } from "../../util";
+import { gameSound, gameTink } from "../../util";
 import { BaseGui } from "./gui";
 /**
  * 返回地图界面
@@ -13,44 +15,40 @@ export class OpenQuit extends BaseGui {
         this.baseContainer = quitContainer;
         quitContainer.visible = false;
         quitContainer.x = 320;
-        quitContainer.width = 340;
         quitContainer.y = 200;
-        quitContainer.height = 100;
         quitContainer.beginFill(0x000000);
-        quitContainer.drawRect(0, 0, 320, 100);
+        quitContainer.drawRect(0, 0, 320, 175);
         quitContainer.endFill();
         /**
          * @test
          */
-        document.addEventListener('keydown', e => {
-            if (!this.world) return;
-            if (e.key == 'p') {
+        if (openPtoCtrlRun) {
+            GlobalEventCaster.on('dkey_p', e => {
+                if (!this.world) return;
                 if (!World.instance.running) {
                     World.instance.start();
                 } else {
                     World.instance.stop();
                 }
-            }
-        })
-        let btn = new Graphics();
-        btn.x = 20;
-        btn.width = 280;
-        btn.height = 50;
-        btn.y = 25;
-        btn.lineStyle(1, 0x00ffff);
-        btn.drawRect(0, 0, 280, 50);
-        quitContainer.addChild(btn);
 
-        let text = new Text('返回地图', new TextStyle({
-            fill: [0xff00ff, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffff00],
-            fontSize: 24
-        }));
-        text.anchor.set(0.5, 0.5);
-        text.position.set(140, 25);
-        btn.addChild(text);
-
-        gameTink.makeInteractive(btn);
-        btn.tap = () => {
+            })
+        }
+        let bgVBtn = this.bgVBtn = new QuitBtn(`背景音量`, 20, 25);
+        quitContainer.addChild(bgVBtn);
+        bgVBtn.tap = _ => {
+            let v = gameSound.cardBg.volume;
+            v += 0.1;
+            v = Math.round(10 * v);
+            if (v > 10) v = 0;
+            gameSound.cardBg.volume = v * 0.1;
+            bgVBtn.refresh();
+        }
+        bgVBtn.refresh = _ => {
+            bgVBtn.text = `背景音量 - ${Math.round(gameSound?.cardBg?.volume * 10 ?? 10)}`;
+        }
+        let quitBtn = new QuitBtn('返回地图', 20, 100);
+        quitContainer.addChild(quitBtn);
+        quitBtn.tap = () => {
             this.world.stop();
             /**
              * @todo
@@ -66,8 +64,38 @@ export class OpenQuit extends BaseGui {
     /**
      * @param {World} world 
      */
-    bind(world){
+    bind(world) {
         this.world = world;
         world.toolContainer.addChild(this.baseContainer);
+    }
+    refresh() {
+        this.bgVBtn.refresh();
+    }
+}
+export class QuitBtn extends Graphics {
+    set text(value) {
+        this.basetext.text = value;
+    }
+    get text() {
+        return this.basetext.text;
+    }
+    constructor(_text, x = 0, y = 0) {
+        super();
+        this.position.set(x, y);
+        this.width = 280;
+        this.height = 50;
+        this.lineStyle(1, 0x00ffff);
+        this.drawRect(0, 0, 280, 50);
+        let text = this.basetext = new Text(_text, new TextStyle({
+            fill: [0xff00ff, 0xffffff, 0xffffff, 0xffffff, 0xffffff, 0xffff00],
+            fontSize: 24
+        }));
+        text.anchor.set(0.5, 0.5);
+        text.position.set(140, 25);
+        this.addChild(text);
+        gameTink.makeInteractive(this);
+    }
+    refresh() {
+
     }
 }

@@ -1,3 +1,4 @@
+import { Container } from "pixi.js";
 import { World } from "../../anxi/atom/world";
 import { GlobalEventCaster } from "../../anxi/instruct/global";
 import { BagController } from "../../pod/guis/bag";
@@ -29,6 +30,7 @@ export class QuickOpen {
         this.world = null;
         for (let key in this.instance.kvs) {
             let tool = this.instance.kvs[key];
+            tool.baseContainer.parent.removeChild(tool.baseContainer);
             tool.world = null;
         }
     }

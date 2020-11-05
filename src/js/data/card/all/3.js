@@ -1,4 +1,4 @@
-import { getGround, getBack, getUrls } from "../util";
+import { getBack, getUrls } from "../util";
 
 export default {
     name: '水星',
@@ -7,7 +7,7 @@ export default {
     position: [50, 385],
     crossOpen: [4],
     back: getBack(4),
-    ground: getGround(0),
+    ground: 5,
     walls: [],
     boss: [
         [5, 120, 600, -1],
@@ -50,5 +50,10 @@ export default {
             [2, 1, 150, 540],
             [2, 1, 150, 720],
         ]
-    ]
+    ],
+    whenFirstCross() {
+        setTimeout(_ => {
+            new ZY.myAler.Aler('恭喜您通关判若莱宇宙，可以去我们的官方qq群(833489208)提出您对将来版本的宝贵意见哦!');
+        }, 0);
+    }
 }

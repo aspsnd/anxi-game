@@ -1,10 +1,11 @@
 import { Sprite } from "pixi.js";
 import { Affect } from "../../../../anxi/affect";
 import { StateCache } from "../../../../anxi/controller/state";
+import { ItemEvent } from "../../../../anxi/event";
 import { Attack } from "../../../../anxi/hurt/attack";
 import { SkillProto } from "../../../../anxi/proto/skill";
 import { Circle, Line, Point } from "../../../../anxi/shape/shape";
-import { a2r, by, gameDust, tween } from "../../../../util";
+import { a2r, by, gameDust, gameSound, tween } from "../../../../util";
 
 export default new SkillProto(10, '天选', '每第三次攻击伤害减半，但会向前方射出一支额外的箭，随机带有以下某些效果[随暴击率提升概率]，瞄准/爆炸/眩晕/斩杀/中毒。【在空中时视为第三次且必定触发瞄准】')
     .execute(function (attack) {
@@ -27,6 +28,7 @@ export default new SkillProto(10, '天选', '每第三次攻击伤害减半，�
         let flyTime = 16;
         role.once(`timer_${timer + preTime}`, e => {
             if (attack.interrupted) return;
+            gameSound.showInCard('./res/util/role/1/sound/0.wav');
             let rx = role.x + 20 * face, ry = role.centerY + 15;
             arrow.anchor.set(1, 0.5);
             arrow.position.set(rx, ry);
@@ -65,8 +67,9 @@ export default new SkillProto(10, '天选', '每第三次攻击伤害减半，�
                     if (willBoom) {
                         let trueArea = new Circle(arrow.x, arrow.y, boomRad);
                         hits = enemys.filter(v => trueArea.hit(v.getHitGraph()));
-                        gameDust.create(arrow.x, arrow.y, () => new Sprite(by('./res/util/role/1/shadow/12.png')), role.world.vitaContainer, 30, 0.05, true, 0, 360, 5, 30, 0, 3, undefined, undefined, 0.02, 0.08);
+                        role.world.dust.create(arrow.x, arrow.y, () => new Sprite(by('./res/util/role/1/shadow/12.png')), role.world.vitaContainer, 30, 0.05, true, 0, 360, 5, 30, 0, 3, undefined, undefined, 0.02, 0.08);
                     };
+                    role.on(new ItemEvent('hitenemys', hits, this));
                     hits.forEach(vita => {
                         let affect = new Affect(this, role, vita);
                         affect.harm.common = role.prop.atk * 0.5;

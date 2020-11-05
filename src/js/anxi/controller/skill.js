@@ -37,6 +37,7 @@ export class SkillController extends Controller {
         if (this.skills.some(s => s.index == skill.index)) return;
         skill.commonType = type;
         this.skills.push(skill);
+        this.belonger.on(new ItemEvent('skillchange'));
         if (!skill.inited) skill.init();
         this.vita.compute();
     }
@@ -59,6 +60,7 @@ export class SkillController extends Controller {
     remove(skill) {
         this.skills.splice(this.skills.indexOf(skill), 1);
         skill.remove();
+        this.belonger.on(new ItemEvent('skillchange'));
         this.vita.compute();
     }
     /**

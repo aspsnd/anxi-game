@@ -5,13 +5,11 @@ import { by } from "../../util";
 import { BaseActionData } from "../action/baseAction";
 import { StateCache } from "./state";
 import { Flyer } from "../atom/flyer";
-import { commonEnglishStyle, lostHpStyle } from "./view.util";
+import { commonEnglishStyle, lostHpStyle, getHpStyle, getMpStyle, lostMpStyle } from "./view.util";
 import { Affect } from "../affect";
-import { World } from "../atom/world";
 import { RealWorld } from "../../po/world";
 import { uraFilter } from "../../data/ffilter/filter";
 import { Role } from "../../po/atom/role";
-import { ComtTypeName } from "../define/util";
 
 export class ViewController extends Controller {
     static convert(arr) {
@@ -110,7 +108,33 @@ export class ViewController extends Controller {
                     s.position.set(this.view.x, this.view.y);
                 }).useConstSpeed([0, -1]).useLiveTime(60).from(this.belonger);
             }
-        }, true)
+        }, true);
+        this.vita.on('nhpchange', e => {
+            if (!e.value) return;
+            let [rhp, nhp] = e.value;
+            let rule = this.belonger.prop.hp * 0.005;
+            let ex = nhp - rhp;
+            let abs = Math.abs(ex);
+            if (abs > rule) {
+                new Flyer(new Text(abs | 0, ex > 0 ? getHpStyle : lostHpStyle), s => {
+                    s.anchor.set(0.5, 0);
+                    s.position.set(this.view.x, this.view.y);
+                }).useConstSpeed([0, -1]).useLiveTime(60).from(this.belonger);
+            }
+        }, true);
+        this.vita.on('nmpchange', e => {
+            if (!e.value) return;
+            let [rmp, nmp] = e.value;
+            let rule = this.belonger.prop.mp * 0.005;
+            let ex = nmp - rmp;
+            let abs = Math.abs(ex);
+            if (abs > rule) {
+                new Flyer(new Text(abs | 0, ex > 0 ? getMpStyle : lostMpStyle), s => {
+                    s.anchor.set(0.5, 0);
+                    s.position.set(this.view.x, this.view.y);
+                }).useConstSpeed([0, -1]).useLiveTime(60).from(this.belonger);
+            }
+        }, true);
         this.vita.on('dodaffect', e => {
             new Flyer(new Text('miss', commonEnglishStyle), s => {
                 s.anchor.set(0.5, 0);

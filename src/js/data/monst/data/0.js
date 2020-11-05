@@ -22,8 +22,8 @@ export default new MonstProto({
         intelli: 3
     },
     reward: {
-        money: 4,
-        exp: 2
+        money: 5,
+        exp: 5
     },
     drops: {
         rate:0.2,

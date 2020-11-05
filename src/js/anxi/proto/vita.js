@@ -85,8 +85,10 @@ export class VitaProto extends AtomProto {
         return this;
     }
     bulletUrl
-    useBulletUrl(url){
+    useBulletUrl(url) {
         this.bulletUrl = url;
         return this;
     }
+    hitsound
+    sound
 }

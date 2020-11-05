@@ -6,7 +6,7 @@ import { tween } from "../../../util";
 export default new RoleProto({
     baseProp: {
         hp: 100,
-        mp: 100,
+        mp: 80,
         atk: 10,
         def: 0,
         crt: 0,
@@ -19,7 +19,7 @@ export default new RoleProto({
     level: 1,
     attacks: [0, 2],
     height: 80
-}).useIndex(0).useRest().useFexpGetter(level => Math.round(50 * (1.25 ** level)))
+}).useIndex(0).useRest().useFexpGetter(level => Math.round(25 + 25 * level))
     .useFultureSkills([
         {
             index: 0,
@@ -36,28 +36,30 @@ export default new RoleProto({
         {
             index: 2,
             cost: {
-                money: 500
+                money: 300
             }
         },
         {
             index: 3,
             cost: {
-                money: 1000
+                money: 800
             }
         },
         {
             index: 4,
             cost: {
-                money: 2000
+                money: 2400
             }
         }
     ])
     .useFultureTalents([])
     .useNextLevel((role, nextLevel) => ({
-        hp: 50,
-        mp: 50,
-        atk: 5,
-        def: 1.5
+        hp: 25,
+        mp: 20,
+        atk: 3,
+        def: 1.5,
+        hpr: (nextLevel % 10 == 0) ? 1 : 0,
+        mpr: (nextLevel % 10 == 5) ? 1 : 0
     }))
     .useView(0)
     .useHitGraph((pos, face, vita) => {

@@ -4,7 +4,7 @@ import { StateCache } from "../controller/state";
 import { ItemEvent } from "../event";
 
 
-export class SkillProto {
+export class SkillProto{
     index
     constructor(index, name, describe) {
         this._name = name;
@@ -128,6 +128,11 @@ export class SkillProto {
      */
     useComplexActionData(adGetter) {
         this._actionDataGetter = adGetter;
+        return this;
+    }
+    hitsound
+    useHitSound(url){
+        this.hitsound = url;
         return this;
     }
 }

@@ -2,7 +2,8 @@ export const ShapeType = {
     Point: 0,
     Line: 1,
     Polygon: 2,
-    Circle: 3
+    Circle: 3,
+    Group: 4
 }
 export class Shape {
     /**
@@ -107,6 +108,9 @@ export class Polygon extends Shape {
         if (type == ShapeType.Line) {
             return this.hitLine(shape);
         }
+        if (type == ShapeType.Group) {
+            return shape.hit(this);
+        }
     }
 }
 export class Line extends Shape {
@@ -210,6 +214,9 @@ export class Line extends Shape {
         }
         if (type == ShapeType.Line) {
             return this.hitLine(shape);
+        } 
+        if (type == ShapeType.Group) {
+            return shape.hit(this);
         }
     }
 }
@@ -251,11 +258,31 @@ export class Circle extends Shape {
         if (type == ShapeType.Line) {
             return shape.hitCircle(this);
         }
+        if (type == ShapeType.Group) {
+            return shape.hit(this);
+        }
     }
     /**
     * @param {Circle} circle 
     */
     hitCircle(circle) {
         return (this.rad + circle.rad) ** 2 > (this.x - circle.x) ** 2 + (this.y - circle.y) ** 2;
+    }
+}
+
+export class ShapeGroup {
+    type = ShapeType.Group
+    /**
+     * @type {Shape[]}
+     */
+    childs
+    constructor(...shapes) {
+        this.childs = shapes;
+    }
+    /**
+     * @param {Shape} shape 
+     */
+    hit(shape) {
+        return this.childs.some(c => shape.hit(c));
     }
 }

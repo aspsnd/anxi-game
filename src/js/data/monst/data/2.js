@@ -2,6 +2,7 @@ import { Matrix } from "pixi.js";
 import { StateCache } from "../../../anxi/controller/state";
 import { MonstProto } from "../../../anxi/proto/monst";
 import { Circle } from "../../../anxi/shape/shape";
+import { defaultHammerUrl } from "../../../sound/util";
 import { tween } from "../../../util";
 
 export default new MonstProto({
@@ -19,7 +20,7 @@ export default new MonstProto({
     },
     level: 3,
     ai: {
-        intelli: 4,
+        intelli: 6,
         skillFreeze: 180,
         attackDistance: 60,
         skill: [
@@ -33,11 +34,11 @@ export default new MonstProto({
     },
     attacks: [4],
     reward: {
-        money: 8,
-        exp: 5
+        money: 10,
+        exp: 8
     },
     drops: {
-        rate:0.4,
+        rate: 0.4,
         equip: [
             [4, 2],
             [5, 2],

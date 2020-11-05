@@ -4,8 +4,8 @@ const minicss = require('mini-css-extract-plugin');
 const copy_plugin = require('copy-webpack-plugin');
 const { ResPlugin } = require('./plugins/resBuild');
 module.exports = {
-  // mode: 'production',
-  mode: 'development',
+  mode: 'production',
+  // mode: 'development',
   entry: path.join(__dirname, 'src', 'index.js'),
   // watch: true,
   output: {
@@ -19,10 +19,6 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel-loader'
       },
-      // {
-      //   test: /res.js/,
-      //   loader: 'resloader'
-      // }
     ]
   },
   resolveLoader: {
@@ -62,5 +58,5 @@ module.exports = {
     port: 8080,
     open: true,
   },
-  devtool: 'source-map'
+  // devtool: 'source-map'
 };

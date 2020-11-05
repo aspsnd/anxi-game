@@ -6,10 +6,10 @@ export class WallProto {
     }
 
     /**
-     * @param {number} imgWidth 
+     * @param {number} imgWidth 图片的真正宽度或者地面的总长度
      * @param {number} height 
      */
-    size(imgWidth, imgHeight, height) {
+    size(imgWidth, imgHeight, height = imgHeight) {
         this.imgWidth = imgWidth;
         this.imgHeight = imgHeight
         this.height = height;

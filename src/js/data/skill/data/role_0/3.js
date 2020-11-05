@@ -2,9 +2,12 @@ import { Sprite } from "pixi.js";
 import { Affect } from "../../../../anxi/affect";
 import { ShadowController } from "../../../../anxi/controller/skill/shadow";
 import { StateCache, StateItem } from "../../../../anxi/controller/state";
+import { ItemEvent } from "../../../../anxi/event";
 import { SkillProto } from "../../../../anxi/proto/skill";
 import { Point, Polygon } from "../../../../anxi/shape/shape";
-import { by } from "../../../../util";
+import { by, gameSound } from "../../../../util";
+
+const soundUrl = './res/util/role/0/sound/3.wav';
 /**
  * 技能4 向前位移【途中无敌】 原地留下一只残影
  */
@@ -53,12 +56,16 @@ export default new SkillProto(3, '悲影落', '向前位移【途中无敌】 �
                 new Point(x + distance + 50, y + 50));
             let shoots = role.world.selectableVitas().filter(vita => Boolean(vita)).filter(vita => vita.group != role.group)
                 .filter(vita => hitarea.hit(vita.getHitGraph()));
+            if (shoots.length > 0) {
+                this.vita.on(new ItemEvent('hitenemys', shoots, this));
+            }
             shoots.forEach(vita => {
                 let affect = new Affect(this, role, vita);
-                affect.harm.absolute = 100 + role.level * 8;
+                affect.harm.absolute = 100 + role.level * 5;
                 affect.harm.common = role.prop.atk * 0.3;
                 affect.setout();
             });
             return true;
-        })
+        });
+        gameSound.showInCard(soundUrl);
     });

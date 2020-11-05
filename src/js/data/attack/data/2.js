@@ -4,7 +4,7 @@ import { Point, Polygon } from "../../../anxi/shape/shape";
 export default new AttackProto({
     index: 2,
     time: 15,
-    freeze: 25,
+    freeze: 20,
     checkTimes: [10],
     debuff: defaultDebuff,
     getHitGraph(pos, face, vita) {

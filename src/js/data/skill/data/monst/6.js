@@ -5,7 +5,8 @@ import { World } from "../../../../anxi/atom/world";
 import { StateCache, StateItem } from "../../../../anxi/controller/state";
 import { SkillProto } from "../../../../anxi/proto/skill";
 import { Circle } from "../../../../anxi/shape/shape";
-import { by, IFC, tween } from "../../../../util";
+import { defaultArrowUrl } from "../../../../sound/util";
+import { by, gameSound, IFC, tween } from "../../../../util";
 import { accumFilter } from "../../../ffilter/filter";
 
 export default new SkillProto(6, '眺望远射', '蓄力射出强力一击').lost(0).freezing(120).active(true).standing(80)

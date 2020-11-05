@@ -5,15 +5,13 @@ import { VitaProto } from "../proto/vita";
 import { SingleState, StateCache, StateController, StateItem } from "../controller/state";
 import { ViewController } from "../controller/view";
 import { World } from "./world";
-import { GameHeight, jumpContinue, jumpSpeed } from "../../util";
+import { jumpContinue, jumpSpeed } from "../../util";
 import { Shape } from "../shape/shape";
 import { Affect } from "../affect";
 import { AttackController } from "../controller/attack";
 import { SkillController } from "../controller/skill";
 import { Controller } from "../controller";
-import { Role } from "../../po/atom/role";
 import { AIController } from "../controller/ai/ai";
-import { res } from "../../../res";
 
 export const typicalProp = ['hp', 'mp', 'atk', 'def', 'crt', 'dod', 'hpr', 'mpr', 'speed'];
 /**
@@ -146,8 +144,6 @@ export class Vita extends Atom {
         var ps = this.stateController.states[StateCache.go];
         return this.timer - ps.lastGet < 25 && this.timer > 25;
     }
-    jumpTimes = 0
-    maxJumpTimes = 1
     /**
      * 注册指令
      */
@@ -176,6 +172,18 @@ export class Vita extends Atom {
                 this.face = -1;
                 this.stateController.setStateInfinite(StateCache.go, true);
             }
+        }, true)
+        this.on('continueleft', e => {
+            if (this.dead) return;
+            if (this.stateController.includes(StateCache.hard, StateCache.beHitBehind, StateCache.dizzy, StateCache.attack)) return;
+            if (this.stateController.includes(StateCache.run, StateCache.go) || this.face == 1) return;
+            this.stateController.setStateInfinite(StateCache.go, true);
+        }, true)
+        this.on('continueright', e => {
+            if (this.dead) return;
+            if (this.stateController.includes(StateCache.hard, StateCache.beHitBehind, StateCache.dizzy, StateCache.attack)) return;
+            if (this.stateController.includes(StateCache.run, StateCache.go) || this.face == -1) return;
+            this.stateController.setStateInfinite(StateCache.go, true);
         }, true)
         this.on('wantright', e => {
             if (this.dead) return;
@@ -221,6 +229,7 @@ export class Vita extends Atom {
             if (this.stateController.has(StateCache.drop) || this.stateController.includes(StateCache.jumpSec, StateCache.jump, StateCache.hover)) return;
             if (!this.stickingWall) return;
             if (!this.stickingWall.candown) return;
+            this._tempY++;
             this.stateController.setStateInfinite(StateCache.drop, true);
         }, true);
         this.on('wantdrop', e => {
@@ -277,13 +286,16 @@ export class Vita extends Atom {
         this.slowSpeed = 0;
         this.fastSpeed = 0;
         this.on(`timing`, e => {
-            let despeed = Math.max(0, ...this.stateController.getSingleState(StateCache.slow).items.map(item => item.data));
-            let fastspeed = this.stateController.getSingleState(StateCache.fast).items.reduce((p, c) => p + c.data, 0);
+            let despeed = Math.max(0, ...this.stateController.getSingleState(StateCache.slow).items.map(item => item?.data ?? 0));
+            let fastspeed = this.stateController.getSingleState(StateCache.fast).items.reduce((p, c) => p + (c?.data ?? 0), 0);
             let newExtra = fastspeed - despeed;
             this.slowSpeed = despeed;
             this.fastSpeed = fastspeed;
             if (this.extraProp.speed != newExtra) {
                 let revalue = this.extraProp.speed;
+                if (isNaN(newExtra)) {
+                    console.log(despeed, fastspeed, newExtra);
+                }
                 this.extraProp.speed = newExtra;
                 this.on(new ItemEvent('espeedchange', [revalue, newExtra]));
             }
@@ -319,6 +331,9 @@ export class Vita extends Atom {
         this.on('movey', e => {
             let moveUtil = e.value;
             let { old, value } = moveUtil;
+            if (old > 1500 && value > 1500) {
+                this.getHP(-this.prop.hp, this);
+            }
             this.stickingWall = null;
             this.stateController.setStateInfinite(StateCache.drop, true);
             if (value > old) {
@@ -352,10 +367,8 @@ export class Vita extends Atom {
             if (this.varProp.hp < this.prop.hp && this.prop.hpr > 0) {
                 this.getHP(this.prop.hpr, this);
             }
-            if (this.varProp.hp < this.prop.mp && this.prop.mpr > 0) {
-                let rmp = this.varProp.mp;
-                this.varProp.mp = Math.min(this.prop.mpr + rmp, this.prop.mp);
-                this.on(new ItemEvent('nhpchange', [rmp, this.varProp.mp], this));
+            if (this.varProp.mp < this.prop.mp && this.prop.mpr > 0) {
+                this.getMP(this.prop.mpr, this);
             }
         }, true);
         this.on('behold_0', e => {

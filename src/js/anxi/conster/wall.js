@@ -1,5 +1,5 @@
-import { TilingSprite } from "pixi.js";
-import { by, GameHeight, GameWidth } from "../../util";
+import { TilingSprite, Sprite } from "pixi.js";
+import { by } from "../../util";
 import { Conster } from "../const";
 import { WallProto } from "../proto/wall";
 

@@ -1,5 +1,5 @@
 import { Graphics, Sprite } from "pixi.js";
-import { gameTink, by, gameApp } from "../../../util";
+import { gameTink, by } from "../../../util";
 // import { ThingProto } from "../../../data/bag/base";
 // import { EquipProto } from "../../../data/bag/util/equip";
 import { BagController } from "../bag";
@@ -11,7 +11,7 @@ class Operater extends Graphics {
     _textures
     get textures() {
         if (!this._textures) {
-            this._textures = Array.from(new Array(8), (v, k) => gameApp.loader.resources[`./res/util/gui/use${k + 1}.png`].texture);
+            this._textures = Array.from(new Array(8), (v, k) => by(`./res/util/gui/use${k + 1}.png`));
             this._textures.unshift('');
         }
         return this._textures;

@@ -1,3 +1,5 @@
+import { defaultAttackMusicUrl } from "../../sound/util";
+
 export class HurtProto {
     /**
      * @param {HurtProto} proto 
@@ -7,4 +9,6 @@ export class HurtProto {
     }
     crtAble = true
     dodAble = true
+    sound
+    hitsound
 }

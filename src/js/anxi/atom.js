@@ -11,7 +11,22 @@ export class Atom extends ItemEventDispatcher {
     timeChangeRates = []
     timeRate = 1
     timer = 0
-    running = true
+
+    _running = true
+    get running() {
+        return this._running;
+    }
+    set running(bool) {
+        if (this._running ^ bool) {
+            this._running = bool;
+            this.on(new ItemEvent('runchange',bool));
+            if (bool) {
+                this.on(new ItemEvent('start'));
+            } else {
+                this.on(new ItemEvent('stop'));
+            }
+        }
+    }
     start() {
         this.running = true;
     }

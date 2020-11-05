@@ -1,5 +1,5 @@
 import { Sprite, Container, Text, TextStyle, Graphics } from "pixi.js";
-import { by, gameApp, GameHeight, GameWidth, getSkillIcon } from "../util";
+import { by, GameHeight, GameWidth, getSkillIcon } from "../util";
 import { Role } from "./atom/role";
 export class GUI {
     /**
@@ -167,6 +167,7 @@ export class GUI {
         this.initDetail();
     }
     refresh() {
+        let role = this.role;
         let hpper = role.varProp.hp / role.prop.hp;
         this.hpbar.width = 150 * hpper;
         this.hptext.text = `${role.varProp.hp | 0}/${role.prop.hp | 0}`;
@@ -180,6 +181,9 @@ export class GUI {
         const width = 250;
         const leftoffset = 5;
         this.detailContainer.position.set(left ? 0 : GameWidth, GameHeight - 40 - 3);
+        /**
+         * @type {Sprite[]}
+         */
         let skillIcons = [];
         for (let i = 0; i < 5; i++) {
             let sprite = new Sprite(by(getSkillIcon(this.role.skills[i])));
@@ -187,5 +191,10 @@ export class GUI {
             skillIcons.push(sprite);
         }
         this.detailContainer.addChild(...skillIcons);
+        this.role.on('skillchange', e => {
+            skillIcons.forEach((icon, i) => {
+                icon.texture = by(getSkillIcon(this.role.skills[i]));
+            })
+        }, true);
     }
 }

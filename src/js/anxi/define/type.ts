@@ -25,6 +25,11 @@ export type CardData = {
     crossOpen: [number, number],
     back: String,
     ground: number,
+    step:number,
+    bgvolume:number,
+    bgmusic:string,
+    whenCross:()=>void,
+    whenFirstCross:()=>void,
     walls: [
         [number, number, number]
     ]

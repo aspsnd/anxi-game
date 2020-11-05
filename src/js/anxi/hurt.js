@@ -1,11 +1,11 @@
 import { Atom } from "./atom"
-import { ItemEvent } from "./event"
+import { ItemEvent, ItemEventDispatcher } from "./event"
 import { HurtProto } from "./proto/hurt"
 
 /**
  * 一次行动，攻击或技能动作
  */
-export class Hurt {
+export class Hurt extends ItemEventDispatcher {
     crtAble = true
     dodAble = true
     crt = 0
@@ -23,6 +23,7 @@ export class Hurt {
      * @param {Atom} belonger 
      */
     constructor(proto, belonger) {
+        super();
         this.proto = proto;
         this.belonger = belonger;
         for (let key in proto) {

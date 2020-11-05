@@ -2,6 +2,8 @@ import { Container, Sprite, Matrix } from "pixi.js";
 import { gameApp } from "../../util";
 import { Vita } from "../../anxi/atom/vita";
 import { StateCache } from "../../anxi/controller/state";
+import { RealWorld } from "../../po/world";
+import { World } from "../../anxi/atom/world";
 
 export var VitaComt = ['weapon', 'head', 'body', 'hand_l', 'hand_r', 'leg_l', 'leg_r', 'wing'];
 export class SmallVita {
@@ -34,6 +36,7 @@ export class SmallVita {
     onFrame() {
         if (!this.showing) return;
         if (!this.view.worldVisible) return;
+        if (World.instance?.running) return;
         this.frame++;
         for (let comt of VitaComt) {
             let action = this.vita.proto.actionData[StateCache.common][comt];

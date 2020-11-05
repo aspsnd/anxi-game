@@ -1,7 +1,6 @@
 import { AttackProtos } from "../../data/attack/all";
 import { by } from "../../util";
 import { Controller } from "../controller";
-import { AnxiError } from "../error/base";
 import { Attack } from "../hurt/attack";
 import { StateCache } from "./state";
 

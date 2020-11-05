@@ -119,8 +119,12 @@ export class StateController extends Controller {
         for (let index of stateIndex) {
             if (!this.has(index)) continue;
             let ss = this.getSingleState(index);
-            ss.last = 0;
-            ss.infinite = false;
+            if (ss.complex) {
+                ss.removeAll();
+            } else {
+                ss.last = 0;
+                ss.infinite = false;
+            }
             this.belonger.on(new ItemEvent(`loststate_${index}`));
         }
     }
@@ -266,7 +270,7 @@ export class SingleState {
         return this._last;
     }
     set last(value) {
-        // if (this.complex) throw new Error('unsuspect operation!');
+        if (this.complex && this._last - 1 > value) throw new Error('unsuspect operation!');
         this._last = Math.max(value, 0);
     }
     behaveTime = 0
@@ -289,11 +293,14 @@ export class SingleState {
         this.timer++;
         this.last--;
         if (this.complex) {
-            this.items = this.items.filter(item => {
+            for (let index in this.items) {
+                let item = this.items[index];
+                if (!item) continue;
                 if (item.last > 0) item.last--;
                 item.timer++;
-                return item.last > 0 || item.infinite || item.destory();
-            })
+                if (item.last > 0 || item.infinite || item.destory()) continue;
+                this.items[index] = undefined;
+            }
         } else {
 
         }
@@ -333,17 +340,19 @@ export class SingleState {
         let item = this.items[itemIndex];
         if (!item) return;
         if (this.last == item.last) {
-            this.last = Math.max(this.items.map(item => item.last));
+            this.last = Math.max(this.items.map(item => item?.last ?? 0));
         }
         if (this.infinite && item.infinite) {
-            this.infinite = this.items.some(item => item.infinite);
+            this.infinite = this.items.some(item => item?.infinite);
         }
-        delete this.items[itemIndex];
+        item.destory();
+        this.items[itemIndex] = undefined;
     }
     removeAll() {
         if (!this.complex) throw new Error('not complex state!');
-        this.last = 0;
+        this._last = 0;
         this.infinite = false;
+        this.items.forEach(item => item?.destory());
         this.items = [];
     }
 }

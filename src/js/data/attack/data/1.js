@@ -6,7 +6,7 @@ import { tween } from "../../../util";
 export default new AttackProto({
     index:1,
     time: 15,
-    freeze: 25,
+    freeze: 20,
     checkTimes: [10],
     debuff: [
         {

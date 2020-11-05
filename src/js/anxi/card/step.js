@@ -25,14 +25,17 @@ export class StepManager {
      */
     constructor(world) {
         this.world = world;
+        /**
+         * @type {import("../define/type").CardData}
+         */
+        this.carddata = world.carddata;
         this.container = world.baseContainer;
         world.on('timing', this.onTimer.bind(this));
-        // setTimeout(_ => {
-        //     this.place([6, 0, 600, 1], {
-        //         deadNum:0,
-        //         monstNum:1
-        //     }, 0);
-        // }, 1000);
+        this.init();
+    }
+    init() {
+        this.stepNum = this.carddata.step ?? this.stepNum;
+        this.limits = this.carddata.limits ?? StepManager.defaultLimits;
     }
     onTimer() {
         this.attach();
@@ -65,6 +68,7 @@ export class StepManager {
     }
     attachRole() {
         let { role, container } = this;
+        if (!role.viewController.view.worldVisible) return;
         let nowX = role.x;
         let gx = role.viewController.view.getGlobalPosition().x;
         let goto = nowX - this.lastX;
@@ -76,7 +80,7 @@ export class StepManager {
             container.x = -this.screenLeft;
         }
         if (this.step % 1 != 0 && this.step < 4.5) {
-            if (this.screenLeft >= StepManager.defaultLimits[this.step + 0.5][1] - GameWidth) {
+            if (this.screenLeft >= this.limits[this.step + 0.5][1] - GameWidth) {
                 this.goToStep(this.step + 0.5);
             }
         }
@@ -84,6 +88,7 @@ export class StepManager {
     }
     attachRoles() {
         let { role, extraRole, container } = this;
+        if (!role.viewController.view.worldVisible) return;
         if (role.dead) {
             this.pointer = [this.extraRole];
             this.attach = this.attachRole;
@@ -122,7 +127,7 @@ export class StepManager {
             }
         }
         if (this.step % 1 != 0 && this.step < 4.5) {
-            if (this.screenLeft >= StepManager.defaultLimits[this.step + 0.5][1] - GameWidth) {
+            if (this.screenLeft >= this.limits[this.step + 0.5][1] - GameWidth) {
                 this.goToStep(this.step + 0.5);
             }
         }
@@ -134,7 +139,7 @@ export class StepManager {
             monstNum: 0,
             deadNum: 0
         }
-        if (step == 4) {
+        if (step == this.stepNum) {
             let _boss = carddata.boss;
             _boss.forEach((arr, index) => {
                 deadCount.monstNum++;
@@ -156,7 +161,7 @@ export class StepManager {
     goToStep(step) {
         this.step = step;
         if (step % 1 == 0) {
-            this.limit = StepManager.defaultLimits[step];
+            this.limit = this.limits[step];
             this.dropMonst(step);
         } else {
             this.limit = [0, CardWidth];
@@ -186,7 +191,7 @@ export class StepManager {
     }
     bossNum = 0
     place(_boss, deadCount, index) {
-        let monst = new Monst(MonstProtos[_boss[0]],this.world);
+        let monst = new Monst(MonstProtos[_boss[0]], this.world);
         this.world.vitaContainer.addChild(monst.viewController.view);
         new BigHPBarController(monst, 0xff0000, index);
         monst.isBoss = true;

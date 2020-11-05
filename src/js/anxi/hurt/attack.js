@@ -1,3 +1,4 @@
+import { gameSound } from "../../util";
 import { ActionData } from "../action/action";
 import { Affect } from "../affect";
 import { Vita } from "../atom/vita";
@@ -32,7 +33,7 @@ export class Attack extends Hurt {
     absoulteCheck = false
     notrans = false
     checkbar
-    check(checker){
+    check(checker) {
         this.checkbar = checker;
     }
     execute() {
@@ -46,6 +47,10 @@ export class Attack extends Hurt {
                 let shoots = this.getShootedVita();
                 if (this.proto.notrans && shoots.length > 0) {
                     this.finished = true;
+                }
+                if (shoots.length > 0) {
+                    this.on(new ItemEvent('hitenemys', shoots, this));
+                    this.belonger.on(new ItemEvent('hitenemys', shoots, this));
                 }
                 shoots.forEach(vita => {
                     this.shootedVitas.push(vita.id);

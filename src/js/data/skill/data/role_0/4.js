@@ -1,7 +1,9 @@
 import { Affect } from "../../../../anxi/affect";
 import { ShadowController } from "../../../../anxi/controller/skill/shadow";
+import { ItemEvent } from "../../../../anxi/event";
 import { SkillProto } from "../../../../anxi/proto/skill";
 import { Circle } from "../../../../anxi/shape/shape";
+import { gameSound } from "../../../../util";
 
 /**
  * 技能5 【被动】残影的滞留时间增加为5秒
@@ -22,11 +24,12 @@ export default new SkillProto(4, '魔影杀', `【被动】残影的滞留时间
         if (num > 0) {
             let affectProto = {
                 harm: {
-                    common: 50 + (8 + num) * 0.1 * this.vita.prop.atk,
+                    common: 20 + (8 + num) * 0.01 * this.vita.prop.atk,
                     absolute: 0
                 }
             }
             sc.worsen(affectProto);
+            gameSound.showInCard('./res/util/role/0/sound/41.m4a');
         } else {
             let role = this.vita;
             let sum = 9;
@@ -55,6 +58,9 @@ export default new SkillProto(4, '魔影杀', `【被动】残影的滞留时间
                         let shoots = role.world.selectableVitas().filter(vita => Boolean(vita)).filter(vita => vita.group != role.group)
                             .filter(vita => !shootedVitas.includes(vita.id))
                             .filter(vita => hitarea.hit(vita.getHitGraph()));
+                        if (shoots.length > 0) {
+                            this.vita.on(new ItemEvent('hitenemys', shoots, this));
+                        }
                         shoots.forEach(vita => {
                             shootedVitas.push(vita.id);
                             /**
@@ -68,5 +74,6 @@ export default new SkillProto(4, '魔影杀', `【被动】残影的滞留时间
                     return true;
                 });
             }
+            gameSound.showInCard('./res/util/role/0/sound/40.wav');
         }
     })

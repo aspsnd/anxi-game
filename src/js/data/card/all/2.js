@@ -7,7 +7,7 @@ export default {
     position: [150, 285],
     crossOpen: [3],
     back: getBack(3),
-    ground: getGround(0),
+    ground: 2,
     walls: [],
     boss: [
         [3, 120, 300, -1],

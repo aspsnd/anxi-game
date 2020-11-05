@@ -1,7 +1,7 @@
 import { Container, Sprite, TextStyle, Text } from "pixi.js";
 import { ForeverWorld, World } from "../anxi/atom/world";
 import { PIXIRouter } from "../lib/router";
-import { directBy, gameTink, gameApp, by } from "../util";
+import { directBy, gameTink, by } from "../util";
 import { cardDatas } from "../data/card/card";
 import { Role } from "./atom/role";
 import { simpleCombine } from "../pod/home/combine";
@@ -44,7 +44,8 @@ export class RealWorld extends ForeverWorld {
                 };
                 let talentSprite = new BaseTool(by('./res/util/gui/talent.png')).useText('天 赋').appendTo(container, 140, 530);
                 talentSprite.tap = _ => {
-                    router.to('talent');
+                    // router.to('talent');
+                    new ZY.myAler.Aler('该功能暂不开放，敬请期待！');
                 }
                 cardDatas.forEach(cd => {
                     let s = gameTink.button([

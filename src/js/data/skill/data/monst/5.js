@@ -39,6 +39,9 @@ export default new SkillProto(5, '射箭', '普通的向前射箭')
                     let shoots = World.instance.selectableVitas().filter(vita => vita.group != monst.group)
                         .filter(vita => !shootedVitas.includes(vita.id))
                         .filter(vita => circle.hit(vita.getHitGraph()));
+                    if (shoots.length > 0) {
+                        monst.on(new ItemEvent('hitenemys', shoots, this));
+                    }
                     shoots.forEach(vita => {
                         shootedVitas.push(vita.id);
                         let affect = new Affect(this, monst, vita);

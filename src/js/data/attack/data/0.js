@@ -5,7 +5,7 @@ import { tween } from "../../../util";
 
 export default new AttackProto({
     index: 0,
-    time: 15,
+    time: 20,
     freeze: 25,
     checkTimes: [10],
     debuff: [
@@ -17,27 +17,27 @@ export default new AttackProto({
     getHitGraph(pos, face, vita) {
         let [x, y] = pos;
         return new Polygon(
-            new Point(x + 20 * face, vita.centerY -25),
+            new Point(x + 20 * face, vita.centerY - 25),
             new Point(x + 20 * face, vita.centerY + 20),
             new Point(x + 75 * face, vita.centerY + 20),
-            new Point(x + 75 * face, vita.centerY -25)
+            new Point(x + 75 * face, vita.centerY - 25)
         );
     },
     acitonData: {
         weapon: {
-            len: 15,
+            len: 20,
             changedFrame: 1,
             value: [
                 ...tween([34, 40, 185], [36, 51, 280], 12),
-                ...tween([36, 51, 280], [34, 40, 185], 3)
+                ...tween([36, 51, 280], [34, 40, 185], 8)
             ]
         },
         hand_r: {
-            len: 15,
+            len: 20,
             changedFrame: 1,
             value: [
                 ...tween([14, 37, 15], [14, 37, 45], 12),
-                ...tween([14, 37, 45], [14, 37, 15], 3)
+                ...tween([14, 37, 45], [14, 37, 15], 8)
             ]
         }
     }

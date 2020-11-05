@@ -1,4 +1,4 @@
-import { gameApp, loadAndAfter, gameRouter, GameWidth, GTip, GDanger, directBy, gameTink } from "./util";
+import { gameApp, loadAndAfter, gameRouter, GameWidth, GTip, GDanger, directBy, gameTink, gameSound } from "./util";
 import { Sprite } from "pixi.js";
 import { Input, Button, SimpleButton, SpanLine } from "./anxi/lib/input";
 import { RecordController } from "./record/record";
@@ -7,15 +7,16 @@ import { DotFilter, GodrayFilter } from "pixi-filters";
 import { RealWorld } from "./po/world";
 import { RoleProtos } from "./data/role/all";
 import { Role } from "./po/atom/role";
-import { cardDatas } from "./data/card/card";
 import { QuickOpen } from "./po/gui/open";
-import { autoLogin, autoLoginTarget } from "./boot";
+import { autoEnterCard, autoEnterCardIndex, autoLogin, autoLoginTarget } from "./boot";
+import { cardDatas } from "./data/card/card";
 const { myAler } = ZY;
 const { Question } = myAler;
 
 export const init = () => {
     gameApp.start();
     loadAndAfter(_ => {
+        gameSound.showMapBg();
         new QuickOpen();
         gameRouter.register('login', {
             initer(container) {
@@ -32,11 +33,8 @@ export const init = () => {
                         new GTip('登录成功');
                         gameRouter.to('main');
 
-                    }).catch(e => {
-                        new GDanger('登录失败', e => {
-                            unameInput.value = '';
-                            upassInput.value = '';
-                        });
+                    }).catch(function (e) {
+                        new ZY.Tip(e?.response?.data?.msg ?? '登录失败');
                     })
                 }
                 container.addChild(unameInput, upassInput, loginBtn);
@@ -287,7 +285,7 @@ export const init = () => {
                 let world = data.world;
                 world.init(data.record);
                 // world.router.to('talent');
-                // world.loadCard(cardDatas[0]);
+                if (autoEnterCard) world.loadCard(cardDatas[autoEnterCardIndex ?? 0]);
             }
         }, undefined, (container, data) => {
             let world = data.world = new RealWorld(gameApp, container);
