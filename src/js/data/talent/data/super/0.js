@@ -58,5 +58,6 @@ export default new SkillProto(0, '强攻', '对每个敌人造成第三次普攻
             affect.setout();
             let defd = 5 + this.vita.level >> 1;
             enemy.computeFunctions['def'].push(_ => -defd);
+            enemy.needCompute = true;
         })
     })

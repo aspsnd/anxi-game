@@ -429,7 +429,7 @@ export class Vita extends Atom {
             /**
              * 参考lol护甲减伤机制
              */
-            affect.reduce.common += this.prop.def >= 0 ? affect.harm.common * this.prop.def / (this.prop.def + 100) : affect.harm * this.prop.def / 100;
+            affect.reduce.common += this.prop.def >= 0 ? affect.harm.common * this.prop.def / (this.prop.def + 100) : affect.harm.common * this.prop.def / 100;
 
 
             /**

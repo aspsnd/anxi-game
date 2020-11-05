@@ -7,5 +7,5 @@ files.keys().forEach(key => {
     let data = files(key).default;
     cardDatas[data.index] = data;
 })
-cardDatas = cardDatas.filter((v, i) => i <= 3);
+// cardDatas = cardDatas.filter((v, i) => i <= 3);
 export { cardDatas };

@@ -172,6 +172,7 @@ export const res = [
     "./res/util/scene/back/2.png",
     "./res/util/scene/back/3.png",
     "./res/util/scene/back/4.png",
+    "./res/util/scene/back/5.png",
     "./res/util/scene/board/0.png",
     "./res/util/scene/board/1.png",
     "./res/util/scene/board/砖3.png",

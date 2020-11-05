@@ -21,7 +21,7 @@ export class SoundManager {
     initExtra() {
         this.mapBg = this.loader.resources[mapBgUrl].sound.play();
         this.mapBg.paused = true;
-        this.mapBg.volume = 0.3;
+        this.mapBg.volume = closeAllBg ? 0 : 0.3;
         this.mapBg.loop = true;
     }
     /**

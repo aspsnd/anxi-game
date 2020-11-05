@@ -44,8 +44,8 @@ export class RealWorld extends ForeverWorld {
                 };
                 let talentSprite = new BaseTool(by('./res/util/gui/talent.png')).useText('天 赋').appendTo(container, 140, 530);
                 talentSprite.tap = _ => {
-                    // router.to('talent');
-                    new ZY.myAler.Aler('该功能暂不开放，敬请期待！');
+                    router.to('talent');
+                    // new ZY.myAler.Aler('该功能暂不开放，敬请期待！');
                 }
                 cardDatas.forEach(cd => {
                     let s = gameTink.button([

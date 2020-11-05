@@ -24,7 +24,7 @@ export default new SkillProto(4, '魔影杀', `【被动】残影的滞留时间
         if (num > 0) {
             let affectProto = {
                 harm: {
-                    common: 20 + (8 + num) * 0.01 * this.vita.prop.atk,
+                    common: 20 + (8 + num) * 0.1 * this.vita.prop.atk,
                     absolute: 0
                 }
             }
