@@ -7,7 +7,7 @@ export const exposeToWindow = true;
 export const closeAllBg = !!1;
 export const openPtoCtrlRun = !!1;
 export const autoEnterCard = 1;
-export const autoEnterCardIndex = 4;
+export const autoEnterCardIndex = 6;
 
 /**
  * for build

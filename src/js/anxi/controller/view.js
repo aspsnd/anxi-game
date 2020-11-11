@@ -302,6 +302,7 @@ export class ViewController extends Controller {
         this.destroyed = false;
         this.toDestory = [];
         this.view.filters = [];
+        this.view.alpha = 1;
     }
     /**
      * @type {Sprite[]}
