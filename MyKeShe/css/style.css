@@ -1,0 +1,208 @@
+html {
+    overflow-x: hidden;
+}
+button:focus,
+*:focus {
+    outline: none;
+}
+*{
+    margin: 0px;
+    padding: 0px;
+}
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0px;
+    padding: 0px;
+    font-size: 14px;
+    line-height: 1.8;
+    font-weight: 400;
+    color: #000;
+    background: #ffffff;
+    border-color: #dfdfdf;
+    transition: transform ease-in .4s;
+    overflow: hidden;
+}
+div{
+    display: block;
+}
+.bg-custom-blue{
+    padding:10px 0px;
+    background-color: #01b7f2;
+}
+.container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 960px;
+}
+.row{
+    display:flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left:-15px;
+}
+.col-sm-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+/*li a{
+    text-align: right;
+}
+*/
+ul.custom-flex{
+    list-style: none;
+    padding:0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+ul {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+    margin-top:0;
+    margin-bottom: 0;
+}
+ul li,ol li{
+    margin:0px;
+    position:relative;
+}
+li{
+    display: list-item;
+    text-align:-webkit-match-parent;
+    padding:0px 5px;
+}
+*,::after,::before{
+    box-sizing:border-box;
+}
+a{
+    text-decoration: none;
+    transition: 0.5s;
+    background-color: transparent;
+}
+.text-custom-white{
+    color:#f176f579;
+}
+select{
+    /*-webkit-writing-mode: horizontal-tb !important;*/
+    text-rendering: auto;
+    color: -internal-light-dark-color(black, white);
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    -webkit-appearance: menulist;
+    box-sizing: border-box;
+    align-items: center;
+    white-space: pre;
+    -webkit-rtl-ordering: logical;
+    background-color: -internal-light-dark-color(white, black);
+    cursor: default;
+    margin: 0em;
+    font: 400 13.3333px Arial;
+    border-radius: 0px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(169, 169, 169);
+    border-image: initial;
+    font-family: inherit;
+    font-size: inherit;
+    line-height:inherit;
+    text-transform: none;
+}
+option{
+    font-weight: normal;
+    display: block;
+    white-space: pre;
+    min-height: 1.2em;
+    padding: 0px 2px 1px;
+}
+.navigation .main-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.navigation .main-navigation .main-menu .logo {
+    display: block;
+    margin: 20px 10px;
+    width:156px;
+}
+.navigation .main-navigation .main-menu>div>ul>.menu-item {
+    padding: 0;
+    margin: 10px;
+}
+.navigation .main-navigation .main-menu>div>ul>.menu-item.active>a {
+    color: #01b7f2;
+    font-weight: 500;
+}
+.navigation .main-navigation .main-menu>div>ul>.menu-item>a {
+    padding: 10px 15px;
+    display: block;
+    background: #fff;
+    text-transform: uppercase;
+}
+.menu-item-has-children .sub-menu .menu-item-has-children>.sub-menu, .menu-item-has-megamenu:hover>.megamenu, .menu-item-has-megamenu .megamenu, .menu-item-has-children .sub-menu {
+    opacity: 1;
+    visibility: visible;
+    left: 0;
+    width: 100%;
+    position: relative;
+    /*display: none;*/
+    padding: 0;
+}
+.menu-item-has-children .sub-menu {
+    position: absolute;
+    top: 100%;
+    left: 50px;
+    right: 0;
+    width: 200px;
+    /*opacity: 0;*/
+    background: #01b7f2;
+    transition: 0.3s all;
+    z-index: 1;
+}
+.menu-item-has-children .sub-menu>.menu-item>a {
+    background: #04afe7;
+    color: #fff;
+}
+.megamenu .megamenu-nav ul>.menu-item>a, .menu-item-has-children .sub-menu>.menu-item>a {
+    display: block;
+    border-top: 1px solid #04afe7;
+    white-space: nowrap;
+    padding: 12px 20px 12px 18px;
+    position: relative;
+}
+.custom-flex li ul {
+    display: none;
+}
+.custom-flex li:hover ul{
+    display:block !important;
+} 
+ol ol,ol ul,ul ol,ul ul{
+    margin-bottom: 0;
+} 
+.navigation .main-navigation .main-menu .cta-btn {
+    margin: 0 10px;
+}
+.navigation .main-navigation .main-menu .cta-btn, .navigation .main-navigation .main-menu {
+    display: flex;
+    align-items: center;
+}
+a:-webkit-any-link {
+    /*color: -webkit-link;*/
+    cursor: pointer;
+    text-decoration: underline;
+}
+/*图片*/
+.text-custom-blue{
+    color:#01b7f2;
+}
