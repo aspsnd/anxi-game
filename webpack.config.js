@@ -39,8 +39,8 @@ module.exports = {
         }, {
           from: './src/res',
           to: 'res',
-          globOptions:{
-            ignore:[
+          globOptions: {
+            ignore: [
               '**/re/**'
             ]
           }
@@ -58,5 +58,13 @@ module.exports = {
     port: 8080,
     open: true,
   },
+  // devServer: {
+  //   contentBase: path.join(__dirname, 'build'),
+  //   compress: true,
+  //   port: 8080,
+  //   host: '0.0.0.0',
+  //   open: true,
+  //   useLocalIp: true
+  // },
   devtool: 'source-map'
 };

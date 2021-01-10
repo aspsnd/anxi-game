@@ -21,6 +21,8 @@ export class SkillPanel extends BaseGui{
     */
     constructor(roles) {
         super();
+        this.container.interactive = true;
+        this.container.accessiblePointerEvents = 'none';
         this.baseContainer = this.container;
         this.roles = roles;
         this.roleIndex = 0;

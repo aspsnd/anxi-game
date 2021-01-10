@@ -15,7 +15,7 @@ import { HPBarController } from "../controller/hp.view";
 import Dust from "pixi-dust";
 import { SuperInstructor } from "../instruct/inst";
 import { GlobalEventCaster } from "../instruct/global";
-import { exposeToWindow, openDropMonst } from "../../boot";
+import { exposeToWindow, isMobile, openDropMonst } from "../../boot";
 
 export class ForeverWorld extends Atom {
     /**
@@ -42,6 +42,7 @@ export class World extends Atom {
     container
     parallelContainer = new Container()
     baseContainer = new Container()
+    handContainer = RealWorld.instance.handContainer
     /**
      * @type {World}
      */
@@ -67,7 +68,7 @@ export class World extends Atom {
         this.bg = gameSound.showCardBg(carddata);
         QuickOpen.bind(this);
         this.container = container;
-        this.container.addChild(this.baseContainer, this.parallelContainer, this.guiContainer, this.toolContainer);
+        this.container.addChild(this.baseContainer, this.parallelContainer, this.handContainer, this.guiContainer, this.toolContainer);
         this.baseContainer.addChild(this.wallContainer, this.vitaContainer);
         this.initCard(carddata);
         this.stepManager = new StepManager(this).bind(roles);
@@ -179,7 +180,7 @@ export class World extends Atom {
     initRole(role, index) {
         this.vitaContainer.addChild(role.viewController.view);
         this.guiContainer.addChild(role.gui.basebar);
-        this.guiContainer.addChild(role.gui.detailContainer);
+        isMobile || this.guiContainer.addChild(role.gui.detailContainer);
         role.refresh();
         role.link(this);
         this.vitas[role.id] = role;

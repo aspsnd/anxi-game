@@ -54,18 +54,16 @@ export class QuickOpen {
         }
     }
     nowOpen = false
-    constructor(roles, keys = ['c', 'z', 'v', 'b']) {
+    constructor(roles, keys = ['c', 'z', 'v']) {
         this.keys = keys;
         this.nowOpenKey = keys[0];
         let openQuit = new OpenQuit();
         let skillPanel = new SkillPanel(roles);
         let bagController = new BagController(roles);
-        let talentPanel = new TalentPanel(roles);
         this.kvs = {
             [keys[0]]: bagController,
             [keys[1]]: openQuit,
-            [keys[2]]: skillPanel,
-            [keys[3]]: talentPanel
+            [keys[2]]: skillPanel
         }
         QuickOpen.instance = this;
     }

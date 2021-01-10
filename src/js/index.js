@@ -10,10 +10,12 @@ import { Role } from "./po/atom/role";
 import { QuickOpen } from "./po/gui/open";
 import { autoEnterCard, autoEnterCardIndex, autoLogin, autoLoginTarget } from "./boot";
 import { cardDatas } from "./data/card/card";
+import { checkFullScreen } from "./lib/mobile";
 const { myAler } = ZY;
 const { Question } = myAler;
 
 export const init = () => {
+    checkFullScreen();
     gameApp.start();
     loadAndAfter(_ => {
         gameSound.showMapBg();

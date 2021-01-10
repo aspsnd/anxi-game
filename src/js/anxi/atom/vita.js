@@ -12,6 +12,7 @@ import { AttackController } from "../controller/attack";
 import { SkillController } from "../controller/skill";
 import { Controller } from "../controller";
 import { AIController } from "../controller/ai/ai";
+import { isMobile } from "../../boot";
 
 export const typicalProp = ['hp', 'mp', 'atk', 'def', 'crt', 'dod', 'hpr', 'mpr', 'speed'];
 /**
@@ -237,6 +238,33 @@ export class Vita extends Atom {
             if (this.stateController.has(StateCache.drop) || this.stateController.includes(StateCache.jumpSec, StateCache.jump, StateCache.hover)) return;
             if (this.stickingWall) return;
             this.stateController.setStateInfinite(StateCache.drop, true);
+        }, true);
+        isMobile && this.initMobileInstruct();
+    }
+
+    initMobileInstruct() {
+        this.on('wantmobilestand', e => {
+            if (this.dead) return;
+            this.stateController.setStateInfinite(StateCache.go, false);
+            this.stateController.setStateInfinite(StateCache.run, false);
+        }, true);
+        this.on('wantmobilego', e => {
+            if (this.dead) return;
+            if (this.stateController.includes(StateCache.hard, StateCache.beHitBehind, StateCache.dizzy, StateCache.attack)) return;
+            let face = e.value;
+            if (this.stateController.has(StateCache.go) && this.face == face) return;
+            this.face = face;
+            this.stateController.setStateInfinite(StateCache.run, false);
+            this.stateController.setStateInfinite(StateCache.go, true);
+        }, true);
+        this.on('wantmobilerun', e => {
+            if (this.dead) return;
+            if (this.stateController.includes(StateCache.hard, StateCache.beHitBehind, StateCache.dizzy, StateCache.attack)) return;
+            let face = e.value;
+            if (this.stateController.has(StateCache.run) && this.face == face) return;
+            this.face = face;
+            this.stateController.setStateInfinite(StateCache.go, false);
+            this.stateController.setStateInfinite(StateCache.run, true);
         }, true);
     }
     /**

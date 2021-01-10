@@ -85,6 +85,29 @@ export const SuperInstructor = {
         return function (vita) {
             vita.aiController = new AIController(vita);
         }
+    },
+    mobilePlayer() {
+        return function (vita) {
+            let comt = GlobalEventCaster.on(e => e.type.startsWith('wantmobile'), e => {
+                if (!vita?.world?.running) return;
+                vita.on(e);
+            });
+            let comt1 = GlobalEventCaster.on('copymobile', e => {
+                if (!vita?.world?.running) return;
+                vita.on(e.value());
+            });
+            if (vita instanceof Role) return;
+            let comt4 = vita.once('dead', e => {
+                GlobalEventCaster.removeHandler(comt);
+                GlobalEventCaster.removeHandler(comt1);
+                vita.world.removeHandler(comt5);
+            })
+            let comt5 = vita.world.once('die', e => {
+                GlobalEventCaster.removeHandler(comt);
+                GlobalEventCaster.removeHandler(comt1);
+                vita.removeHandler(comt4);
+            })
+        }
     }
 }
 /**

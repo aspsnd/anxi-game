@@ -7,7 +7,6 @@ import { PIXIRouter } from "./lib/router";
 import { dynamicResource } from "./boot";
 import { SoundManager } from "./sound/sound";
 import Smoothie from "pixi-smoothie";
-var axios = require('axios').default;
 export const jumpContinue = {
     jump: 30,
     jumpSec: 30

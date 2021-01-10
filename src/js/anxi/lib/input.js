@@ -50,14 +50,14 @@ export class Input extends Graphics {
         }));
         this.root.position.set(90, offsetY);
         this.addChild(this.root);
-        gameTink.makeInteractive(this);
-        this.tap = _ => {
+        this.interactive = true;
+        this.on('tap', _ => {
             new ZY.Inputer('', (bool, value) => {
                 if (!bool) return;
                 this.saveText = value;
                 this.root.text = passwordable ? "*".repeat(this.saveText.length) : value;
             }, this.saveText);
-        }
+        });
     }
 }
 export class Button extends Graphics {
@@ -86,7 +86,10 @@ export class Button extends Graphics {
         text.position.set(style.width >> 1, style.height >> 1);
         text.anchor.set(0.5, 0.5);
         this.addChild(text);
-        gameTink.makeInteractive(this);
+        this.interactive = true;
+        this.on('tap',_=>{
+            this.tap?.();
+        })
     }
 }
 export class SimpleButton extends Graphics {

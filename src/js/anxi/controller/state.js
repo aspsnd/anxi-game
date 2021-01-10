@@ -225,7 +225,7 @@ export class StateController extends Controller {
     /**
      * complex
      */
-    removeAllStateItem(stateNumber) {
+    removeAllStateItem(stateIndex) {
         let ss = this.getSingleState(stateIndex);
         if (!ss.exist()) return;
         ss.removeAll();

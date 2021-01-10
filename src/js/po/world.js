@@ -10,7 +10,9 @@ import { GUI } from "./gui";
 import { RecordController } from "../record/record";
 import { SuperInstructor } from "../anxi/instruct/inst";
 import { SingleTalent } from "../pod/home/talent";
-import { exposeToWindow } from "../boot";
+import { exposeToWindow, isMobile } from "../boot";
+import { HandShakeContainer, HandShake } from "./gui/hand";
+import { AnxiError } from "../anxi/error/base";
 
 export class RealWorld extends ForeverWorld {
     /**
@@ -27,6 +29,10 @@ export class RealWorld extends ForeverWorld {
         this.container = container;
     }
     record
+    /**
+     * @type {HandShake}
+     */
+    handContainer = HandShakeContainer()
     init(record) {
         let all = this;
         this.record = record;
@@ -130,11 +136,15 @@ export class RealWorld extends ForeverWorld {
      * @param {RoleProto[]} roles 
      */
     loadRoles(roles) {
+        if (isMobile && roles.length > 1) throw new AnxiError('移动端设备不支持多人模式');
         roles.forEach((_role, index) => {
             let role = new Role(_role);
             new GUI(role, index == 0);
             this.roles.push(role);
-            role.use(SuperInstructor.player(index == 0 ? SuperInstructor.defaultPlayer : SuperInstructor.extraPlayer));
+            role.use(isMobile ? SuperInstructor.mobilePlayer() : SuperInstructor.player(index == 0 ? SuperInstructor.defaultPlayer : SuperInstructor.extraPlayer));
+            if (isMobile) {
+                this.handContainer.initRole(role);
+            }
         });
         if (exposeToWindow) {
             window.role = this.roles[0];

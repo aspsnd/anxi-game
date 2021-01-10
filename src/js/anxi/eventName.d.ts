@@ -4,7 +4,8 @@ export type EventName = 'wantleft' | 'wantright' | 'wantattack' | 'wantjump' | '
     | 'finishcard' | 'getura' | 'lostura' | 'urafull' | 'getmoney' | 'getexp' | 'reduceexp' | 'reducemoney' | 'wantdown' | 'statechange'
     | 'holdvita_0' | 'holdvita_1' | 'holdvita_2' | 'behold_0' | 'behold_1' | 'behold_2' | 'cancelskill' | 'hittarget' | 'bedod' | 'timeratechange'
     | 'beinterrupt' | 'clear' | 'reallydie' | 'movex' | 'movey' | 'killenemy' | 'getura' | 'lostura' | 'wantdie' | 'getaffectpre' | 'overlevel'
-    | 'reduceexp' | 'overexp' | 'somedie' | 'continueleft' | 'continueright' | 'start' | 'stop' | 'runchange' | 'hitenemys' | 'skillchange'
+    | 'reduceexp' | 'overexp' | 'somedie' | 'continueleft' | 'continueright' | 'start' | 'stop' | 'runchange' | 'hitenemys' | 'skillchange' | 'wantmobilerun'
+    | 'wantmobilestand' | 'wantmobilego' | 'copymobile'
 export type EventComt = {
     handler: Function,
     type: EventName | undefined,

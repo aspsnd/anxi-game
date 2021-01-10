@@ -1,5 +1,5 @@
 import { BaseGui } from "./gui";
-import { Container, Graphics, Text, TextStyle } from "pixi.js";
+import { Container, Graphics, Rectangle, Text, TextStyle } from "pixi.js";
 import { SmallVita } from "./smallVita";
 import { ObjWrap } from "./base/block";
 import { WholePropBar, PropBar } from "./base/porpbar";
@@ -11,7 +11,7 @@ import { SimpleOperator } from "./base/operate";
 // import { equipExtraProps } from "../../po/vita";
 import { SimpleDetail } from "./base/detail";
 import { Role } from "../../po/atom/role";
-import { EquipTypeIntro,EquipType, } from "../../anxi/define/util";
+import { EquipTypeIntro, EquipType, } from "../../anxi/define/util";
 import { World } from "../../anxi/atom/world";
 import { getProto, getSpriteFromThing } from "../../data/thing/all";
 import { EquipProtos } from "../../data/thing/equip/all";
@@ -57,6 +57,8 @@ export class BagController extends BaseGui {
     }
     init() {
         let container = new Graphics();
+        container.interactive = true;
+        container.accessiblePointerEvents = 'none';
         this.baseContainer = container;
         container.beginFill(0x000000);
         container.drawRect(0, 0, 700, 450);
@@ -171,7 +173,7 @@ export class BagController extends BaseGui {
     /**
      * @param {World} world 
      */
-    bind(world){
+    bind(world) {
         this.world = world;
         this.roles = this.world.roles;
         world.toolContainer.addChild(this.baseContainer);

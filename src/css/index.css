@@ -8,13 +8,13 @@ html {
     width: 960px;
     height: 590px;
     margin: 35px auto;
+    transform-origin: left top;
 }
 #appCanvas{
     display: block;
-    width: 960px;
-    height: 590px;
+    width: 100%;
+    height: 100%;
     background-color: #000;
-    border: 1px solid #111;
 }
 .g-tip {
     pointer-events: none;
