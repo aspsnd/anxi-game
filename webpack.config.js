@@ -3,9 +3,10 @@ const html_plugin = require('html-webpack-plugin');
 const minicss = require('mini-css-extract-plugin');
 const copy_plugin = require('copy-webpack-plugin');
 const { ResPlugin } = require('./plugins/resBuild');
+const mode = 'development'
 module.exports = {
   // mode: 'production',
-  mode: 'development',
+  mode,
   entry: path.join(__dirname, 'src', 'index.js'),
   // watch: true,
   output: {
@@ -66,5 +67,5 @@ module.exports = {
   //   open: true,
   //   useLocalIp: true
   // },
-  devtool: 'source-map'
+  devtool: mode == "development" ? 'source-map' : 'none'
 };

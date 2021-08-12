@@ -282,7 +282,7 @@ export const loadAndAfter = callback => {
             })
         } else {
             gameApp.loader.add(res).on('progress', function (p) {
-                g.x = p.progress * perw * 0.5;
+                g.x = p.progress * perw * (gameSound.jumped ? 1 : 0.5);
             }).load(() => {
                 gameSound.init(p => {
                     g.x = (p + 100) * perw * 0.5;

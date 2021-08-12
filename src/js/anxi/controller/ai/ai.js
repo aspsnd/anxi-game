@@ -138,6 +138,6 @@ export class AIController extends Controller {
         return target && !target.dead && Math.abs(this.belonger.x - target.x) <= distance;
     }
     randomWait() {
-        return this.catchWait == 0 ? 0 : Math.floor(Math.random() * this.catchWait);
+        return this.catchWait == 0 ? 0 : Math.floor(this.belonger.world.random() * this.catchWait);
     }
 }

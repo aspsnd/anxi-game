@@ -1,3 +1,4 @@
+import { RealWorld } from "../po/world"
 import { Atom } from "./atom"
 import { ItemEvent, ItemEventDispatcher } from "./event"
 import { HurtProto } from "./proto/hurt"
@@ -9,7 +10,7 @@ export class Hurt extends ItemEventDispatcher {
     crtAble = true
     dodAble = true
     crt = 0
-    crtBase = Math.random();
+    crtBase = RealWorld.instance.cardWorld.random();
     debuff = []
     get crted() {
         return this.crtAble && (this.crtBase < this.crt);

@@ -11,8 +11,9 @@ import { QuickOpen } from "./po/gui/open";
 import { autoEnterCard, autoEnterCardIndex, autoLogin, autoLoginTarget } from "./boot";
 import { cardDatas } from "./data/card/card";
 import { checkFullScreen } from "./lib/mobile";
-const { myAler } = ZY;
-const { Question } = myAler;
+import { getWS } from "./net/net";
+const { myAler, Inputer } = ZY;
+const { Question, Loading, Aler } = myAler;
 
 export const init = () => {
     checkFullScreen();
@@ -123,25 +124,79 @@ export const init = () => {
                 let line = new SpanLine();
                 line.position.set(760, 305);
                 container.addChild(line);
+                let line2 = new SpanLine();
+                line2.position.set(760, 305 + 55);
+                container.addChild(line2);
+                let line3 = new SpanLine();
+                line3.position.set(760, 305 + 55 * 2);
+                container.addChild(line3);
                 let mode1 = new SimpleButton('单人模式');
                 let mode2 = new SimpleButton('双人模式');
+                let mode3 = new SimpleButton('双人联机');
+                let mode4 = new SimpleButton('加入联机');
                 let rebtn = new SimpleButton('返回主页');
                 mode1.position.set(770, 258);
                 mode2.position.set(770, 258 + 55);
+                mode3.position.set(770, 258 + 55 * 2);
+                mode4.position.set(770, 258 + 55 * 3);
                 rebtn.position.set(770, 258 + 55 * 4);
-                container.addChild(mode1, mode2, rebtn);
+                container.addChild(mode1, mode2, mode3, mode4, rebtn);
                 mode1.tap = _ => {
                     gameRouter.to('select1');
                 }
                 mode2.tap = _ => {
                     gameRouter.to('select2');
                 }
+                mode3.tap = _ => {
+                    return new Aler('本功能尚在开发阶段，暂时关闭。');
+                    let rrid = '' + RecordController.uuid + ((Math.random() * 10000) | 0);
+                    let ws = getWS();
+                    ws.once('connection', e => {
+                        ws.send({
+                            global: true,
+                            name: 'createRecord',
+                            value: rrid
+                        });
+                        ws.once('recordCreated', e => {
+                            let pass = e.value;
+                            let loading = new Loading('请让加入存档的好友输入以下密码： \r\n' + pass);
+                            ws.once('recordAddIn', e => {
+                                loading.remove();
+                                gameRouter.pageHandlers['select3'].data.isHomer = true;
+                                gameRouter.pageHandlers['select3'].data.rrid = rrid;
+                                gameRouter.to('select3');
+                            })
+                        });
+                    });
+                };
+                mode4.tap = _ => {
+                    return new Aler('本功能尚在开发阶段，暂时关闭。');
+                    new Inputer('请输入建立存档者端提示的加入密码', (bool, value) => {
+                        let ws = getWS();
+                        ws.once('connection', e => {
+                            ws.send({
+                                global: true,
+                                name: 'addInRecord',
+                                value: value
+                            });
+                            ws.once('recordAdd', e => {
+                                let rrid = e.from?.rrid;
+                                if (!rrid) {
+                                    return new myAler.Aler('找不到存档，请确认你的密码。');
+                                };
+                                gameRouter.pageHandlers['select3'].data.isHomer = false;
+                                gameRouter.pageHandlers['select3'].data.rrid = rrid;
+                                gameRouter.to('select3');
+                            })
+                        });
+                    });
+                }
                 rebtn.tap = _ => {
                     gameRouter.to('main');
                 }
                 gameApp.stage.addChild(container);
             }
-        })
+        });
         gameRouter.register('select1', {
             initer(container, data) {
                 data.roles = [];
@@ -227,6 +282,50 @@ export const init = () => {
                 })
             }
         });
+        gameRouter.register('select3', {
+            initer(container, data) {
+                data.roles = [];
+                let { isHomer, rrid } = data;
+                let filter1 = data.filter1 = [new DotFilter(1, 5)];
+                let filter2 = data.filter2 = [new GodrayFilter({
+                    parallel: false
+                })];
+                gameApp.ticker.add(_ => {
+                    filter2[0].time += 0.05;
+                })
+                for (let i = 0; i < 4; i++) {
+                    let index = i;
+                    let sprite = new Sprite(directBy(`role/face/role${i + 1}.png`));
+                    sprite.position.set(240 * i, 0);
+                    sprite.filters = filter1;
+                    gameTink.makeInteractive(sprite);
+                    sprite.over = _ => {
+                        sprite.filters = filter2;
+                    }
+                    sprite.out = _ => {
+                        sprite.filters = filter1;
+                    }
+                    sprite.tap = _ => {
+                        sprite.out = undefined;
+                        let role = new Role(RoleProtos[index]);
+                        let record = RecordController.newNetRecord([role.toPlainObject()], rrid, isHomer);
+                        console.log(record);
+                        gameRouter.pageHandlers['save'].data.record = record;
+                        gameRouter.to('save');
+                    }
+                    data.roles = [];
+                    container.addChild(sprite);
+                }
+                container.addChild(new Sprite(directBy('role_select_bg.png')));
+                gameApp.stage.addChild(container);
+            },
+            refresher(container, data) {
+                container.visible = true;
+                data.roles.forEach(r => {
+                    r.filters = data.filter1;
+                });
+            }
+        });
         gameRouter.register('loadRecord', {
             initer(container, data) {
                 let recordPage = data.recordPage = new RecordPage({
@@ -285,8 +384,13 @@ export const init = () => {
             refresher(container, data) {
                 container.visible = true;
                 let world = data.world;
-                world.init(data.record);
-                // world.router.to('talent');
+                if (getWS().ws.readyState == 1) {
+                    world.init(data.record);
+                } else {
+                    getWS().on('connection', e => {
+                        world.init(data.record);
+                    });
+                }
                 if (autoEnterCard) world.loadCard(cardDatas[autoEnterCardIndex ?? 0]);
             }
         }, undefined, (container, data) => {

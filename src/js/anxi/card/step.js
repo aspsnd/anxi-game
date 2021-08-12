@@ -1,8 +1,9 @@
-import { res } from "../../../res"
 import { MonstProtos } from "../../data/monst/all"
+import { getWS } from "../../net/net"
 import { Monst } from "../../po/atom/monst"
 import { Role } from "../../po/atom/role"
-import { GameWidth, CardWidth } from "../../util"
+import { RealWorld } from "../../po/world"
+import { GameWidth, CardWidth, IFC } from "../../util"
 import { Exit } from "../atom/exit"
 import { World } from "../atom/world"
 import { BigHPBarController, HPBarController } from "../controller/hp.view"
@@ -15,10 +16,10 @@ export class StepManager {
     limit = [0, 1300]
     static defaultLimits = [
         [0, 1300],
-        [800, 2100],
-        [1600, 2900],
-        [2400, 3700],
-        [3200, 4500]
+        [0, 2100],
+        [0, 2900],
+        [0, 3700],
+        [0, 4500]
     ]
     /**
      * @param {World} world 
@@ -32,10 +33,16 @@ export class StepManager {
         this.container = world.baseContainer;
         world.on('timing', this.onTimer.bind(this));
         this.init();
+        window.step = this;
     }
     init() {
         this.stepNum = this.carddata.step ?? this.stepNum;
         this.limits = this.carddata.limits ?? StepManager.defaultLimits;
+        if (this.world.isNet) {
+            getWS().on('jumpStep', e => {
+                this.goToStep(e.value);
+            })
+        }
     }
     onTimer() {
         this.attach();
@@ -47,6 +54,7 @@ export class StepManager {
     get role() {
         return this.pointer[0];
     }
+    netRole
     get extraRole() {
         return this.pointer[1];
     }
@@ -60,7 +68,11 @@ export class StepManager {
         this.pointer = roles;
         this.lastX = this.role.x;
         this.lastXs = roles.map(role => role.x);
-        this.attach = this.multiPlayer ? this.attachRoles : this.attachRole;
+        this.attach = this.world.isNet ? this.attachNet
+            : (this.multiPlayer ? this.attachRoles : this.attachRole);
+        if (this.world.isNet) {
+            this.netRole = RealWorld.instance.record.isHomer ? roles[0] : roles[1];
+        }
         return this;
     }
     attach() {
@@ -86,9 +98,32 @@ export class StepManager {
         }
         this.lastX = nowX;
     }
+    attachNet() {
+        let { netRole, container } = this;
+        if (!netRole.viewController.view.worldVisible) return;
+        let nowX = netRole.x;
+        let gx = netRole.viewController.view.getGlobalPosition().x;
+        let goto = nowX - this.lastX;
+        if (gx < 220 && goto < 0) {
+            this.screenLeft = Math.max(this.screenLeft + goto, this.limit[0]);
+            container.x = - this.screenLeft;
+        } else if (gx > GameWidth - 290 && goto > 0) {
+            this.screenLeft = Math.min(this.screenLeft + goto, this.limit[1] - GameWidth);
+            container.x = -this.screenLeft;
+        }
+        if (this.step % 1 != 0 && this.step < 4.5) {
+            if (this.screenLeft >= this.limits[this.step + 0.5][1] - GameWidth) {
+                getWS().send({
+                    global: true,
+                    name: 'jumpStep',
+                    value: this.step + 0.5
+                });
+            }
+        }
+        this.lastX = nowX;
+    }
     attachRoles() {
         let { role, extraRole, container } = this;
-        if (!role.viewController.view.worldVisible) return;
         if (role.dead) {
             this.pointer = [this.extraRole];
             this.attach = this.attachRole;

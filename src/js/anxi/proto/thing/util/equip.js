@@ -1,4 +1,5 @@
 import { SkillProtos } from "../../../../data/skill/all";
+import { RealWorld } from "../../../../po/world";
 import { Body, ComtTypeName, Dcrt, EquipKind, EquipType, Weapon, Wing } from "../../../define/util";
 import { ThingProto } from "../base";
 
@@ -118,19 +119,19 @@ export class EquipProto extends ThingProto {
                 base.prop[prop] = value;
             } else if (Array.isArray(value)) {
                 if (value[1] <= 1) {
-                    base.prop[prop] = Math.round(value[0] + (value[1] - value[0]) * Math.random() * 100) * 0.01;
+                    base.prop[prop] = Math.round(value[0] + (value[1] - value[0]) * RealWorld.instance.random() * 100) * 0.01;
                 } else {
-                    base.prop[prop] = Math.round(value[0] + (value[1] - value[0]) * Math.random());
+                    base.prop[prop] = Math.round(value[0] + (value[1] - value[0]) * RealWorld.instance.random());
                 }
             }
         }
-        if (this.wingSkill?.[1] > Math.random()) {
+        if (this.wingSkill?.[1] > RealWorld.instance.random()) {
             base.wingSkill = this.wingSkill[0];
             let skillProto = SkillProtos[this.wingSkill[0]];
             base.extraIntro.push(`羽翼技能:${skillProto._name}`);
         }
         this.extraSkills.forEach(s => {
-            if (s[1] >= Math.random()) {
+            if (s[1] >= RealWorld.instance.random()) {
                 base.extraSkills.push(s[0]);
                 let skillProto = SkillProtos[s[0]];
                 base.extraIntro.push(`${skillProto._name}:${skillProto._describe}`);

@@ -57,16 +57,16 @@ export class MoneyController extends Controller {
     }
     addMoney(_money, ...pos) {
         let money = new Container();
-        let ss = Math.ceil(Math.random() * 4) + 1;
+        let ss = Math.ceil(this.role.world.random() * 4) + 1;
         for (let i = 0; i < ss; i++) {
-            let s = new Sprite(by(moneyUrls[Math.floor(Math.random() * moneyUrlLength)]));
-            s.x = (Math.random() - 0.5) * 20;
-            s.y = (Math.random() - 0.5) * 20;
+            let s = new Sprite(by(moneyUrls[Math.floor(this.role.world.random() * moneyUrlLength)]));
+            s.x = (this.role.world.random() - 0.5) * 20;
+            s.y = (this.role.world.random() - 0.5) * 20;
             money.addChild(s);
         }
         money.__value = _money;
-        money.alpha = 0.3 + Math.floor(Math.random() * 30) * 0.02;
-        money.__nextAlpha = Math.random() > 0.5;
+        money.alpha = 0.3 + Math.floor(this.role.world.random() * 30) * 0.02;
+        money.__nextAlpha = this.role.world.random() > 0.5;
         money.position.set(...pos);
         money.stay = 50;
         World.instance.vitaContainer.addChild(money);

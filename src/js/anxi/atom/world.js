@@ -27,6 +27,15 @@ export class ForeverWorld extends Atom {
     }
 }
 export class World extends Atom {
+    random() {
+        return Math.random();
+    }
+    randomInt(min, max) {
+        return (min + this.random() * (max + 1 - min)) | 0;
+    }
+    randomNode(arr) {
+        return arr[(arr.length * this.random()) | 0];
+    }
     /**
      * 相对掉宝倍率
      */
@@ -71,6 +80,7 @@ export class World extends Atom {
         this.container.addChild(this.baseContainer, this.parallelContainer, this.handContainer, this.guiContainer, this.toolContainer);
         this.baseContainer.addChild(this.wallContainer, this.vitaContainer);
         this.initCard(carddata);
+        this.isNet = RealWorld.instance.record.net;
         this.stepManager = new StepManager(this).bind(roles);
         roles.forEach((role, index) => this.initRole(role, index));
         /**

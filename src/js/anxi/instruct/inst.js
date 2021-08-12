@@ -16,17 +16,17 @@ export const SuperInstructor = {
                 let key = event.key;
                 let index = findIndex(keys, event);
                 switch (index) {
-                    case 0: vita.on(new ItemEvent('finishcard', key)); break;
-                    case 2: vita.on(new ItemEvent('wantleft', key)); break;
-                    case 3: vita.on(new ItemEvent('wantright', key)); break;
-                    case 4: vita.on(new ItemEvent('wantattack', key)); break;
-                    case 5: vita.on(new ItemEvent(GlobalDowning[keys[1]] ? 'wantdown' : 'wantjump', key)); break;
+                    case 0: vita.on(new ItemEvent('finishcard')); break;
+                    case 2: vita.on(new ItemEvent('wantleft')); break;
+                    case 3: vita.on(new ItemEvent('wantright')); break;
+                    case 4: vita.on(new ItemEvent('wantattack')); break;
+                    case 5: vita.on(new ItemEvent(GlobalDowning[keys[1]] ? 'wantdown' : 'wantjump')); break;
                     case 6: vita.on(new ItemEvent('wantskill', 1)); break;
                     case 7: vita.on(new ItemEvent('wantskill', 2)); break;
                     case 8: vita.on(new ItemEvent('wantskill', 3)); break;
                     case 9: vita.on(new ItemEvent('wantskill', 4)); break;
                     case 10: vita.on(new ItemEvent('wantskill', 5)); break;
-                    case 11: vita.on(new ItemEvent('wantura', 6)); break;
+                    case 11: vita.on(new ItemEvent('wantura')); break;
                     case 12: vita.on(new ItemEvent('wantskill', 0)); break;
                 }
             });
@@ -39,8 +39,8 @@ export const SuperInstructor = {
                 let key = event.key;
                 let index = findIndex(keys, event);
                 switch (index) {
-                    case 2: vita.on(new ItemEvent('cancelleft', key)); break;
-                    case 3: vita.on(new ItemEvent('cancelright', key)); break;
+                    case 2: vita.on(new ItemEvent('cancelleft')); break;
+                    case 3: vita.on(new ItemEvent('cancelright')); break;
                     case 6: vita.on(new ItemEvent('cancelskill', 1)); break;
                     case 7: vita.on(new ItemEvent('cancelskill', 2)); break;
                     case 8: vita.on(new ItemEvent('cancelskill', 3)); break;

@@ -4,6 +4,7 @@ import { Flyer } from "../../../../anxi/atom/flyer";
 import { StateCache } from "../../../../anxi/controller/state";
 import { SkillProto } from "../../../../anxi/proto/skill";
 import { Point, Polygon } from "../../../../anxi/shape/shape";
+import { RealWorld } from "../../../../po/world";
 import { by, directBy, gameSound, r2a, tween } from "../../../../util";
 
 export default new SkillProto(14, '弑神星云', '进入最长8秒的蓄力，蓄力中保持浮空状态，结束蓄力时向前发射星云箭，随蓄力时间提升伤害')
@@ -69,18 +70,18 @@ export default new SkillProto(14, '弑神星云', '进入最长8秒的蓄力，�
             if (timer > 60 * 8 - lightMove) return;
             if (timer < 60) return;
             for (let i = 0; i < oneTime; i++) {
-                let endx = 150 - interval * i - Math.random() * interval;
+                let endx = 150 - interval * i - RealWorld.instance.random() * interval;
                 let endy;
                 if (endx < -220) {
                     let rate = (endx + 220) / -80;
-                    endy = (16 - Math.abs(0.5 - rate) * 8) * (rate + (1 - rate) * Math.random()) * (Math.random() > 0.5 ? 1 : -1);
+                    endy = (16 - Math.abs(0.5 - rate) * 8) * (rate + (1 - rate) * RealWorld.instance.random()) * (RealWorld.instance.random() > 0.5 ? 1 : -1);
                 } else if (endx < 110) {
                     let rate = (endx - 110) / -330;
-                    endy = 8 * 2 * (Math.random() - 0.5) * rate;
+                    endy = 8 * 2 * (RealWorld.instance.random() - 0.5) * rate;
                 } else {
-                    endy = 8 * 2 * (Math.random() - 0.5);
+                    endy = 8 * 2 * (RealWorld.instance.random() - 0.5);
                 }
-                let beginY = 30 * (endy > 0 ? 1 + Math.random() : -1 - Math.random());
+                let beginY = 30 * (endy > 0 ? 1 + RealWorld.instance.random() : -1 - RealWorld.instance.random());
                 let beginX = (endx - 90) * 0.3 + endx;
                 let distance = ((endy - beginY) ** 2 + (endx - beginX) ** 2) ** 0.5;
                 let angle = r2a(Math.asin((endy - beginY) / distance));
@@ -130,12 +131,12 @@ export default new SkillProto(14, '弑神星云', '进入最长8秒的蓄力，�
             ended = true;
             parent.timeHandler = [];
             lights.forEach(light => {
-                let lasttime = (15 * (1 + Math.random())) | 0;
+                let lasttime = (15 * (1 + RealWorld.instance.random())) | 0;
                 light.timeHandler = [];
                 light.timer = 0;
                 light.onTime(t => {
                     light.root.alpha = 1 - t / lasttime;
-                }).useLiveTime(lasttime).useConstAngle(light.constAngle + 180).useConstSpeed(light._speed * (3 + 2 * Math.random()));
+                }).useLiveTime(lasttime).useConstAngle(light.constAngle + 180).useConstSpeed(light._speed * (3 + 2 * RealWorld.instance.random()));
             });
             lines.forEach(line => {
                 line.die();

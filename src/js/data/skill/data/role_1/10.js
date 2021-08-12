@@ -5,6 +5,7 @@ import { ItemEvent } from "../../../../anxi/event";
 import { Attack } from "../../../../anxi/hurt/attack";
 import { SkillProto } from "../../../../anxi/proto/skill";
 import { Circle, Line, Point } from "../../../../anxi/shape/shape";
+import { RealWorld } from "../../../../po/world";
 import { a2r, by, gameDust, gameSound, tween } from "../../../../util";
 
 export default new SkillProto(10, '天选', '每第三次攻击伤害减半，但会向前方射出一支额外的箭，随机带有以下某些效果[随暴击率提升概率]，瞄准/爆炸/眩晕/斩杀/中毒。【在空中时视为第三次且必定触发瞄准】')
@@ -16,12 +17,12 @@ export default new SkillProto(10, '天选', '每第三次攻击伤害减半，�
         let inair = role.inair();
         let { timer } = role;
         let { crt } = role.prop;
-        let findAngle = inair || (Math.random() <= crt * 0.3);
-        let willBoom = Math.random() < 0.4 + crt * 0.6;
+        let findAngle = inair || (RealWorld.instance.random() <= crt * 0.3);
+        let willBoom = RealWorld.instance.random() < 0.4 + crt * 0.6;
         let boomRad = 50;
-        let letDizzy = Math.random() < 0.15 + crt * 0.15;
-        let killWeak = Math.random() < 0.1 + 0.4 * crt;
-        let setPoison = Math.random() < 0.05 + crt * 0.65;
+        let letDizzy = RealWorld.instance.random() < 0.15 + crt * 0.15;
+        let killWeak = RealWorld.instance.random() < 0.1 + 0.4 * crt;
+        let setPoison = RealWorld.instance.random() < 0.05 + crt * 0.65;
         let arrow = new Sprite(smallGoldArrowTextrue);
         let preTime = 15;
         let findTime = 4;

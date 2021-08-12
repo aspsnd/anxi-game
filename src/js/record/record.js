@@ -1,4 +1,6 @@
+import { netBaseUrl } from '../boot';
 import { GTip, GDanger, formatDate } from '../util';
+
 var axios = require('axios').default;
 /**
  * Record:{
@@ -18,7 +20,7 @@ export class RecordController {
     }
 
     static login(uname, upass) {
-        return axios.post('http://139.224.8.192/server10003/login', {
+        return axios.post(netBaseUrl + 'login', {
             uname,
             upass
         }).then(res => {
@@ -34,11 +36,21 @@ export class RecordController {
     static newRecord(role) {
         // 初始化一个存档
         return {
+            net: false,
             roles: role,
             opened: [0]
         }
     }
-    static logout(){
+    static newNetRecord(role, rrid, isHomer) {
+        return {
+            net: true,
+            roles: role,
+            opened: [0],
+            rrid,
+            isHomer
+        };
+    }
+    static logout() {
         this.id = undefined;
         this.uuid = undefined;
         this.records = [];
@@ -47,7 +59,7 @@ export class RecordController {
         record.updateTime = formatDate(new Date(), 'yy-MM-dd hh:mm:ss');
         record.index = index;
         this.records[index] = record;
-        axios.post('http://139.224.8.192/server10003/save', {
+        axios.post(netBaseUrl + 'save', {
             id: this.id,
             uuid: this.uuid,
             record: record,

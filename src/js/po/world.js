@@ -1,7 +1,7 @@
 import { Container, Sprite, TextStyle, Text } from "pixi.js";
 import { ForeverWorld, World } from "../anxi/atom/world";
 import { PIXIRouter } from "../lib/router";
-import { directBy, gameTink, by } from "../util";
+import { directBy, gameTink, by, GTip, GDanger } from "../util";
 import { cardDatas } from "../data/card/card";
 import { Role } from "./atom/role";
 import { simpleCombine } from "../pod/home/combine";
@@ -13,8 +13,22 @@ import { SingleTalent } from "../pod/home/talent";
 import { exposeToWindow, isMobile } from "../boot";
 import { HandShakeContainer, HandShake } from "./gui/hand";
 import { AnxiError } from "../anxi/error/base";
+import { getWS } from "../net/net";
+import { SuperInstructorNet } from "../anxi/instruct/netinst";
+import { NetWorld } from "../anxi/atom/netWrold";
 
 export class RealWorld extends ForeverWorld {
+    /**
+     * 不确定是否在关卡内时的随机数
+     */
+    random(){
+        return this.incarding ? this.cardWorld.random() : Math.random();
+    }
+    incarding = false;
+    /**
+     * @type {World | NetWorld}
+     */
+    cardWorld
     /**
      * @type {RealWorld}
      */
@@ -36,6 +50,52 @@ export class RealWorld extends ForeverWorld {
     init(record) {
         let all = this;
         this.record = record;
+        if (record.net) {
+            this.ws = getWS();
+            let loading = new ZY.myAler.Loading(record.isHomer ? '等待追随者...' : '加入中');
+            this.ws.send({
+                global: true,
+                name: 'enterWorld',
+                value: record.rrid,
+                isHomer: record.isHomer
+            })
+            this.ws.once('enterWorld', e => {
+                if (e.value) {
+                    loading.remove();
+                    new GTip('联机成功');
+                } else {
+                    loading.remove();
+                    new ZY.myAler.Aler('联机失败,请刷新重试');
+                    this.world.container.visible = false;
+                }
+            })
+            if (!record.isHomer) {
+                this.ws.on('wantCard', e => {
+                    let cardIndex = e.value;
+                    let cardData = cardDatas[cardIndex];
+                    let cardName = cardData.name;
+                    new ZY.myAler.Question(`【邀请】 是否加入关卡《${cardName}》?`, bool => {
+                        if (!bool) {
+                            this.ws.send({
+                                global: true,
+                                value: false,
+                                name: 'enterCard'
+                            })
+                        } else {
+                            let role1 = e.from.role;
+                            this.loadNetRole(role1, 0, false);
+                            all.loadCard(cardData);
+                            this.ws.send({
+                                global: true,
+                                value: true,
+                                name: 'enterCard',
+                                role: this.netRole
+                            });
+                        }
+                    });
+                })
+            }
+        }
         let router = this.router = new PIXIRouter();
         this.container.removeChildren();
         router.register('map', {
@@ -64,11 +124,32 @@ export class RealWorld extends ForeverWorld {
                     s.anchor.y = 0.5;
                     s.tap = e => {
                         if (!all.record.opened.includes(cd.index)) return;
-                        all.loadCard(cd);
+                        if (all.record.net) {
+                            if (all.record.isHomer) {
+                                all.ws.send({
+                                    global: true,
+                                    name: 'wantCard',
+                                    value: cd.index,
+                                    role: all.roles[0].toPlainObject()
+                                });
+                                let load = new ZY.myAler.Loading('请等待伙伴同意加入');
+                                all.ws.once('enterCard', e => {
+                                    if (e.value) {
+                                        let role2 = e.from.role;
+                                        all.loadNetRole(role2, 1, false);
+                                        load.remove();
+                                        all.loadCard(cd);
+                                    }
+                                });
+                            } else {
+                                new ZY.myAler.Aler('您不是存档创建者，无法加入关卡');
+                            }
+                        } else {
+                            all.loadCard(cd);
+                        }
                     }
                     container.addChild(s);
                 });
-
             },
             refresher(container, data) {
                 container.visible = true;
@@ -90,13 +171,18 @@ export class RealWorld extends ForeverWorld {
                 all.container.addChild(container);
             },
             refresher(container, data) {
+                all.incarding = true;
                 let carddata = data.carddata;
-                let world = data.world = new World(carddata, all.roles, container);
+                let world = all.cardWorld = data.world = record.net ? new NetWorld(carddata, all.roles, container) : new World(carddata, all.roles, container);
                 container.visible = true;
                 world.landIn(all);
                 world.once('die', e => {
                     data.world = null;
-                })
+                });
+            },
+            disolver(container){
+                container.visible = false;
+                all.incarding = false;
             }
         });
         router.register('combine', {
@@ -125,7 +211,7 @@ export class RealWorld extends ForeverWorld {
         }, SingleTalent.container, _ => {
             SingleTalent.init();
         });
-        this.loadRoles(record.roles);
+        this.record.net ? this.loadNetRole(record.roles[0], record.isHomer ? 0 : 1, true) : this.loadRoles(record.roles);
         router.start();
     }
     /**
@@ -152,6 +238,23 @@ export class RealWorld extends ForeverWorld {
         }
         simpleCombine.load(this.roles);
         SingleTalent.load(this.roles);
+    }
+    /**
+     * @param {RoleProto} roleobj 
+     */
+    loadNetRole(roleobj, index, self = true) {
+        if (self) this.netRole = roleobj;
+        let role = new Role(roleobj);
+        new GUI(role, index == 0);
+        this.roles[index] = role;
+        if (self) {
+            role.use(isMobile ? SuperInstructorNet.mobilePlayer() : SuperInstructorNet.player(SuperInstructorNet.defaultPlayer));
+            simpleCombine.load([role]);
+            SingleTalent.load([role]);
+        }
+        if (exposeToWindow) {
+            window['role' + index] = role;
+        };
     }
     loadCard(carddata) {
         this.router.pageHandlers['world'].data = {

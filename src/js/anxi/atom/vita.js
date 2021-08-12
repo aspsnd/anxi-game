@@ -447,7 +447,7 @@ export class Vita extends Atom {
              */
             let affect = e.value;
 
-            affect.bedoded = affect.proto.dodAble && Math.random() < this.prop.dod;
+            affect.bedoded = affect.proto.dodAble && (this.world.random() < this.prop.dod);
             if (affect.bedoded) {
                 this.on(new ItemEvent('dodaffect', affect, e.from));
                 e.from.on(new ItemEvent('dodedaffect', affect, this));

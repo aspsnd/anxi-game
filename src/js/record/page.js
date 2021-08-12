@@ -69,10 +69,11 @@ export class RecordPage extends Graphics {
             graphics.addChild(indexText);
             graphics.tap = selectHandler.bind(this, index, !!record, record);
             if (!record) continue;
-            let nameText = new Text(record.roles.map(role => role.name).join(' '), new TextStyle({
+            let namet = record.net ? record.roles.map(role => role.name).join(' ') + (record.isHomer ? ' 创建者' : ' 跟随者') : record.roles.map(role => role.name).join(' ');
+            let nameText = new Text(namet, new TextStyle({
                 fontSize: 18,
-                fill: 0xffffff,
-                fontWeight: 'bold'
+                fill: record.net ? 0xeeddff : 0xffffff,
+                fontWeight: (record.net && !record.isHomer) ? '200' : 'bold'
             }));
             nameText.position.set(75, 20);
             graphics.addChild(nameText);

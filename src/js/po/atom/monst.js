@@ -4,6 +4,7 @@ import { ItemEvent } from "../../anxi/event";
 import { EquipProtos } from "../../data/thing/equip/all";
 import { ExtraProtos } from "../../data/thing/extra/all";
 import { MaterialProtos } from "../../data/thing/material/all";
+import { RealWorld } from "../world";
 import { Drop } from "./drop";
 import { Role } from "./role";
 
@@ -28,11 +29,11 @@ export class Monst extends Vita {
                 role?.moneyController?.addMoney(this.proto.reward.money, this.x, this.centerY);
             }
             let dropRate = this.proto.drops.rate * this.world.dropRate;
-            if (dropRate > Math.random()) {
+            if (dropRate > RealWorld.instance.random()) {
                 let drops = Object.assign({ equip: [], material: [], extra: [] }, this.proto.drops);
                 let n = drops.equip.reduce((n, e) => n + e[1], 0) +
                     drops.material.reduce((n, e) => n + e[1], 0) + drops.extra.reduce((n, e) => n + e[1], 0);
-                let na = Math.random() * n;
+                let na = RealWorld.instance.random() * n;
                 const dropEquip = drops.equip.some(v => {
                     na -= v[1];
                     if (na <= 0) {
