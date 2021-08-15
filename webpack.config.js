@@ -53,19 +53,19 @@ module.exports = {
     }),
     new ResPlugin()
   ],
-  devServer: {
-    contentBase: path.join(__dirname, 'build'),
-    compress: true,
-    port: 8080,
-    open: true,
-  },
   // devServer: {
   //   contentBase: path.join(__dirname, 'build'),
   //   compress: true,
   //   port: 8080,
-  //   host: '0.0.0.0',
   //   open: true,
-  //   useLocalIp: true
   // },
+  devServer: {
+    contentBase: path.join(__dirname, 'build'),
+    compress: true,
+    port: 8080,
+    host: '0.0.0.0',
+    open: true,
+    useLocalIp: true
+  },
   devtool: mode == "development" ? 'source-map' : 'none'
 };

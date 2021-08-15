@@ -10,9 +10,9 @@ export const openPtoCtrlRun = !!1;
 export const autoEnterCard = 0;
 export const autoEnterCardIndex = 0;
 export const isMobile = isMobileFunc() || 0;
-export const forbidFullScreenFunc = true;
+export const forbidFullScreenFunc = false;
 export const useLocalServer = false;
-export const netBaseUrl = useLocalServer ? 'http://localhost:10003/' : 'http://139.224.8.192/server10003/';
+export const netBaseUrl = useLocalServer ? 'http://localhost:10003/' : 'https://www.anxyser.xyz/server10003/';
 
 /**
  * for build
